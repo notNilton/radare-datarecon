@@ -13,11 +13,11 @@ import "./components/Canva/Canva.css";
 import Node from "./components/Canva/Canva";
 // import About from "./components/About/aboutModal";
 
-function App() {
-  const [currentTab, setCurrentTab] = useState("Aba1");
-  const [showAbout, setShowAbout] = useState(false);
+const App: React.FC = () => {
+  const [currentTab, setCurrentTab] = useState<string>("Aba1");
+  const [showAbout, setShowAbout] = useState<boolean>(false);
 
-  const handleTabClick = (tabName: React.SetStateAction<string>) => {
+  const handleTabClick = (tabName: string) => {
     setCurrentTab(tabName);
   };
 
@@ -271,6 +271,6 @@ function App() {
       </div>
     </div>
   );
-}
+};
 
 export default App;
