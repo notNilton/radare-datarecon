@@ -31,7 +31,7 @@ const App: React.FC = () => {
         <nav className="navbar">
           <ul className="navbar-menu">
             <li className="navbar-item">
-              <a>Arquivo</a>
+              <button className="link-button">Arquivo</button>
               <ul>
                 <li>
                   <a href="novo">Novo</a>
@@ -63,7 +63,7 @@ const App: React.FC = () => {
               </ul>
             </li>
             <li className="navbar-item">
-              <a>Editar</a>
+              <button className="link-button">Editar</button>
               <ul>
                 <li>
                   <a href="retornar">Retornar</a>
@@ -86,7 +86,7 @@ const App: React.FC = () => {
               </ul>
             </li>
             <li className="navbar-item">
-              <a>Desenhar</a>
+              <button className="link-button">Desenhar</button>
               <ul>
                 <li>
                   <a href="objetos-padroes">Lista de Objetos Padrões</a>
@@ -100,10 +100,10 @@ const App: React.FC = () => {
               </ul>
             </li>
             <li className="navbar-item">
-              <a>Ajuda</a>
+              <button className="link-button">Ajuda</button>
             </li>
             <li className="navbar-item" onClick={toggleAboutPopup}>
-              <a>Sobre</a>
+              <button className="link-button">Sobre</button>
             </li>
             <div className="navbar-icon">
               <img src="/public/assets/userIcon.png" alt="User Icon" />
