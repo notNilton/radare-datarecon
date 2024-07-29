@@ -1,0 +1,82 @@
+.react-flow .react-flow__handle {
+  width: 15px;
+  height: 15px;
+  border-radius: 5px;
+  background-color: #dad9dc;
+  display:flex;
+  justify-content: center;
+}
+
+.react-flow .react-flow__node {
+  height: 50px;
+  width: 150px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  border-width: 2px;
+  font-weight: 700;
+}
+
+.react-flow .react-flow__edge path,
+.react-flow__connectionline path {
+  stroke-width: 2;
+}
+
+.react-flow Panel {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: space-evenly;
+}
+
+.button {
+  background: rgba(242, 100, 48, 1);
+  border: none;
+  padding: 5px 10px;
+  color: white;
+  cursor: pointer;
+  outline: none;
+  border-radius: 4px;
+  margin: 5px;
+  width: 45%;
+}
+
+/* Canva.css */
+.vis-button {
+  background-color: #f9c74f; /* Laranja claro */
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.vis-button:hover {
+  background-color: #f8b026;
+}
+
+.run-button {
+  background-color: #90e0ef; /* Azul claro */
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.run-button:hover {
+  background-color: #00b4d8;
+}
+
+.add-button {
+  background-color: #f3722c; /* Laranja forte */
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.add-button:hover {
+  background-color: #f94144;
+}
