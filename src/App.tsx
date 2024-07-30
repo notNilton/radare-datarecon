@@ -9,7 +9,6 @@ import "./components/Canva/Canva.css";
 
 // Import Components
 import Node from "./components/Canva/Canva";
-// import AboutModal from "./components/AboutModal";
 import AboutModal from "./components/About/AboutModal";
 
 const version = require("../package.json").version;
@@ -17,6 +16,17 @@ const version = require("../package.json").version;
 const App: React.FC = () => {
   const [currentTab, setCurrentTab] = useState<string>("Aba1");
   const [showAbout, setShowAbout] = useState<boolean>(false);
+  const [visibleSidebarContent, setVisibleSidebarContent] = useState<{
+    [key: string]: boolean;
+  }>({
+    "arvore-funcionalidades": true,
+    analise: true,
+    matriz: true,
+    classificacao: true,
+    "tags-originais": true,
+    "tags-reconciliadas": true,
+    "erros-das-tags": true,
+  });
 
   const handleTabClick = (tabName: string) => {
     setCurrentTab(tabName);
@@ -24,6 +34,13 @@ const App: React.FC = () => {
 
   const toggleAboutPopup = () => {
     setShowAbout(!showAbout);
+  };
+
+  const toggleSidebarContent = (key: string) => {
+    setVisibleSidebarContent((prevState) => ({
+      ...prevState,
+      [key]: !prevState[key],
+    }));
   };
 
   return (
@@ -139,49 +156,109 @@ const App: React.FC = () => {
       </div>
 
       <div className="r-sidebar-structure">
-        <div className="sidebar-title">
-          <a href="tags-originais">Tags Originais</a>
+        <div
+          className="sidebar-title"
+          onClick={() => toggleSidebarContent("tags-originais")}
+        >
+          <a>Tags Originais</a>
         </div>
-        <div className="sidebar-content">
+        <div
+          className="sidebar-content"
+          style={{
+            display: visibleSidebarContent["tags-originais"] ? "block" : "none",
+          }}
+        >
           {/* Placeholder for Tags Originais content */}
         </div>
-        <div className="sidebar-title">
-          <a href="tags-reconciliadas">Tags Reconciliadas</a>
+        <div
+          className="sidebar-title"
+          onClick={() => toggleSidebarContent("tags-reconciliadas")}
+        >
+          <a>Tags Reconciliadas</a>
         </div>
-        <div className="sidebar-content">
+        <div
+          className="sidebar-content"
+          style={{
+            display: visibleSidebarContent["tags-reconciliadas"]
+              ? "block"
+              : "none",
+          }}
+        >
           {/* Placeholder for Tags Reconciliadas content */}
         </div>
-        <div className="sidebar-title">
-          <a href="erros-das-tags">Erros das Tags</a>
+        <div
+          className="sidebar-title"
+          onClick={() => toggleSidebarContent("erros-das-tags")}
+        >
+          <a>Erros das Tags</a>
         </div>
-        <div className="sidebar-content">
+        <div
+          className="sidebar-content"
+          style={{
+            display: visibleSidebarContent["erros-das-tags"] ? "block" : "none",
+          }}
+        >
           {/* Placeholder for Erros das Tags content */}
         </div>
       </div>
 
       <div className="l-sidebar-structure">
-        <div className="sidebar-title">
-          <a href="arvore-funcionalidades">Árvore de Funcionalidades</a>
+        <div
+          className="sidebar-title"
+          onClick={() => toggleSidebarContent("arvore-funcionalidades")}
+        >
+          <a>Árvore de Funcionalidades</a>
         </div>
-        <div className="sidebar-content">
+        <div
+          className="sidebar-content"
+          style={{
+            display: visibleSidebarContent["arvore-funcionalidades"]
+              ? "block"
+              : "none",
+          }}
+        >
           {/* Placeholder for Árvore de Funcionalidades content */}
         </div>
-        <div className="sidebar-title">
-          <a href="analise">Análise</a>
+        <div
+          className="sidebar-title"
+          onClick={() => toggleSidebarContent("analise")}
+        >
+          <a>Análise</a>
         </div>
-        <div className="sidebar-content">
+        <div
+          className="sidebar-content"
+          style={{
+            display: visibleSidebarContent["analise"] ? "block" : "none",
+          }}
+        >
           {/* Placeholder for Análise content */}
         </div>
-        <div className="sidebar-title">
-          <a href="matriz">Matriz</a>
+        <div
+          className="sidebar-title"
+          onClick={() => toggleSidebarContent("matriz")}
+        >
+          <a>Matriz</a>
         </div>
-        <div className="sidebar-content">
+        <div
+          className="sidebar-content"
+          style={{
+            display: visibleSidebarContent["matriz"] ? "block" : "none",
+          }}
+        >
           {/* Placeholder for Matriz content */}
         </div>
-        <div className="sidebar-title">
-          <a href="classificacao">Classificação</a>
+        <div
+          className="sidebar-title"
+          onClick={() => toggleSidebarContent("classificacao")}
+        >
+          <a>Classificação</a>
         </div>
-        <div className="sidebar-content">
+        <div
+          className="sidebar-content"
+          style={{
+            display: visibleSidebarContent["classificacao"] ? "block" : "none",
+          }}
+        >
           {/* Placeholder for Classificação content */}
         </div>
       </div>
