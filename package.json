@@ -1,6 +1,6 @@
 {
   "name": "recyon",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.13.0",
@@ -31,7 +31,10 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "release": "standard-version",
+    "release:minor": "standard-version --release-as minor",
+    "release:major": "standard-version --release-as major"
   },
   "eslintConfig": {
     "extends": [
@@ -52,6 +55,7 @@
     ]
   },
   "devDependencies": {
-    "sass": "^1.77.8"
+    "sass": "^1.77.8",
+    "standard-version": "^9.5.0"
   }
 }
