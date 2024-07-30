@@ -1,9 +1,8 @@
 // Import Libraries
 import React, { useState } from "react";
-import { Email, GitHub, LinkedIn } from "@mui/icons-material";
+import { Email, GitHub, LinkedIn, AccountCircle } from "@mui/icons-material";
 
 // Import Styles
-// import "./App.css";
 import "./App.scss";
 import "./styles/global.css";
 import "./components/Canva/Canva.css";
@@ -12,6 +11,8 @@ import "./components/Canva/Canva.css";
 import Node from "./components/Canva/Canva";
 // import AboutModal from "./components/AboutModal";
 import AboutModal from "./components/About/AboutModal";
+
+const version = require("../package.json").version;
 
 const App: React.FC = () => {
   const [currentTab, setCurrentTab] = useState<string>("Aba1");
@@ -106,7 +107,8 @@ const App: React.FC = () => {
               <button className="link-button">Sobre</button>
             </li>
             <div className="navbar-icon">
-              <img src="/public/assets/userIcon.png" alt="User Icon" />
+              <span className="project-version">Versão: {version}</span>
+              <AccountCircle className="user-icon" />
             </div>
           </ul>
         </nav>
