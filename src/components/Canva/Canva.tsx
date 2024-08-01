@@ -18,7 +18,7 @@ import {
   initialNodes,
   initialEdges,
   nodeTypes,
-} from "./utils/initialCanvaDataI";
+} from "./utils/initialCanvaDataIII";
 import { multiplyArrays } from "./utils/arrayUtils";
 import {
   calcularReconciliacao,
@@ -27,6 +27,7 @@ import {
 } from "./utils/Reconciliacao";
 import ProgressModal from "./utils/ReconciliacaoModal";
 import EditNodeModal from "./utils/EditNodeModal";
+import FileUpload from "./UploadFile"; // Import the new component
 
 const getNodeId = () => `randomnode_${+new Date()}`;
 
@@ -164,6 +165,11 @@ const Node = () => {
     fecharEditNodeModal();
   };
 
+  const handleFileUploadSuccess = (data) => {
+    console.log("File uploaded successfully:", data);
+    // Update your nodes or edges based on the uploaded data if needed
+  };
+
   return (
     <div style={{ width: "100%", height: "100%" }}>
       <ReactFlow
@@ -250,12 +256,7 @@ const Node = () => {
             Adc S.
           </button>
 
-          <button
-            className="button add-button"
-            onClick={() => addNode("output")}
-          >
-            Adc. Arq.
-          </button>
+          <FileUpload onFileUploadSuccess={handleFileUploadSuccess} />
         </Panel>
 
         <Controls />
