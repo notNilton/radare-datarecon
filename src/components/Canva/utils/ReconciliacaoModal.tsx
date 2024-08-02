@@ -1,8 +1,17 @@
-// ProgressModal.js
 import React from "react";
 import "./ReconciliacaoModal.css";
 
-const ProgressModal = ({ isVisible, progress, onClose }) => {
+interface ProgressModalProps {
+  isVisible: boolean;
+  progress: string;
+  onClose: () => void;
+}
+
+const ProgressModal: React.FC<ProgressModalProps> = ({
+  isVisible,
+  progress,
+  onClose,
+}) => {
   if (!isVisible) return null;
 
   // Remove colchetes da string de progresso
