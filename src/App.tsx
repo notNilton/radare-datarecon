@@ -1,15 +1,11 @@
-// Import Libraries
 import React, { useState } from "react";
 import { Email, GitHub, LinkedIn, AccountCircle } from "@mui/icons-material";
-
-// Import Styles
 import "./App.scss";
 import "./styles/global.css";
 import "./components/Canva/Canva.css";
-
-// Import Components
 import Node from "./components/Canva/Canva";
 import AboutModal from "./components/About/AboutModal";
+import FunctionButtons from "./components/Sidebar/FunctionButtons";
 
 const version = require("../package.json").version;
 
@@ -41,6 +37,19 @@ const App: React.FC = () => {
       ...prevState,
       [key]: !prevState[key],
     }));
+  };
+
+  // State and handlers for FunctionButtons
+  const [nodes, setNodes] = useState<any[]>([]);
+  const [edges, setEdges] = useState<any[]>([]);
+
+  const atualizarProgresso = (message: string) => {
+    console.log(message);
+  };
+
+  const addNode = (nodeType: string) => {
+    console.log(`Add node of type: ${nodeType}`);
+    // Logic to add a node
   };
 
   return (
@@ -217,7 +226,14 @@ const App: React.FC = () => {
               : "none",
           }}
         >
-          {/* Placeholder for Árvore de Funcionalidades content */}
+          <FunctionButtons
+            nodes={nodes}
+            edges={edges}
+            setNodes={setNodes}
+            setEdges={setEdges}
+            atualizarProgresso={atualizarProgresso}
+            addNode={addNode}
+          />
         </div>
         <div
           className="sidebar-title"
