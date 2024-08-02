@@ -7,7 +7,6 @@ import ReactFlow, {
   addEdge,
   Connection,
   Edge,
-  Panel,
   getConnectedEdges,
   BackgroundVariant,
 } from "reactflow";
@@ -26,9 +25,11 @@ import {
   reconciliarApi,
   createAdjacencyMatrix,
 } from "./utils/Reconciliacao";
-import ProgressModal from "./utils/ReconciliacaoModal";
-import EditNodeModal from "./utils/EditNodeModal";
-import Functions from "../Sidebar/Functions";
+import ProgressModalComponent from "./ProgressModalComponent";
+import EditNodeModalComponent from "./EditNodeModalComponent";
+import ContextMenuComponent from "./ContextMenuComponent";
+import FunctionsComponent from "./FunctionsComponent.tsx";
+
 const getNodeId = () => `randomnode_${+new Date()}`;
 
 const Node = () => {
@@ -51,18 +52,13 @@ const Node = () => {
 
   const atualizarProgresso = (message: string) => {
     setProgress(message);
-    if (!isModalVisible) {
-      setIsModalVisible(true);
-    }
+    setIsModalVisible(true);
   };
 
-  const fecharModal = () => {
-    setIsModalVisible(false);
-  };
+  const fecharModal = () => setIsModalVisible(false);
 
-  const fecharEditNodeModal = () => {
+  const fecharEditNodeModal = () =>
     setEditNodeModal({ isVisible: false, node: null });
-  };
 
   const onConnect = useCallback(
     (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
@@ -94,9 +90,8 @@ const Node = () => {
     }
   };
 
-  const onNodeDoubleClick = (event: MouseEvent, node: any) => {
+  const onNodeDoubleClick = (event: MouseEvent, node: any) =>
     setEditNodeModal({ isVisible: true, node });
-  };
 
   const addNode = useCallback(
     (nodeType: string) => {
@@ -147,13 +142,10 @@ const Node = () => {
     });
   };
 
-  const handleCloseContextMenu = () => {
-    setContextMenu(null);
-  };
+  const handleCloseContextMenu = () => setContextMenu(null);
 
   const handleEditNode = () => {
-    const node = contextMenu!.node;
-    setEditNodeModal({ isVisible: true, node });
+    setEditNodeModal({ isVisible: true, node: contextMenu!.node });
     handleCloseContextMenu();
   };
 
@@ -197,32 +189,24 @@ const Node = () => {
         <Controls />
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
       </ReactFlow>
-      <ProgressModal
+      <ProgressModalComponent
         isVisible={isModalVisible}
         progress={progress}
         onClose={fecharModal}
       />
-      {contextMenu && (
-        <div
-          className="context-menu"
-          style={{ top: contextMenu.mouseY, left: contextMenu.mouseX }}
-          onMouseLeave={handleCloseContextMenu}
-        >
-          <button onClick={handleEditNode} className="context-menu-button">
-            Editar
-          </button>
-          <button onClick={handleDeleteNode} className="context-menu-button">
-            Deletar
-          </button>
-        </div>
-      )}
-      <EditNodeModal
+      <ContextMenuComponent
+        contextMenu={contextMenu}
+        handleEditNode={handleEditNode}
+        handleDeleteNode={handleDeleteNode}
+        handleCloseContextMenu={handleCloseContextMenu}
+      />
+      <EditNodeModalComponent
         isVisible={editNodeModal.isVisible}
         node={editNodeModal.node}
         onClose={fecharEditNodeModal}
         onUpdate={handleUpdateNode}
       />
-      <Functions
+      <FunctionsComponent
         calcularReconciliacao={() =>
           calcularReconciliacao(
             nodes,
