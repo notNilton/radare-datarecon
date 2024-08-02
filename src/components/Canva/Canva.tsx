@@ -28,8 +28,7 @@ import {
 } from "./utils/Reconciliacao";
 import ProgressModal from "./utils/ReconciliacaoModal";
 import EditNodeModal from "./utils/EditNodeModal";
-import FileUpload from "./UploadFile"; // Import the new component
-
+import Functions from "../Sidebar/Functions";
 const getNodeId = () => `randomnode_${+new Date()}`;
 
 const Node = () => {
@@ -195,71 +194,6 @@ const Node = () => {
         onNodeDoubleClick={onNodeDoubleClick}
         onNodeContextMenu={handleNodeContextMenu}
       >
-        <Panel position="top-left" className="top-left-panel">
-          <button
-            className="button run-button"
-            onClick={() =>
-              calcularReconciliacao(
-                nodes,
-                edges,
-                reconciliarApi,
-                atualizarProgresso
-              )
-            }
-          >
-            Reconciliar
-          </button>
-          <button
-            className="button vis-button"
-            onClick={() => createAdjacencyMatrix(nodes, edges)}
-          >
-            Matriz
-          </button>
-
-          <button
-            className="button vis-button"
-            onClick={() => createAdjacencyMatrix(nodes, edges)}
-          >
-            Valores
-          </button>
-
-          <button
-            className="button vis-button"
-            onClick={() => createAdjacencyMatrix(nodes, edges)}
-          >
-            Tolerâncias
-          </button>
-
-          <button
-            className="button add-button"
-            onClick={() => addNode("cnOneTwo")}
-          >
-            Adc Nó
-          </button>
-
-          <button
-            className="button add-button"
-            onClick={() => addNode("cnOneTwo")}
-          >
-            Adc Nó*
-          </button>
-
-          <button
-            className="button add-button"
-            onClick={() => addNode("input")}
-          >
-            Adc E.
-          </button>
-          <button
-            className="button add-button"
-            onClick={() => addNode("output")}
-          >
-            Adc S.
-          </button>
-
-          <FileUpload onFileUploadSuccess={handleFileUploadSuccess} />
-        </Panel>
-
         <Controls />
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
       </ReactFlow>
@@ -287,6 +221,19 @@ const Node = () => {
         node={editNodeModal.node}
         onClose={fecharEditNodeModal}
         onUpdate={handleUpdateNode}
+      />
+      <Functions
+        calcularReconciliacao={() =>
+          calcularReconciliacao(
+            nodes,
+            edges,
+            reconciliarApi,
+            atualizarProgresso
+          )
+        }
+        createAdjacencyMatrix={() => createAdjacencyMatrix(nodes, edges)}
+        addNode={addNode}
+        handleFileUploadSuccess={handleFileUploadSuccess}
       />
     </div>
   );

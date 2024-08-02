@@ -1,6 +1,8 @@
-// Import Libraries
 import React, { useState } from "react";
-import { Email, GitHub, LinkedIn, AccountCircle } from "@mui/icons-material";
+import { AccountCircle } from "@mui/icons-material";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import theme from "./theme"; // Import your theme
 
 // Import Styles
 import "./App.scss";
@@ -10,6 +12,7 @@ import "./components/Canva/Canva.css";
 // Import Components
 import Node from "./components/Canva/Canva";
 import AboutModal from "./components/About/AboutModal";
+import FuncoesComponent from "./components/Sidebar/Functions"; // Import the new component
 
 const version = require("../package.json").version;
 
@@ -19,7 +22,7 @@ const App: React.FC = () => {
   const [visibleSidebarContent, setVisibleSidebarContent] = useState<{
     [key: string]: boolean;
   }>({
-    "arvore-funcionalidades": true,
+    funcoes: true,
     analise: true,
     matriz: true,
     classificacao: true,
@@ -44,227 +47,248 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="app-container">
-      <header>
-        <nav className="navbar">
-          <ul className="navbar-menu">
-            <li className="navbar-item">
-              <button className="link-button">Arquivo</button>
-              <ul>
-                <li>
-                  <a href="novo">Novo</a>
-                </li>
-                <li>
-                  <a href="abrir">Abrir</a>
-                </li>
-                <li>
-                  <a href="fechar">Fechar</a>
-                </li>
-                <li>
-                  <a href="salvar">Salvar</a>
-                </li>
-                <li>
-                  <a href="salvar-como">Salvar Como</a>
-                </li>
-                <li>
-                  <a href="importar">Importar</a>
-                </li>
-                <li>
-                  <a href="exportar">Exportar</a>
-                </li>
-                <li>
-                  <a href="exemplos">Exemplos</a>
-                </li>
-                <li>
-                  <a href="sair">Sair</a>
-                </li>
-              </ul>
-            </li>
-            <li className="navbar-item">
-              <button className="link-button">Editar</button>
-              <ul>
-                <li>
-                  <a href="retornar">Retornar</a>
-                </li>
-                <li>
-                  <a href="avancar">Avançar</a>
-                </li>
-                <li>
-                  <a href="cortar">Cortar</a>
-                </li>
-                <li>
-                  <a href="copiar">Copiar</a>
-                </li>
-                <li>
-                  <a href="colar">Colar</a>
-                </li>
-                <li>
-                  <a href="deletar">Deletar</a>
-                </li>
-              </ul>
-            </li>
-            <li className="navbar-item">
-              <button className="link-button">Desenhar</button>
-              <ul>
-                <li>
-                  <a href="objetos-padroes">Lista de Objetos Padrões</a>
-                </li>
-                <li>
-                  <a href="agrupar-objetos">Agrupar Objetos</a>
-                </li>
-                <li>
-                  <a href="desagrupar-objetos">Desagrupar Objetos</a>
-                </li>
-              </ul>
-            </li>
-            <li className="navbar-item">
-              <button className="link-button">Ajuda</button>
-            </li>
-            <li className="navbar-item" onClick={toggleAboutPopup}>
-              <button className="link-button">Sobre</button>
-            </li>
-            <div className="navbar-icon">
-              <span className="project-version">Versão: {version}</span>
-              <AccountCircle className="user-icon" />
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <div className="app-container">
+        <header>
+          <nav className="navbar">
+            <ul className="navbar-menu">
+              <li className="navbar-item">
+                <button className="link-button">Arquivo</button>
+                <ul>
+                  <li>
+                    <a href="novo">Novo</a>
+                  </li>
+                  <li>
+                    <a href="abrir">Abrir</a>
+                  </li>
+                  <li>
+                    <a href="fechar">Fechar</a>
+                  </li>
+                  <li>
+                    <a href="salvar">Salvar</a>
+                  </li>
+                  <li>
+                    <a href="salvar-como">Salvar Como</a>
+                  </li>
+                  <li>
+                    <a href="importar">Importar</a>
+                  </li>
+                  <li>
+                    <a href="exportar">Exportar</a>
+                  </li>
+                  <li>
+                    <a href="exemplos">Exemplos</a>
+                  </li>
+                  <li>
+                    <a href="sair">Sair</a>
+                  </li>
+                </ul>
+              </li>
+              <li className="navbar-item">
+                <button className="link-button">Editar</button>
+                <ul>
+                  <li>
+                    <a href="retornar">Retornar</a>
+                  </li>
+                  <li>
+                    <a href="avancar">Avançar</a>
+                  </li>
+                  <li>
+                    <a href="cortar">Cortar</a>
+                  </li>
+                  <li>
+                    <a href="copiar">Copiar</a>
+                  </li>
+                  <li>
+                    <a href="colar">Colar</a>
+                  </li>
+                  <li>
+                    <a href="deletar">Deletar</a>
+                  </li>
+                </ul>
+              </li>
+              <li className="navbar-item">
+                <button className="link-button">Desenhar</button>
+                <ul>
+                  <li>
+                    <a href="objetos-padroes">Lista de Objetos Padrões</a>
+                  </li>
+                  <li>
+                    <a href="agrupar-objetos">Agrupar Objetos</a>
+                  </li>
+                  <li>
+                    <a href="desagrupar-objetos">Desagrupar Objetos</a>
+                  </li>
+                </ul>
+              </li>
+              <li className="navbar-item">
+                <button className="link-button">Ajuda</button>
+              </li>
+              <li className="navbar-item" onClick={toggleAboutPopup}>
+                <button className="link-button">Sobre</button>
+              </li>
+              <div className="navbar-icon">
+                <span className="project-version">Versão: {version}</span>
+                <AccountCircle className="user-icon" />
+              </div>
+            </ul>
+          </nav>
+        </header>
+
+        <div className="central-area">
+          <Node />
+        </div>
+
+        <div className="tab-structure">
+          {["Aba1", "Aba2", "Aba3", "Aba4", "Aba5"].map((tab) => (
+            <div
+              key={tab}
+              className={`tab ${currentTab === tab ? "active" : ""}`}
+              onClick={() => handleTabClick(tab)}
+            >
+              <a href={tab.toLowerCase()}>{tab}</a>
             </div>
-          </ul>
-        </nav>
-      </header>
+          ))}
+        </div>
 
-      <div className="central-area">
-        <Node />
-      </div>
+        <div className="graph-bar-title">
+          <a href="analise-resumida">Análise Resumida</a>
+        </div>
 
-      <div className="tab-structure">
-        {["Aba1", "Aba2", "Aba3", "Aba4", "Aba5"].map((tab) => (
+        <div className="graph-bar-content">
+          {/* Placeholder for graph bar content */}
+        </div>
+
+        <div className="r-sidebar-structure">
           <div
-            key={tab}
-            className={`tab ${currentTab === tab ? "active" : ""}`}
-            onClick={() => handleTabClick(tab)}
+            className="sidebar-title"
+            onClick={() => toggleSidebarContent("tags-originais")}
           >
-            <a href={tab.toLowerCase()}>{tab}</a>
+            <a>Tags Originais</a>
           </div>
-        ))}
-      </div>
+          <div
+            className="sidebar-content"
+            style={{
+              display: visibleSidebarContent["tags-originais"]
+                ? "block"
+                : "none",
+            }}
+          >
+            {/* Placeholder for Tags Originais content */}
+          </div>
+          <div
+            className="sidebar-title"
+            onClick={() => toggleSidebarContent("tags-reconciliadas")}
+          >
+            <a>Tags Reconciliadas</a>
+          </div>
+          <div
+            className="sidebar-content"
+            style={{
+              display: visibleSidebarContent["tags-reconciliadas"]
+                ? "block"
+                : "none",
+            }}
+          >
+            {/* Placeholder for Tags Reconciliadas content */}
+          </div>
+          <div
+            className="sidebar-title"
+            onClick={() => toggleSidebarContent("erros-das-tags")}
+          >
+            <a>Erros das Tags</a>
+          </div>
+          <div
+            className="sidebar-content"
+            style={{
+              display: visibleSidebarContent["erros-das-tags"]
+                ? "block"
+                : "none",
+            }}
+          >
+            {/* Placeholder for Erros das Tags content */}
+          </div>
+        </div>
 
-      <div className="graph-bar-title">
-        <a href="analise-resumida">Análise Resumida</a>
-      </div>
+        <div className="l-sidebar-structure">
+          <div
+            className="sidebar-title"
+            onClick={() => toggleSidebarContent("funcoes")}
+          >
+            <a>Funções</a>
+          </div>
+          <div
+            className="sidebar-content"
+            style={{
+              display: visibleSidebarContent["funcoes"] ? "block" : "none",
+            }}
+          >
+            <FuncoesComponent
+              calcularReconciliacao={function (): void {
+                throw new Error("Function not implemented.");
+              }}
+              createAdjacencyMatrix={function (): void {
+                throw new Error("Function not implemented.");
+              }}
+              addNode={function (nodeType: string): void {
+                throw new Error("Function not implemented.");
+              }}
+              handleFileUploadSuccess={function (data: any): void {
+                throw new Error("Function not implemented.");
+              }}
+            />{" "}
+            {/* Inserted the new component */}
+          </div>
+          <div
+            className="sidebar-title"
+            onClick={() => toggleSidebarContent("analise")}
+          >
+            <a>Análise</a>
+          </div>
+          <div
+            className="sidebar-content"
+            style={{
+              display: visibleSidebarContent["analise"] ? "block" : "none",
+            }}
+          >
+            {/* Placeholder for Análise content */}
+          </div>
+          <div
+            className="sidebar-title"
+            onClick={() => toggleSidebarContent("matriz")}
+          >
+            <a>Matriz</a>
+          </div>
+          <div
+            className="sidebar-content"
+            style={{
+              display: visibleSidebarContent["matriz"] ? "block" : "none",
+            }}
+          >
+            {/* Placeholder for Matriz content */}
+          </div>
+          <div
+            className="sidebar-title"
+            onClick={() => toggleSidebarContent("classificacao")}
+          >
+            <a>Classificação</a>
+          </div>
+          <div
+            className="sidebar-content"
+            style={{
+              display: visibleSidebarContent["classificacao"]
+                ? "block"
+                : "none",
+            }}
+          >
+            {/* Placeholder for Classificação content */}
+          </div>
+        </div>
 
-      <div className="graph-bar-content">
-        {/* Placeholder for graph bar content */}
+        <AboutModal showAbout={showAbout} toggleAboutPopup={toggleAboutPopup} />
       </div>
-
-      <div className="r-sidebar-structure">
-        <div
-          className="sidebar-title"
-          onClick={() => toggleSidebarContent("tags-originais")}
-        >
-          <a>Tags Originais</a>
-        </div>
-        <div
-          className="sidebar-content"
-          style={{
-            display: visibleSidebarContent["tags-originais"] ? "block" : "none",
-          }}
-        >
-          {/* Placeholder for Tags Originais content */}
-        </div>
-        <div
-          className="sidebar-title"
-          onClick={() => toggleSidebarContent("tags-reconciliadas")}
-        >
-          <a>Tags Reconciliadas</a>
-        </div>
-        <div
-          className="sidebar-content"
-          style={{
-            display: visibleSidebarContent["tags-reconciliadas"]
-              ? "block"
-              : "none",
-          }}
-        >
-          {/* Placeholder for Tags Reconciliadas content */}
-        </div>
-        <div
-          className="sidebar-title"
-          onClick={() => toggleSidebarContent("erros-das-tags")}
-        >
-          <a>Erros das Tags</a>
-        </div>
-        <div
-          className="sidebar-content"
-          style={{
-            display: visibleSidebarContent["erros-das-tags"] ? "block" : "none",
-          }}
-        >
-          {/* Placeholder for Erros das Tags content */}
-        </div>
-      </div>
-
-      <div className="l-sidebar-structure">
-        <div
-          className="sidebar-title"
-          onClick={() => toggleSidebarContent("arvore-funcionalidades")}
-        >
-          <a>Árvore de Funcionalidades</a>
-        </div>
-        <div
-          className="sidebar-content"
-          style={{
-            display: visibleSidebarContent["arvore-funcionalidades"]
-              ? "block"
-              : "none",
-          }}
-        >
-          {/* Placeholder for Árvore de Funcionalidades content */}
-        </div>
-        <div
-          className="sidebar-title"
-          onClick={() => toggleSidebarContent("analise")}
-        >
-          <a>Análise</a>
-        </div>
-        <div
-          className="sidebar-content"
-          style={{
-            display: visibleSidebarContent["analise"] ? "block" : "none",
-          }}
-        >
-          {/* Placeholder for Análise content */}
-        </div>
-        <div
-          className="sidebar-title"
-          onClick={() => toggleSidebarContent("matriz")}
-        >
-          <a>Matriz</a>
-        </div>
-        <div
-          className="sidebar-content"
-          style={{
-            display: visibleSidebarContent["matriz"] ? "block" : "none",
-          }}
-        >
-          {/* Placeholder for Matriz content */}
-        </div>
-        <div
-          className="sidebar-title"
-          onClick={() => toggleSidebarContent("classificacao")}
-        >
-          <a>Classificação</a>
-        </div>
-        <div
-          className="sidebar-content"
-          style={{
-            display: visibleSidebarContent["classificacao"] ? "block" : "none",
-          }}
-        >
-          {/* Placeholder for Classificação content */}
-        </div>
-      </div>
-
-      <AboutModal showAbout={showAbout} toggleAboutPopup={toggleAboutPopup} />
-    </div>
+    </ThemeProvider>
   );
 };
 
