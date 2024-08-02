@@ -1,13 +1,17 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, ChangeEvent } from "react";
 import "./UploadFile.css"; // Import the CSS for the progress modal
 
-const FileUpload = ({ onFileUploadSuccess }) => {
-  const fileInputRef = useRef(null);
+interface FileUploadProps {
+  onFileUploadSuccess?: (data: any) => void;
+}
+
+const FileUpload: React.FC<FileUploadProps> = ({ onFileUploadSuccess }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState("");
 
-  const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
+  const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (!file) return;
 
     const formData = new FormData();
@@ -34,14 +38,14 @@ const FileUpload = ({ onFileUploadSuccess }) => {
       setProgress("Upload concluído com sucesso!");
     } catch (error) {
       console.error("Error uploading file:", error);
-      setProgress(`Erro ao fazer upload: ${error.message}`);
+      setProgress(`Erro ao fazer upload: ${(error as Error).message}`);
     } finally {
       setTimeout(() => setIsUploading(false), 2000); // Close modal after 2 seconds
     }
   };
 
   const handleFileButtonClick = () => {
-    fileInputRef.current.click();
+    fileInputRef.current?.click();
   };
 
   const handleCloseModal = () => {
@@ -56,9 +60,10 @@ const FileUpload = ({ onFileUploadSuccess }) => {
       <input
         type="file"
         ref={fileInputRef}
-        style={{ display: "none" }}
+        className="hidden-file-input"
         accept=".json"
         onChange={handleFileUpload}
+        aria-label="File upload" // Added aria-label for accessibility
       />
       {isUploading && (
         <div className="progress-modal-overlay">

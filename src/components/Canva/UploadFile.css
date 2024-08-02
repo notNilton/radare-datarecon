@@ -31,3 +31,7 @@
 .close-button:hover {
   background: #0056b3;
 }
+
+.hidden-file-input {
+  display: none;
+}
