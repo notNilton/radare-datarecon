@@ -28,7 +28,7 @@ import {
 import ProgressModalComponent from "./ProgressModalComponent";
 import EditNodeModalComponent from "./EditNodeModalComponent";
 import ContextMenuComponent from "./ContextMenuComponent";
-import FunctionsComponent from "./FunctionsComponent.tsx";
+import FunctionsComponent from "./FunctionsComponent";
 
 const getNodeId = () => `randomnode_${+new Date()}`;
 

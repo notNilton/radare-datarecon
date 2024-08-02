@@ -39,34 +39,7 @@ const FunctionButtons: React.FC<FunctionButtonsProps> = ({
     // Your tolerances logic here
   };
 
-  return (
-    <div className="function-buttons">
-      <button className="button run-button" onClick={handleReconciliation}>
-        Reconciliar
-      </button>
-      <button className="button vis-button" onClick={handleAdjacencyMatrix}>
-        Matriz
-      </button>
-      <button className="button vis-button" onClick={handleValues}>
-        Valores
-      </button>
-      <button className="button vis-button" onClick={handleTolerances}>
-        Tolerâncias
-      </button>
-      <button className="button add-button" onClick={() => addNode("cnOneTwo")}>
-        Adc Nó
-      </button>
-      <button className="button add-button" onClick={() => addNode("cnOneTwo")}>
-        Adc Nó*
-      </button>
-      <button className="button add-button" onClick={() => addNode("input")}>
-        Adc E.
-      </button>
-      <button className="button add-button" onClick={() => addNode("output")}>
-        Adc S.
-      </button>
-    </div>
-  );
+  return <div className="function-buttons"></div>;
 };
 
 export default FunctionButtons;
