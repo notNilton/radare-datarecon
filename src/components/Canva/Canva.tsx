@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, MouseEvent } from "react";
 import ReactFlow, {
   Controls,
   Background,
@@ -9,6 +9,7 @@ import ReactFlow, {
   Edge,
   Panel,
   getConnectedEdges,
+  BackgroundVariant,
 } from "reactflow";
 
 import "reactflow/dist/style.css";
@@ -36,13 +37,20 @@ const Node = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [progress, setProgress] = useState("");
-  const [contextMenu, setContextMenu] = useState(null);
-  const [editNodeModal, setEditNodeModal] = useState({
+  const [contextMenu, setContextMenu] = useState<{
+    mouseX: number;
+    mouseY: number;
+    node: any;
+  } | null>(null);
+  const [editNodeModal, setEditNodeModal] = useState<{
+    isVisible: boolean;
+    node: any | null;
+  }>({
     isVisible: false,
     node: null,
   });
 
-  const atualizarProgresso = (message) => {
+  const atualizarProgresso = (message: string) => {
     setProgress(message);
     if (!isModalVisible) {
       setIsModalVisible(true);
@@ -62,7 +70,7 @@ const Node = () => {
     [setEdges]
   );
 
-  const onEdgeDoubleClick = (edgeId) => {
+  const onEdgeDoubleClick = (edgeId: string) => {
     const labelValue = window.prompt(
       "Digite um valor para o rótulo da aresta:"
     );
@@ -71,8 +79,8 @@ const Node = () => {
     if (
       labelValue &&
       toleranceValue &&
-      !isNaN(labelValue) &&
-      !isNaN(toleranceValue)
+      !isNaN(Number(labelValue)) &&
+      !isNaN(Number(toleranceValue))
     ) {
       const numericLabel = parseFloat(labelValue);
       const numericTolerance = parseFloat(toleranceValue);
@@ -87,12 +95,12 @@ const Node = () => {
     }
   };
 
-  const onNodeDoubleClick = (event, node) => {
+  const onNodeDoubleClick = (event: MouseEvent, node: any) => {
     setEditNodeModal({ isVisible: true, node });
   };
 
   const addNode = useCallback(
-    (nodeType) => {
+    (nodeType: string) => {
       const newNode = {
         id: getNodeId(),
         type: nodeType,
@@ -115,8 +123,11 @@ const Node = () => {
 
   const getConnectedEdgeLabels = () => {
     const edgeLabels = edges.map((edge) => edge.label);
-    const connectionTolerance = edges.map((edge) => edge.tolerance);
-    const multiplied = multiplyArrays(edgeLabels, connectionTolerance);
+    const connectionTolerance = edges.map((edge) => (edge as any).tolerance);
+    const multiplied = multiplyArrays(
+      edgeLabels as number[],
+      connectionTolerance as number[]
+    );
 
     console.log("Todos os valores de conexão:", edgeLabels);
     console.log("Todos os valores de tolerância:", connectionTolerance);
@@ -128,7 +139,7 @@ const Node = () => {
     console.log("Todos os nós e conexões:", allEdges);
   };
 
-  const handleNodeContextMenu = (event, node) => {
+  const handleNodeContextMenu = (event: MouseEvent, node: any) => {
     event.preventDefault();
     setContextMenu({
       mouseX: event.clientX - 2,
@@ -142,13 +153,13 @@ const Node = () => {
   };
 
   const handleEditNode = () => {
-    const node = contextMenu.node;
+    const node = contextMenu!.node;
     setEditNodeModal({ isVisible: true, node });
     handleCloseContextMenu();
   };
 
   const handleDeleteNode = () => {
-    const node = contextMenu.node;
+    const node = contextMenu!.node;
     setNodes((prevNodes) => prevNodes.filter((n) => n.id !== node.id));
     setEdges((prevEdges) =>
       prevEdges.filter((e) => e.source !== node.id && e.target !== node.id)
@@ -156,7 +167,7 @@ const Node = () => {
     handleCloseContextMenu();
   };
 
-  const handleUpdateNode = (updatedNode) => {
+  const handleUpdateNode = (updatedNode: any) => {
     setNodes((prevNodes) =>
       prevNodes.map((n) =>
         n.id === updatedNode.id ? { ...n, data: updatedNode.data } : n
@@ -165,13 +176,13 @@ const Node = () => {
     fecharEditNodeModal();
   };
 
-  const handleFileUploadSuccess = (data) => {
+  const handleFileUploadSuccess = (data: any) => {
     console.log("File uploaded successfully:", data);
     // Update your nodes or edges based on the uploaded data if needed
   };
 
   return (
-    <div style={{ width: "100%", height: "100%" }}>
+    <div className="node-container">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -184,17 +195,7 @@ const Node = () => {
         onNodeDoubleClick={onNodeDoubleClick}
         onNodeContextMenu={handleNodeContextMenu}
       >
-        <Panel
-          position="top-left"
-          style={{
-            height: "35%",
-            width: "200px",
-            display: "flex",
-            flexDirection: "column",
-            flexWrap: "wrap",
-            justifyContent: "space-between",
-          }}
-        >
+        <Panel position="top-left" className="top-left-panel">
           <button
             className="button run-button"
             onClick={() =>
@@ -260,7 +261,7 @@ const Node = () => {
         </Panel>
 
         <Controls />
-        <Background variant="dots" gap={12} size={1} />
+        <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
       </ReactFlow>
       <ProgressModal
         isVisible={isModalVisible}
@@ -269,29 +270,14 @@ const Node = () => {
       />
       {contextMenu && (
         <div
-          style={{
-            position: "absolute",
-            top: contextMenu.mouseY,
-            left: contextMenu.mouseX,
-            zIndex: 1000,
-            padding: "10px",
-          }}
+          className="context-menu"
+          style={{ top: contextMenu.mouseY, left: contextMenu.mouseX }}
           onMouseLeave={handleCloseContextMenu}
         >
-          <button
-            onClick={handleEditNode}
-            style={{
-              display: "block",
-              width: "100%",
-              marginBlock: "5px",
-            }}
-          >
+          <button onClick={handleEditNode} className="context-menu-button">
             Editar
           </button>
-          <button
-            onClick={handleDeleteNode}
-            style={{ display: "block", width: "100%" }}
-          >
+          <button onClick={handleDeleteNode} className="context-menu-button">
             Deletar
           </button>
         </div>

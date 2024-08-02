@@ -1,18 +1,19 @@
+/* General Styles */
 .react-flow .react-flow__handle {
   width: 15px;
   height: 15px;
   border-radius: 5px;
   background-color: #dad9dc;
-  display:flex;
+  display: flex;
   justify-content: center;
 }
 
 .react-flow .react-flow__node {
   height: 50px;
   width: 150px;
+  display: flex;
   justify-content: center;
   align-items: center;
-  display: flex;
   border-width: 2px;
   font-weight: 700;
 }
@@ -22,6 +23,7 @@
   stroke-width: 2;
 }
 
+/* Panel Styles */
 .react-flow Panel {
   display: flex;
   flex-direction: column;
@@ -29,6 +31,7 @@
   justify-content: space-evenly;
 }
 
+/* Button Styles */
 .button {
   background: rgba(242, 100, 48, 1);
   border: none;
@@ -41,9 +44,8 @@
   width: 45%;
 }
 
-/* Canva.css */
 .vis-button {
-  background-color: #f9c74f; /* Laranja claro */
+  background-color: #f9c74f; /* Light orange */
   border: none;
   padding: 10px;
   border-radius: 5px;
@@ -56,7 +58,7 @@
 }
 
 .run-button {
-  background-color: #90e0ef; /* Azul claro */
+  background-color: #90e0ef; /* Light blue */
   border: none;
   padding: 10px;
   border-radius: 5px;
@@ -69,7 +71,7 @@
 }
 
 .add-button {
-  background-color: #f3722c; /* Laranja forte */
+  background-color: #f3722c; /* Strong orange */
   border: none;
   padding: 10px;
   border-radius: 5px;
@@ -79,4 +81,32 @@
 
 .add-button:hover {
   background-color: #f94144;
+}
+
+/* Layout Styles */
+.node-container {
+  width: 100%;
+  height: 100%;
+}
+
+.top-left-panel {
+  height: 35%;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+/* Context Menu Styles */
+.context-menu {
+  position: absolute;
+  z-index: 1000;
+  padding: 10px;
+}
+
+.context-menu-button {
+  display: block;
+  width: 100%;
+  margin-block: 5px;
 }
