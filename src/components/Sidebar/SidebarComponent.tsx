@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import FunctionButtons from "./FunctionButtons";
 
 interface SidebarComponentProps {
   nodes: any[];
@@ -56,7 +57,16 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
             ? "block"
             : "none",
         }}
-      ></div>
+      >
+        <FunctionButtons
+          nodes={nodes}
+          edges={edges}
+          setNodes={setNodes}
+          setEdges={setEdges}
+          atualizarProgresso={atualizarProgresso}
+          addNode={addNode}
+        />
+      </div>
       <div
         className="sidebar-title"
         onClick={() => toggleSidebarContent("analise")}
