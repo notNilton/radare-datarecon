@@ -7,7 +7,6 @@ import ReactFlow, {
   addEdge,
   Connection,
   Edge,
-  getConnectedEdges,
   BackgroundVariant,
 } from "reactflow";
 
@@ -19,7 +18,6 @@ import {
   initialEdges,
   nodeTypes,
 } from "./utils/initialCanvaDataIII";
-import { multiplyArrays } from "./utils/arrayUtils";
 import {
   calcularReconciliacao,
   reconciliarApi,
@@ -114,24 +112,6 @@ const Node = () => {
     },
     [setNodes]
   );
-
-  const getConnectedEdgeLabels = () => {
-    const edgeLabels = edges.map((edge) => edge.label);
-    const connectionTolerance = edges.map((edge) => (edge as any).tolerance);
-    const multiplied = multiplyArrays(
-      edgeLabels as number[],
-      connectionTolerance as number[]
-    );
-
-    console.log("Todos os valores de conexão:", edgeLabels);
-    console.log("Todos os valores de tolerância:", connectionTolerance);
-    console.log(multiplied);
-  };
-
-  const checkNodesEdges = () => {
-    const allEdges = getConnectedEdges(nodes, edges);
-    console.log("Todos os nós e conexões:", allEdges);
-  };
 
   const handleNodeContextMenu = (event: MouseEvent, node: any) => {
     event.preventDefault();

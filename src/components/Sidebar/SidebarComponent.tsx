@@ -1,4 +1,3 @@
-// SidebarComponent.tsx
 import React, { useState } from "react";
 import FunctionButtons from "./FunctionButtons";
 
@@ -43,8 +42,13 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
       <div
         className="sidebar-title"
         onClick={() => toggleSidebarContent("arvore-funcionalidades")}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) =>
+          e.key === "Enter" && toggleSidebarContent("arvore-funcionalidades")
+        }
       >
-        <a>Árvore de Funcionalidades</a>
+        Árvore de Funcionalidades
       </div>
       <div
         className="sidebar-content"
@@ -66,8 +70,11 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
       <div
         className="sidebar-title"
         onClick={() => toggleSidebarContent("analise")}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => e.key === "Enter" && toggleSidebarContent("analise")}
       >
-        <a>Análise</a>
+        Análise
       </div>
       <div
         className="sidebar-content"
@@ -80,8 +87,11 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
       <div
         className="sidebar-title"
         onClick={() => toggleSidebarContent("matriz")}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => e.key === "Enter" && toggleSidebarContent("matriz")}
       >
-        <a>Matriz</a>
+        Matriz
       </div>
       <div
         className="sidebar-content"
@@ -94,8 +104,13 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
       <div
         className="sidebar-title"
         onClick={() => toggleSidebarContent("classificacao")}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) =>
+          e.key === "Enter" && toggleSidebarContent("classificacao")
+        }
       >
-        <a>Classificação</a>
+        Classificação
       </div>
       <div
         className="sidebar-content"
