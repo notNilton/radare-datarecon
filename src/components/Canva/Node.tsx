@@ -27,6 +27,8 @@ import ProgressModalComponent from "./ProgressModalComponent";
 import EditNodeModalComponent from "./EditNodeModalComponent";
 import ContextMenuComponent from "./ContextMenuComponent";
 import FunctionsComponent from "./FunctionsComponent";
+// import SidebarComponent from "./Sidebar/SidebarComponent"; // Import SidebarComponent
+import SidebarComponent from "../Sidebar/SidebarComponent";
 
 const getNodeId = () => `randomnode_${+new Date()}`;
 
@@ -199,6 +201,8 @@ const Node = () => {
         addNode={addNode}
         handleFileUploadSuccess={handleFileUploadSuccess}
       />
+      <SidebarComponent nodes={nodes} edges={edges} />{" "}
+      {/* Pass nodes and edges as props */}
     </div>
   );
 };

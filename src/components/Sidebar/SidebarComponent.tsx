@@ -1,22 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FunctionButtons from "./FunctionButtons";
 
 interface SidebarComponentProps {
   nodes: any[];
   edges: any[];
-  setNodes: (nodes: any[]) => void;
-  setEdges: (edges: any[]) => void;
-  atualizarProgresso: (message: string) => void;
-  addNode: (nodeType: string) => void;
 }
 
 const SidebarComponent: React.FC<SidebarComponentProps> = ({
   nodes,
   edges,
-  setNodes,
-  setEdges,
-  atualizarProgresso,
-  addNode,
 }) => {
   const [visibleSidebarContent, setVisibleSidebarContent] = useState<{
     [key: string]: boolean;
@@ -30,11 +22,22 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
     "erros-das-tags": true,
   });
 
+  useEffect(() => {
+    console.log("Nodes updated:", nodes);
+    console.log("Edges updated:", edges);
+  }, [nodes, edges]);
+
   const toggleSidebarContent = (key: string) => {
     setVisibleSidebarContent((prevState) => ({
       ...prevState,
       [key]: !prevState[key],
     }));
+  };
+
+  const handleButtonClick = () => {
+    console.log("Botão do Sidebar clicado!");
+    console.log("Nodes:", nodes);
+    console.log("Edges:", edges);
   };
 
   return (
@@ -57,16 +60,7 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
             ? "block"
             : "none",
         }}
-      >
-        <FunctionButtons
-          nodes={nodes}
-          edges={edges}
-          setNodes={setNodes}
-          setEdges={setEdges}
-          atualizarProgresso={atualizarProgresso}
-          addNode={addNode}
-        />
-      </div>
+      ></div>
       <div
         className="sidebar-title"
         onClick={() => toggleSidebarContent("analise")}
@@ -120,6 +114,7 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
       >
         {/* Placeholder for Classificação content */}
       </div>
+      <button onClick={handleButtonClick}>Clique aqui</button>
     </div>
   );
 };
