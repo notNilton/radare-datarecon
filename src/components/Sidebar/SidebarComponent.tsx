@@ -35,10 +35,10 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
     console.log("Edges:", edges);
   };
 
-  useEffect(() => {
-    console.log("Nodes updated:", nodes);
-    console.log("Edges updated:", edges);
-  }, [nodes, edges]);
+  // useEffect(() => {
+  //   console.log("Nodes updated:", nodes);
+  //   console.log("Edges updated:", edges);
+  // }, [nodes, edges]);
 
   return (
     <div className="r-sidebar-structure">
@@ -114,7 +114,7 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
       >
         {/* Placeholder for Classificação content */}
       </div>
-      {/* <button onClick={handleButtonClick}>Clique aqui</button> */}
+      <button onClick={handleButtonClick}>Clique aqui</button>
     </div>
   );
 };
