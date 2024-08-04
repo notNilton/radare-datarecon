@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./App.scss";
 import "./styles/global.css";
-import "./components/Canva/Canva.css";
+import "./components/Canva/Node.css";
 import Node from "./components/Canva/Node";
 import AboutModal from "./components/About/AboutModal";
 import SidebarComponent from "./components/Sidebar/SidebarComponent";
@@ -47,15 +47,6 @@ const App: React.FC = () => {
       <TabComponent currentTab={currentTab} handleTabClick={handleTabClick} />
 
       <GraphComponent />
-
-      <SidebarComponent
-        nodes={nodes}
-        edges={edges}
-        setNodes={setNodes}
-        setEdges={setEdges}
-        atualizarProgresso={atualizarProgresso}
-        addNode={addNode}
-      />
 
       <AboutModal showAbout={showAbout} toggleAboutPopup={toggleAboutPopup} />
     </div>

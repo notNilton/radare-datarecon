@@ -1,4 +1,4 @@
-import { useCallback, useState, MouseEvent } from "react";
+import { useCallback, useState, useRef, useEffect, MouseEvent } from "react";
 import ReactFlow, {
   Controls,
   Background,
@@ -11,7 +11,7 @@ import ReactFlow, {
 } from "reactflow";
 
 import "reactflow/dist/style.css";
-import "./Canva.css";
+import "./Node.css";
 
 import {
   initialNodes,
@@ -27,7 +27,6 @@ import ProgressModalComponent from "./ProgressModalComponent";
 import EditNodeModalComponent from "./EditNodeModalComponent";
 import ContextMenuComponent from "./ContextMenuComponent";
 import FunctionsComponent from "./FunctionsComponent";
-// import SidebarComponent from "./Sidebar/SidebarComponent"; // Import SidebarComponent
 import SidebarComponent from "../Sidebar/SidebarComponent";
 
 const getNodeId = () => `randomnode_${+new Date()}`;
@@ -35,6 +34,8 @@ const getNodeId = () => `randomnode_${+new Date()}`;
 const Node = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const nodesRef = useRef(nodes);
+  const edgesRef = useRef(edges);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [progress, setProgress] = useState("");
   const [contextMenu, setContextMenu] = useState<{
@@ -49,6 +50,14 @@ const Node = () => {
     isVisible: false,
     node: null,
   });
+
+  useEffect(() => {
+    nodesRef.current = nodes;
+  }, [nodes]);
+
+  useEffect(() => {
+    edgesRef.current = edges;
+  }, [edges]);
 
   const atualizarProgresso = (message: string) => {
     setProgress(message);
@@ -189,15 +198,18 @@ const Node = () => {
         onUpdate={handleUpdateNode}
       />
       <FunctionsComponent
+        className="functions-component"
         calcularReconciliacao={() =>
           calcularReconciliacao(
-            nodes,
-            edges,
+            nodesRef.current,
+            edgesRef.current,
             reconciliarApi,
             atualizarProgresso
           )
         }
-        createAdjacencyMatrix={() => createAdjacencyMatrix(nodes, edges)}
+        createAdjacencyMatrix={() =>
+          createAdjacencyMatrix(nodesRef.current, edgesRef.current)
+        }
         addNode={addNode}
         handleFileUploadSuccess={handleFileUploadSuccess}
       />

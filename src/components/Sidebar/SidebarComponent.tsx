@@ -22,11 +22,6 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
     "erros-das-tags": true,
   });
 
-  useEffect(() => {
-    console.log("Nodes updated:", nodes);
-    console.log("Edges updated:", edges);
-  }, [nodes, edges]);
-
   const toggleSidebarContent = (key: string) => {
     setVisibleSidebarContent((prevState) => ({
       ...prevState,
@@ -40,8 +35,13 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
     console.log("Edges:", edges);
   };
 
+  useEffect(() => {
+    console.log("Nodes updated:", nodes);
+    console.log("Edges updated:", edges);
+  }, [nodes, edges]);
+
   return (
-    <div className="l-sidebar-structure">
+    <div className="r-sidebar-structure">
       <div
         className="sidebar-title"
         onClick={() => toggleSidebarContent("arvore-funcionalidades")}
@@ -114,7 +114,7 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
       >
         {/* Placeholder for Classificação content */}
       </div>
-      <button onClick={handleButtonClick}>Clique aqui</button>
+      {/* <button onClick={handleButtonClick}>Clique aqui</button> */}
     </div>
   );
 };
