@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./App.scss";
 import "./styles/global.css";
 import "./components/Canva/Canva.css";
-import Node from "./components/Canva/Canva";
+import Node from "./components/Canva/Node";
 import AboutModal from "./components/About/AboutModal";
 import SidebarComponent from "./components/Sidebar/SidebarComponent";
 import NavbarComponent from "./components/Navbar/NavbarComponent";
