@@ -1,6 +1,5 @@
 // SidebarComponent.tsx
 import React, { useState, useEffect } from "react";
-import FunctionButtons from "./FunctionButtons";
 import MatrixDisplay from "./MatrixDisplay";
 import { createAdjacencyMatrix } from "../Canva/utils/CreateAdjMatrix";
 
@@ -32,12 +31,6 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
       ...prevState,
       [key]: !prevState[key],
     }));
-  };
-
-  const handleButtonClick = () => {
-    console.log("Botão do Sidebar clicado!");
-    console.log("Nodes:", nodes);
-    console.log("Edges:", edges);
   };
 
   useEffect(() => {

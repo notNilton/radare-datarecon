@@ -4,7 +4,6 @@ import "./styles/global.css";
 import "./components/Canva/Node.css";
 import Node from "./components/Canva/Node";
 import AboutModal from "./components/About/AboutModal";
-import SidebarComponent from "./components/Sidebar/SidebarComponent";
 import NavbarComponent from "./components/Navbar/NavbarComponent";
 import TabComponent from "./components/Navbar/TabsComponent";
 import GraphComponent from "./components/Dashboard/GraphComponent";
@@ -24,17 +23,17 @@ const App: React.FC = () => {
   };
 
   // State and handlers for FunctionButtons
-  const [nodes, setNodes] = useState<any[]>([]);
-  const [edges, setEdges] = useState<any[]>([]);
+  // const [nodes, setNodes] = useState<any[]>([]);
+  // // const [edges, setEdges] = useState<any[]>([]);
 
-  const atualizarProgresso = (message: string) => {
-    console.log(message);
-  };
+  // const atualizarProgresso = (message: string) => {
+  //   console.log(message);
+  // };
 
-  const addNode = (nodeType: string) => {
-    console.log(`Add node of type: ${nodeType}`);
-    // Logic to add a node
-  };
+  // const addNode = (nodeType: string) => {
+  //   console.log(`Add node of type: ${nodeType}`);
+  //   // Logic to add a node
+  // };
 
   return (
     <div className="app-container">

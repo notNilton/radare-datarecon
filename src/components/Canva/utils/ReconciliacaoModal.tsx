@@ -15,7 +15,7 @@ const ProgressModal: React.FC<ProgressModalProps> = ({
   if (!isVisible) return null;
 
   // Remove colchetes da string de progresso
-  const formattedProgress = progress.replace(/[\[\]]/g, "");
+  const formattedProgress = progress.replace(/\[\]]/g, "");
 
   return (
     <div className="progress-modal-overlay">

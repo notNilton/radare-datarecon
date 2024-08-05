@@ -1,12 +1,10 @@
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import ReactFlow, {
   Controls,
   Background,
   useNodesState,
   useEdgesState,
   addEdge,
-  Connection,
-  Edge,
   Panel,
   MarkerType,
 } from "reactflow";
@@ -24,9 +22,6 @@ const nodeTypes = {
   cnTwoOne: cnTwoOne,
   cnOneTwo: cnOneTwo,
 };
-
-const getRandomValue = (min, max) =>
-  Math.floor(Math.random() * (max - min + 1)) + min;
 
 const initialNodes = [
   {
@@ -162,7 +157,7 @@ const initialEdges = [
 export { initialNodes, initialEdges, nodeTypes };
 
 const Flow = () => {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [nodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   const onConnect = useCallback(

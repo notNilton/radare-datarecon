@@ -19,15 +19,10 @@ import {
   initialEdges,
   nodeTypes,
 } from "./utils/initialCanvaDataIII";
-import {
-  calcularReconciliacao,
-  reconciliarApi,
-  createAdjacencyMatrix,
-} from "./utils/Reconciliacao";
+import { calcularReconciliacao, reconciliarApi } from "./utils/Reconciliacao";
 import ProgressModalComponent from "./ProgressModalComponent";
 import EditNodeModalComponent from "./EditNodeModalComponent";
 import ContextMenuComponent from "./ContextMenuComponent";
-import FunctionsComponent from "./FunctionsComponent";
 import SidebarComponent from "../Sidebar/SidebarComponent";
 import FileUpload from "./UploadFile";
 
@@ -167,8 +162,8 @@ const Node = () => {
   };
 
   const handleFileUploadSuccess = (data: any) => {
-    console.log("File uploaded successfully:", data);
-    // Update your nodes or edges based on the uploaded data if needed
+    console.log("Arquivo carregado com sucesso:", data);
+    // Atualize seus nodes ou edges com base nos dados carregados, se necessário
   };
 
   return (
@@ -186,7 +181,7 @@ const Node = () => {
         onNodeContextMenu={handleNodeContextMenu}
       >
         <Panel position="top-left" className="top-left-panel">
-          <Tooltip title="Run Reconciliation">
+          <Tooltip title="Executar Reconciliação">
             <PlayArrowIcon
               className="button run-button"
               onClick={() =>
@@ -199,31 +194,31 @@ const Node = () => {
               }
             />
           </Tooltip>
-          <Tooltip title="Add Node 1-2">
+          <Tooltip title="Adicionar Nó 1-2">
             <AddCircleOutlineIcon
               className="button add-button"
               onClick={() => addNode("cnOneTwo")}
             />
           </Tooltip>
-          <Tooltip title="Add Custom Node">
+          <Tooltip title="Adicionar Nó Customizado">
             <AddCircleOutlineIcon
               className="button add-button"
               onClick={() => addNode("cnOneTwo")}
             />
           </Tooltip>
-          <Tooltip title="Add Input">
+          <Tooltip title="Adicionar Input">
             <InputIcon
               className="button add-button"
               onClick={() => addNode("input")}
             />
           </Tooltip>
-          <Tooltip title="Add Output">
+          <Tooltip title="Adicionar Output">
             <OutputIcon
               className="button add-button"
               onClick={() => addNode("output")}
             />
           </Tooltip>
-          <Tooltip title="Upload File">
+          <Tooltip title="Carregar Arquivo">
             <div className="upload-button">
               <FileUpload onFileUploadSuccess={handleFileUploadSuccess} />
             </div>
@@ -249,24 +244,8 @@ const Node = () => {
         onClose={fecharEditNodeModal}
         onUpdate={handleUpdateNode}
       />
-      {/* <FunctionsComponent
-        className="functions-component"
-        calcularReconciliacao={() =>
-          calcularReconciliacao(
-            nodesRef.current,
-            edgesRef.current,
-            reconciliarApi,
-            atualizarProgresso
-          )
-        }
-        createAdjacencyMatrix={() =>
-          createAdjacencyMatrix(nodesRef.current, edgesRef.current)
-        }
-        addNode={addNode}
-        handleFileUploadSuccess={handleFileUploadSuccess}
-      /> */}
       <SidebarComponent nodes={nodes} edges={edges} />{" "}
-      {/* Pass nodes and edges as props */}
+      {/* Passar nodes e edges como props */}
     </div>
   );
 };
