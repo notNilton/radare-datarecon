@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
+// SidebarComponent.tsx
+import React, { useState } from "react";
 import FunctionButtons from "./FunctionButtons";
+import MatrixDisplay from "./MatrixDisplay";
 
 interface SidebarComponentProps {
   nodes: any[];
@@ -35,10 +37,13 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
     console.log("Edges:", edges);
   };
 
-  // useEffect(() => {
-  //   console.log("Nodes updated:", nodes);
-  //   console.log("Edges updated:", edges);
-  // }, [nodes, edges]);
+  const matrixData = [
+    [1, 2, 3],
+    [2, 2, 3],
+    [1, 2, 1],
+    [1, 2, 1],
+    [1, 2, 2],
+  ];
 
   return (
     <div className="r-sidebar-structure">
@@ -93,7 +98,7 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
           display: visibleSidebarContent["matriz"] ? "block" : "none",
         }}
       >
-        {/* Placeholder for Matriz content */}
+        <MatrixDisplay matrix={matrixData} />
       </div>
       <div
         className="sidebar-title"
