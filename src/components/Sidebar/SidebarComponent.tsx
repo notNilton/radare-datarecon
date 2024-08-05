@@ -1,7 +1,8 @@
 // SidebarComponent.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FunctionButtons from "./FunctionButtons";
 import MatrixDisplay from "./MatrixDisplay";
+import { createAdjacencyMatrix } from "../Canva/utils/CreateAdjMatrix";
 
 interface SidebarComponentProps {
   nodes: any[];
@@ -24,6 +25,8 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
     "erros-das-tags": true,
   });
 
+  const [matrixData, setMatrixData] = useState<number[][]>([]);
+
   const toggleSidebarContent = (key: string) => {
     setVisibleSidebarContent((prevState) => ({
       ...prevState,
@@ -37,13 +40,10 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
     console.log("Edges:", edges);
   };
 
-  const matrixData = [
-    [1, 2, 3],
-    [2, 2, 3],
-    [1, 2, 1],
-    [1, 2, 1],
-    [1, 2, 2],
-  ];
+  useEffect(() => {
+    const newMatrix = createAdjacencyMatrix(nodes, edges);
+    setMatrixData(newMatrix);
+  }, [nodes, edges]);
 
   return (
     <div className="r-sidebar-structure">
@@ -119,7 +119,7 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
       >
         {/* Placeholder for Classificação content */}
       </div>
-      <button onClick={handleButtonClick}>Clique aqui</button>
+      {/* <button onClick={handleButtonClick}>Clique aqui</button> */}
     </div>
   );
 };
