@@ -2,10 +2,11 @@
 .react-flow .react-flow__handle {
   width: 15px;
   height: 15px;
-  border-radius: 5px;
+  border-radius: 50%;
   background-color: #dad9dc;
   display: flex;
   justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .react-flow .react-flow__node {
@@ -15,12 +16,20 @@
   justify-content: center;
   align-items: center;
   border-width: 2px;
+  border-radius: 12px;
   font-weight: 700;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.react-flow .react-flow__node:hover {
+  transform: scale(1.05);
 }
 
 .react-flow .react-flow__edge path,
 .react-flow__connectionline path {
   stroke-width: 2;
+  stroke-linecap: round;
 }
 
 /* Panel Styles */
@@ -29,57 +38,81 @@
   flex-direction: column;
   flex-wrap: nowrap;
   justify-content: space-evenly;
+  border-radius: 12px;
+  padding: 10px;
+  background-color: #f5f5f5;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Button Styles */
 .button {
   background: rgba(242, 100, 48, 1);
   border: none;
-  padding: 5px 10px;
+  padding: 10px 20px;
   color: white;
   cursor: pointer;
   outline: none;
-  border-radius: 4px;
+  border-radius: 8px;
   margin: 5px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.button:hover {
+  background: rgba(242, 80, 28, 1);
+  transform: scale(1.05);
 }
 
 .vis-button {
   background-color: #f9c74f; /* Light orange */
   border: none;
-  padding: 10px;
-  border-radius: 5px;
+  padding: 10px 20px;
+  border-radius: 8px;
   cursor: pointer;
   margin-bottom: 10px;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
 .vis-button:hover {
   background-color: #f8b026;
+  transform: scale(1.05);
 }
 
 .run-button {
   background-color: #90e0ef; /* Light blue */
   border: none;
-  padding: 10px;
-  border-radius: 5px;
+  padding: 10px 10px;
+  border-radius: 8px;
   cursor: pointer;
   margin-bottom: 10px;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
 .run-button:hover {
   background-color: #00b4d8;
+  transform: scale(1.05);
 }
 
-.add-button {
+.func-button {
   background-color: #f3722c; /* Strong orange */
   border: none;
-  padding: 10px;
-  border-radius: 5px;
+  padding: 10px 10px;
+  border-radius: 8px;
   cursor: pointer;
   margin-bottom: 10px;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
-.add-button:hover {
+.func-button:hover {
   background-color: #f94144;
+  transform: scale(1.05);
+}
+
+.upload-button {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  margin: 0px;
+  padding: 0px;
 }
 
 /* Layout Styles */
@@ -101,11 +134,11 @@
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  padding: 10px;
+  padding: 5px;
   background-color: #f5f5f5;
   border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .functions-component button {
@@ -118,48 +151,44 @@
   align-items: center;
   width: auto;
   height: auto;
-  padding: 10px;
+  padding: 5px;
   background-color: #f5f5f5;
   border: 1px solid #ddd;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.button {
-  cursor: pointer;
-  margin: 5px;
-}
-
-.run-button {
-  color: #4caf50;
-}
-
-.add-button {
-  color: #f50057;
-}
-
-.upload-button {
-  display: inline-flex;
-  align-items: center;
-  cursor: pointer;
-  margin-top: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .context-menu {
   position: absolute;
   z-index: 1000;
   padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .context-menu-button {
   display: block;
   width: 100%;
+  padding: 10px 20px;
   margin-block: 5px;
+  background-color: #f5f5f5;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.context-menu-button:hover {
+  background-color: #e0e0e0;
 }
 
 /* Matrix Styles */
 .matrix-container {
   padding: 10px;
+  /* border-radius: 12px; */
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
 }
 
 .matrix-container table {
@@ -168,8 +197,8 @@
 }
 
 .matrix-container td {
-  border: 1px solid #ddd;
-  padding: 8px;
+  /* border: 1px solid #ddd; */
+  padding: 5px;
   text-align: center;
   background-color: #f5f5f5;
 }
@@ -183,9 +212,10 @@
 }
 
 .matrix-container th {
-  padding-top: 12px;
-  padding-bottom: 12px;
+  /* padding-top: 12px; */
+  /* padding-bottom: 12px; */
   text-align: center;
   background-color: #4caf50;
   color: white;
+  border-radius: 8px;
 }

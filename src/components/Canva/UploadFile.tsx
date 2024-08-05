@@ -55,7 +55,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUploadSuccess }) => {
 
   return (
     <div>
-      <button className="button add-button" onClick={handleFileButtonClick}>
+      <button className="button func-button" onClick={handleFileButtonClick}>
         <CloudUploadIcon />
       </button>
 

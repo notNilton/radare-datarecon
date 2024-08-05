@@ -196,25 +196,25 @@ const Node = () => {
           </Tooltip>
           <Tooltip title="Adicionar Nó 1-2">
             <AddCircleOutlineIcon
-              className="button add-button"
+              className="func-button"
               onClick={() => addNode("cnOneTwo")}
             />
           </Tooltip>
           <Tooltip title="Adicionar Nó Customizado">
             <AddCircleOutlineIcon
-              className="button add-button"
+              className="func-button"
               onClick={() => addNode("cnOneTwo")}
             />
           </Tooltip>
           <Tooltip title="Adicionar Input">
             <InputIcon
-              className="button add-button"
+              className="func-button"
               onClick={() => addNode("input")}
             />
           </Tooltip>
           <Tooltip title="Adicionar Output">
             <OutputIcon
-              className="button add-button"
+              className="func-button"
               onClick={() => addNode("output")}
             />
           </Tooltip>
