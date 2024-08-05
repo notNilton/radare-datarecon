@@ -1,5 +1,7 @@
 import React, { useRef, useState, ChangeEvent } from "react";
 import "./UploadFile.css"; // Import the CSS for the progress modal
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import Tooltip from "@mui/material/Tooltip";
 
 interface FileUploadProps {
   onFileUploadSuccess?: (data: any) => void;
@@ -55,8 +57,9 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUploadSuccess }) => {
   return (
     <div>
       <button className="button add-button" onClick={handleFileButtonClick}>
-        Adc. Arq.
+        <CloudUploadIcon />
       </button>
+
       <input
         type="file"
         ref={fileInputRef}

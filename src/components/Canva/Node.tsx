@@ -31,6 +31,12 @@ import FunctionsComponent from "./FunctionsComponent";
 import SidebarComponent from "../Sidebar/SidebarComponent";
 import FileUpload from "./UploadFile";
 
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import InputIcon from "@mui/icons-material/Input";
+import OutputIcon from "@mui/icons-material/Output";
+import Tooltip from "@mui/material/Tooltip";
+
 const getNodeId = () => `randomnode_${+new Date()}`;
 
 const Node = () => {
@@ -180,68 +186,48 @@ const Node = () => {
         onNodeContextMenu={handleNodeContextMenu}
       >
         <Panel position="top-left" className="top-left-panel">
-          <button
-            className="button run-button"
-            onClick={() =>
-              calcularReconciliacao(
-                nodes,
-                edges,
-                reconciliarApi,
-                atualizarProgresso
-              )
-            }
-          >
-            Reconciliar
-          </button>
-          <button
-            className="button vis-button"
-            onClick={() => createAdjacencyMatrix(nodes, edges)}
-          >
-            Matriz
-          </button>
-
-          <button
-            className="button vis-button"
-            onClick={() => createAdjacencyMatrix(nodes, edges)}
-          >
-            Valores
-          </button>
-
-          <button
-            className="button vis-button"
-            onClick={() => createAdjacencyMatrix(nodes, edges)}
-          >
-            Tolerâncias
-          </button>
-
-          <button
-            className="button add-button"
-            onClick={() => addNode("cnOneTwo")}
-          >
-            Adc Nó
-          </button>
-
-          <button
-            className="button add-button"
-            onClick={() => addNode("cnOneTwo")}
-          >
-            Adc Nó*
-          </button>
-
-          <button
-            className="button add-button"
-            onClick={() => addNode("input")}
-          >
-            Adc E.
-          </button>
-          <button
-            className="button add-button"
-            onClick={() => addNode("output")}
-          >
-            Adc S.
-          </button>
-
-          <FileUpload onFileUploadSuccess={handleFileUploadSuccess} />
+          <Tooltip title="Run Reconciliation">
+            <PlayArrowIcon
+              className="button run-button"
+              onClick={() =>
+                calcularReconciliacao(
+                  nodes,
+                  edges,
+                  reconciliarApi,
+                  atualizarProgresso
+                )
+              }
+            />
+          </Tooltip>
+          <Tooltip title="Add Node 1-2">
+            <AddCircleOutlineIcon
+              className="button add-button"
+              onClick={() => addNode("cnOneTwo")}
+            />
+          </Tooltip>
+          <Tooltip title="Add Custom Node">
+            <AddCircleOutlineIcon
+              className="button add-button"
+              onClick={() => addNode("cnOneTwo")}
+            />
+          </Tooltip>
+          <Tooltip title="Add Input">
+            <InputIcon
+              className="button add-button"
+              onClick={() => addNode("input")}
+            />
+          </Tooltip>
+          <Tooltip title="Add Output">
+            <OutputIcon
+              className="button add-button"
+              onClick={() => addNode("output")}
+            />
+          </Tooltip>
+          <Tooltip title="Upload File">
+            <div className="upload-button">
+              <FileUpload onFileUploadSuccess={handleFileUploadSuccess} />
+            </div>
+          </Tooltip>
         </Panel>
         <Controls />
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
