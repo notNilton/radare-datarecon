@@ -6,7 +6,7 @@
   height: 100%; 
   overflow: hidden;
   grid-template-columns: 4fr 1fr;
-  grid-template-rows: 8fr 1fr;
+  grid-template-rows: 1fr auto;
 }
 
 .node-container.sidebar-hidden {
@@ -43,23 +43,13 @@
 
 .graph-component {
   width: 100%;
-  height: 100%;
   overflow-y: hidden;
   grid-column: 1/3;
-}
-
-.graph-component {
-  width: 100%;
-  height: 100%;
-  overflow-y: hidden;
-  grid-column: 1/3;
-}
-
-.graph-component {
-  width: 100%;
-  height: 100%;
-  overflow-y: hidden;
-  grid-column: 1/3; /* Ajuste para ocupar todo o espaço horizontal quando o sidebar estiver oculto */
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 /* General Styles */
