@@ -1,7 +1,12 @@
-// SidebarComponent.tsx
 import React, { useState, useEffect } from "react";
+import { Tag } from 'primereact/tag'; // Importando o componente Tag do PrimeReact
+import { Divider } from 'primereact/divider'; // Importando o componente Divider do PrimeReact
 import MatrixDisplay from "./MatrixDisplay";
+
 import { createAdjacencyMatrix } from "../Canva/utils/CreateAdjMatrix";
+import "./SidebarComponent.scss";
+import SelectedTags from "./SelectedTags";
+import ExistingTags from "./ExistingTags";
 
 interface SidebarComponentProps {
   nodes: any[];
@@ -19,12 +24,15 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
     analise: true,
     matriz: true,
     classificacao: true,
-    "tags-originais": true,
-    "tags-reconciliadas": true,
-    "erros-das-tags": true,
+    "tags-selecionadas": true,
   });
 
   const [matrixData, setMatrixData] = useState<number[][]>([]);
+
+  useEffect(() => {
+    const newMatrix = createAdjacencyMatrix(nodes, edges);
+    setMatrixData(newMatrix);
+  }, [nodes, edges]);
 
   const toggleSidebarContent = (key: string) => {
     setVisibleSidebarContent((prevState) => ({
@@ -33,86 +41,62 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
     }));
   };
 
-  useEffect(() => {
-    const newMatrix = createAdjacencyMatrix(nodes, edges);
-    setMatrixData(newMatrix);
-  }, [nodes, edges]);
-
   return (
-    <div className="r-sidebar-structure">
+    <div className="sidebar-component">
+      {/* Tags Existentes - Cannot be minimized */}
+      <div className="sidebar-title">Tags Existentes</div>
+      <div className="sidebar-content">
+        <ExistingTags />  
+      </div>
+
+      <Divider />
+
+      {/* Tags Selecionadas */}
       <div
         className="sidebar-title"
-        onClick={() => toggleSidebarContent("arvore-funcionalidades")}
+        onClick={() => toggleSidebarContent("tags-selecionadas")}
         role="button"
         tabIndex={0}
         onKeyDown={(e) =>
-          e.key === "Enter" && toggleSidebarContent("arvore-funcionalidades")
+          e.key === "Enter" && toggleSidebarContent("tags-selecionadas")
         }
       >
-        Árvore de Funcionalidades
+        Tags Selecionadas
       </div>
       <div
         className="sidebar-content"
         style={{
-          display: visibleSidebarContent["arvore-funcionalidades"]
+          display: visibleSidebarContent["tags-selecionadas"]
             ? "block"
             : "none",
         }}
-      ></div>
-      <div
-        className="sidebar-title"
-        onClick={() => toggleSidebarContent("analise")}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => e.key === "Enter" && toggleSidebarContent("analise")}
       >
-        Análise
+        <SelectedTags/>
       </div>
+      
+
+      {/* Matriz de Incidência */}
       <div
-        className="sidebar-content"
-        style={{
-          display: visibleSidebarContent["analise"] ? "block" : "none",
-        }}
-      >
-        {/* Placeholder for Análise content */}
-      </div>
-      <div
-        className="sidebar-title"
+        className="sidebar-title matrix"
         onClick={() => toggleSidebarContent("matriz")}
         role="button"
         tabIndex={0}
         onKeyDown={(e) => e.key === "Enter" && toggleSidebarContent("matriz")}
       >
-        Matriz
+        Matriz de Incidência
       </div>
       <div
-        className="sidebar-content"
+        className={`sidebar-content matrix${
+          visibleSidebarContent["matriz"] ? "matrix-visible" : ""
+        }`}
         style={{
           display: visibleSidebarContent["matriz"] ? "block" : "none",
         }}
       >
-        <MatrixDisplay matrix={matrixData} />
+        <div className="matrix-container">
+          <MatrixDisplay matrix={matrixData} />
+        </div>
       </div>
-      <div
-        className="sidebar-title"
-        onClick={() => toggleSidebarContent("classificacao")}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) =>
-          e.key === "Enter" && toggleSidebarContent("classificacao")
-        }
-      >
-        Classificação
-      </div>
-      <div
-        className="sidebar-content"
-        style={{
-          display: visibleSidebarContent["classificacao"] ? "block" : "none",
-        }}
-      >
-        {/* Placeholder for Classificação content */}
-      </div>
-      {/* <button onClick={handleButtonClick}>Clique aqui</button> */}
     </div>
   );
 };

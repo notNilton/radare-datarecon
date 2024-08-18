@@ -7,7 +7,7 @@ interface MatrixDisplayProps {
 
 const MatrixDisplay: React.FC<MatrixDisplayProps> = ({ matrix }) => {
   return (
-    <div className="matrix-container">
+    <>
       <table>
         <tbody>
           {matrix.map((row, rowIndex) => (
@@ -19,7 +19,7 @@ const MatrixDisplay: React.FC<MatrixDisplayProps> = ({ matrix }) => {
           ))}
         </tbody>
       </table>
-    </div>
+    </>
   );
 };
 

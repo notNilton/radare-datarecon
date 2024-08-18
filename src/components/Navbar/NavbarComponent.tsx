@@ -1,6 +1,7 @@
 // NavbarComponent.tsx
 import React from "react";
 import { AccountCircle } from "@mui/icons-material";
+import "./NavbarComponent.scss";
 
 interface NavbarComponentProps {
   version: string;
@@ -12,7 +13,7 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
   toggleAboutPopup,
 }) => {
   return (
-    <header>
+    <header className="header">
       <nav className="navbar">
         <ul className="navbar-menu">
           <li className="navbar-item">

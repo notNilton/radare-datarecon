@@ -1,4 +1,10 @@
-import { useCallback, useState, useRef, useEffect, MouseEvent } from "react";
+import React, {
+  useCallback,
+  useState,
+  useRef,
+  useEffect,
+  MouseEvent,
+} from "react";
 import ReactFlow, {
   Controls,
   Panel,
@@ -12,7 +18,7 @@ import ReactFlow, {
 } from "reactflow";
 
 import "reactflow/dist/style.css";
-import "./Node.css";
+import "./Node.scss";
 
 import {
   initialNodes,
@@ -24,6 +30,7 @@ import ProgressModalComponent from "./ProgressModalComponent";
 import EditNodeModalComponent from "./EditNodeModalComponent";
 import ContextMenuComponent from "./ContextMenuComponent";
 import SidebarComponent from "../Sidebar/SidebarComponent";
+import GraphComponent from "../Dashboard/GraphComponent";
 import FileUpload from "./UploadFile";
 
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
@@ -34,7 +41,7 @@ import Tooltip from "@mui/material/Tooltip";
 
 const getNodeId = () => `randomnode_${+new Date()}`;
 
-const Node = () => {
+const Node: React.FC = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const nodesRef = useRef(nodes);
@@ -53,6 +60,8 @@ const Node = () => {
     isVisible: false,
     node: null,
   });
+
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true); // Estado para controlar a visibilidade do sidebar
 
   useEffect(() => {
     nodesRef.current = nodes;
@@ -166,86 +175,47 @@ const Node = () => {
     // Atualize seus nodes ou edges com base nos dados carregados, se necessário
   };
 
+  const toggleSidebar = () => {
+    setIsSidebarVisible(!isSidebarVisible);
+  };
+
   return (
-    <div className="node-container">
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        nodeTypes={nodeTypes}
-        fitView
-        onEdgeDoubleClick={(event, edge) => onEdgeDoubleClick(edge.id)}
-        onNodeDoubleClick={onNodeDoubleClick}
-        onNodeContextMenu={handleNodeContextMenu}
-      >
-        <Panel position="top-left" className="top-left-panel">
-          <Tooltip title="Executar Reconciliação">
-            <PlayArrowIcon
-              className="button run-button"
-              onClick={() =>
-                calcularReconciliacao(
-                  nodes,
-                  edges,
-                  reconciliarApi,
-                  atualizarProgresso
-                )
-              }
-            />
-          </Tooltip>
-          <Tooltip title="Adicionar Nó 1-2">
-            <AddCircleOutlineIcon
-              className="func-button"
-              onClick={() => addNode("cnOneTwo")}
-            />
-          </Tooltip>
-          <Tooltip title="Adicionar Nó Customizado">
-            <AddCircleOutlineIcon
-              className="func-button"
-              onClick={() => addNode("cnOneTwo")}
-            />
-          </Tooltip>
-          <Tooltip title="Adicionar Input">
-            <InputIcon
-              className="func-button"
-              onClick={() => addNode("input")}
-            />
-          </Tooltip>
-          <Tooltip title="Adicionar Output">
-            <OutputIcon
-              className="func-button"
-              onClick={() => addNode("output")}
-            />
-          </Tooltip>
-          <Tooltip title="Carregar Arquivo">
-            <div className="upload-button">
-              <FileUpload onFileUploadSuccess={handleFileUploadSuccess} />
-            </div>
-          </Tooltip>
-        </Panel>
-        <Controls />
-        <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
-      </ReactFlow>
-      <ProgressModalComponent
-        isVisible={isModalVisible}
-        progress={progress}
-        onClose={fecharModal}
-      />
-      <ContextMenuComponent
-        contextMenu={contextMenu}
-        handleEditNode={handleEditNode}
-        handleDeleteNode={handleDeleteNode}
-        handleCloseContextMenu={handleCloseContextMenu}
-      />
-      <EditNodeModalComponent
-        isVisible={editNodeModal.isVisible}
-        node={editNodeModal.node}
-        onClose={fecharEditNodeModal}
-        onUpdate={handleUpdateNode}
-      />
-      <SidebarComponent nodes={nodes} edges={edges} />{" "}
-      {/* Passar nodes e edges como props */}
+    <div className={`node-container ${isSidebarVisible ? "" : "sidebar-hidden"}`}>
+      <div className="reactflow-component">
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          nodeTypes={nodeTypes}
+          fitView
+          onEdgeDoubleClick={(event, edge) => onEdgeDoubleClick(edge.id)}
+          onNodeDoubleClick={onNodeDoubleClick}
+          onNodeContextMenu={handleNodeContextMenu}
+        >
+          <Panel
+            position="top-left"
+            className="top-left-panel"
+            children={undefined}
+          >
+            {/* Painéis e botões de controle */}
+          </Panel>
+          <Controls />
+          <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+        </ReactFlow>
+        <button className="hide-sidebar" onClick={toggleSidebar}>
+          {isSidebarVisible ? "Esconder Sidebar" : "Mostrar Sidebar"}
+        </button>
+      </div>
+
+      {isSidebarVisible && (
+        <SidebarComponent nodes={nodes} edges={edges} />
+      )}
+
+      <div className="graph-component">
+        <GraphComponent nodes={nodes} edges={edges} />
+      </div>
     </div>
   );
 };
