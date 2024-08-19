@@ -1,5 +1,5 @@
 // ReconciliationUtils.js
-export const createAdjacencyMatrix = (nodes, edges) => {
+export const createAdjacencyMatrix = (nodes: any[], edges: any[]) => {
   const cnOneTwoNodes = nodes.filter((node) => node.type === "cnOneTwo");
   const adjMatrix = Array.from({ length: cnOneTwoNodes.length }, () =>
     Array(edges.length).fill(0)
@@ -21,51 +21,31 @@ export const createAdjacencyMatrix = (nodes, edges) => {
 };
 
 export const calcularReconciliacao = (
-  nodes,
-  edges,
-  reconciliarApi,
-  atualizarProgresso
+  nodes: any[],
+  edges: any[],
+  reconciliarApi: { (incidenceMatrix: any, measurements: any, tolerances: any, atualizarProgresso: any): Promise<void>; (arg0: any[][], arg1: any, arg2: any, arg3: any): void; },
+  atualizarProgresso: { (message: string): void; (arg0: string): void; }
 ) => {
-  const medida = edges.map((edge) => edge.label);
-  const tolerancia = edges.map((edge) => edge.tolerance);
+  const medida = edges.map((edge) => edge.value); // Captura os valores (antes estava usando o label)
+  const tolerancia = edges.map((edge) => edge.tolerance); // Captura as tolerâncias
 
-  const adjMatrix = createAdjacencyMatrix(nodes, edges);
+  const adjMatrix = createAdjacencyMatrix(nodes, edges); // Gera a matriz de adjacência
 
-  const toleranciaAbs = medida.map((value, index) => value * tolerancia[index]);
-  const toleranciaAbsSquared = toleranciaAbs.map((value) => value * value);
-  const mPeso = [
-    0,
-    ...medida.map((value, index) => (2 * value) / toleranciaAbsSquared[index]),
-    0,
-  ];
-
-  const diagSquared = toleranciaAbs.map((value) => Math.pow(value, 2));
-  const inverseDiagSquared = diagSquared.map((value) => 1 / value);
-
-  const size = toleranciaAbs.length;
-  const Diag1 = Array.from({ length: size }, (_, i) =>
-    Array.from({ length: size }, (_, j) =>
-      i === j ? 2 * inverseDiagSquared[i] : 0
-    )
-  );
-
-  console.log("Novo Teste");
+  // Exibe os valores capturados no console
   console.log("Valores de Medida:", medida);
   console.log("Valores de Tolerância:", tolerancia);
   console.log("Matriz de Adjacência:", adjMatrix);
-  console.log("a:", toleranciaAbs);
-  console.log("mPeso:", mPeso);
-  console.log("Diagonal:", Diag1);
 
+  // Se necessário, você ainda pode chamar a API de reconciliação aqui
   atualizarProgresso("Chamando API de reconciliação...");
   reconciliarApi(adjMatrix, medida, tolerancia, atualizarProgresso);
 };
 
 export const reconciliarApi = async (
-  incidenceMatrix,
-  measurements,
-  tolerances,
-  atualizarProgresso
+  incidenceMatrix: any,
+  measurements: any,
+  tolerances: any,
+  atualizarProgresso: (arg0: string) => void
 ) => {
   try {
     atualizarProgresso("Enviando dados para o servidor...");

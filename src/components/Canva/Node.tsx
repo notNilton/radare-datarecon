@@ -25,7 +25,10 @@ import {
   initialEdges,
   nodeTypes,
 } from "./utils/initialCanvaDataIII";
-import { calcularReconciliacao, reconciliarApi } from "./utils/Reconciliacao";
+import {
+  calcularReconciliacao,
+  reconciliarApi,
+} from "./utils/Reconciliacao";
 import ProgressModalComponent from "./ProgressModalComponent";
 import EditNodeModalComponent from "./EditNodeModalComponent";
 import ContextMenuComponent from "./ContextMenuComponent";
@@ -202,7 +205,7 @@ const Node: React.FC = () => {
       formData.append('file', file);
 
       try {
-        const response = await fetch('https://seu-servidor-api.com/upload', {
+        const response = await fetch('http://localhost:5000/reconcile', { // Atualize o URL para o servidor Flask local
           method: 'POST',
           body: formData,
         });
@@ -218,6 +221,10 @@ const Node: React.FC = () => {
         console.error('Erro ao enviar o arquivo:', error);
       }
     }
+  };
+
+  const handleReconcile = () => {
+    calcularReconciliacao(nodes, edges, reconciliarApi, atualizarProgresso);
   };
 
   const toggleSidebar = () => {
@@ -277,6 +284,9 @@ const Node: React.FC = () => {
             </button>
             <button onClick={toggleGraph}>
               {isGraphVisible ? "Esconder Gráfico" : "Mostrar Gráfico"}
+            </button>
+            <button onClick={handleReconcile}>
+              Reconciliar Dados
             </button>
             <input
               type="file"
