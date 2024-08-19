@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Tag } from 'primereact/tag'; // Importando o componente Tag do PrimeReact
-import { Divider } from 'primereact/divider'; // Importando o componente Divider do PrimeReact
+import { Tag } from "primereact/tag"; // Importando o componente Tag do PrimeReact
+import { Divider } from "primereact/divider"; // Importando o componente Divider do PrimeReact
 import MatrixDisplay from "./MatrixDisplay";
 
 import { createAdjacencyMatrix } from "../Canva/utils/CreateAdjMatrix";
@@ -22,11 +22,10 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
   const [visibleSidebarContent, setVisibleSidebarContent] = useState<{
     [key: string]: boolean;
   }>({
-    "arvore-funcionalidades": true,
-    analise: true,
-    matriz: true,
-    classificacao: true,
+    "tags-existentes": true,
     "tags-selecionadas": true,
+    matriz: true,
+    reconciled: true,
   });
 
   const [matrixData, setMatrixData] = useState<number[][]>([]);
@@ -44,11 +43,26 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
   };
 
   return (
-    <div className="sidebar-component">
-      {/* Tags Existentes - Cannot be minimized */}
-      <div className="sidebar-title">Tags Existentes</div>
-      <div className="sidebar-content">
-        <ExistingTags edgeNames={edgeNames} />  {/* Passe edgeNames para ExistingTags */}
+    <>
+      {/* Tags Existentes */}
+      <div
+        className="sidebar-title"
+        onClick={() => toggleSidebarContent("tags-existentes")}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => e.key === "Enter" && toggleSidebarContent("tags-existentes")}
+      >
+        Tags Existentes
+      </div>
+      <div
+        className="sidebar-content"
+        style={{
+          display: visibleSidebarContent["tags-existentes"]
+            ? "block"
+            : "none",
+        }}
+      >
+        <ExistingTags edgeNames={edgeNames} />
       </div>
 
       <Divider />
@@ -73,9 +87,10 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
             : "none",
         }}
       >
-        <SelectedTags/>
+        <SelectedTags />
       </div>
-      
+
+      <Divider />
 
       {/* Matriz de Incidência */}
       <div
@@ -99,7 +114,34 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
           <MatrixDisplay matrix={matrixData} />
         </div>
       </div>
-    </div>
+
+      <Divider />
+
+      {/* Dados Reconciliados */}
+      <div
+        className="sidebar-title reconciled"
+        onClick={() => toggleSidebarContent("reconciled")}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => e.key === "Enter" && toggleSidebarContent("reconciled")}
+      >
+        Dados Reconciliados
+      </div>
+      <div
+        className={`sidebar-content reconciled${
+          visibleSidebarContent["reconciled"] ? "matrix-visible" : ""
+        }`}
+        style={{
+          display: visibleSidebarContent["reconciled"] ? "block" : "none",
+        }}
+      >
+        <div className="reconciled-container">
+          <MatrixDisplay matrix={matrixData} />
+          <MatrixDisplay matrix={matrixData} />
+          <MatrixDisplay matrix={matrixData} /><MatrixDisplay matrix={matrixData} /><MatrixDisplay matrix={matrixData} /><MatrixDisplay matrix={matrixData} /><MatrixDisplay matrix={matrixData} /><MatrixDisplay matrix={matrixData} /><MatrixDisplay matrix={matrixData} /><MatrixDisplay matrix={matrixData} /><MatrixDisplay matrix={matrixData} /><MatrixDisplay matrix={matrixData} />
+        </div>
+      </div>
+    </>
   );
 };
 

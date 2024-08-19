@@ -25,10 +25,7 @@ import {
   initialEdges,
   nodeTypes,
 } from "./utils/initialCanvaDataIII";
-import {
-  calcularReconciliacao,
-  reconciliarApi,
-} from "./utils/Reconciliacao";
+import { calcularReconciliacao, reconciliarApi } from "./utils/Reconciliacao";
 import ProgressModalComponent from "./ProgressModalComponent";
 import EditNodeModalComponent from "./EditNodeModalComponent";
 import ContextMenuComponent from "./ContextMenuComponent";
@@ -52,7 +49,7 @@ const Node: React.FC = () => {
       label: `Nome: ${edge.nome || generateRandomName()}, Valor: ${
         edge.value
       }, Tolerância: ${edge.tolerance}`, // Label dinâmico
-      type: 'step', // Definindo o tipo da aresta como 'step'
+      type: "step", // Definindo o tipo da aresta como 'step'
     }))
   );
 
@@ -102,7 +99,7 @@ const Node: React.FC = () => {
         label: `Nome: ${generateRandomName()}, Valor: ${
           params.label || ""
         }, Tolerância: ${params.tolerance || ""}`,
-        type: 'step', // Definindo o tipo da aresta como 'step'
+        type: "step", // Definindo o tipo da aresta como 'step'
       };
       setEdges((eds) => addEdge(newEdge, eds));
     },
@@ -198,27 +195,30 @@ const Node: React.FC = () => {
     fecharEditNodeModal();
   };
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append("file", file);
 
       try {
-        const response = await fetch('http://localhost:5000/reconcile', { // Atualize o URL para o servidor Flask local
-          method: 'POST',
+        const response = await fetch("http://localhost:5000/reconcile", {
+          // Atualize o URL para o servidor Flask local
+          method: "POST",
           body: formData,
         });
 
         if (response.ok) {
           const result = await response.json();
-          console.log('Upload bem-sucedido:', result);
+          console.log("Upload bem-sucedido:", result);
           // Lidar com a resposta do servidor aqui
         } else {
-          console.error('Falha no upload:', response.statusText);
+          console.error("Falha no upload:", response.statusText);
         }
       } catch (error) {
-        console.error('Erro ao enviar o arquivo:', error);
+        console.error("Erro ao enviar o arquivo:", error);
       }
     }
   };
@@ -285,9 +285,7 @@ const Node: React.FC = () => {
             <button onClick={toggleGraph}>
               {isGraphVisible ? "Esconder Gráfico" : "Mostrar Gráfico"}
             </button>
-            <button onClick={handleReconcile}>
-              Reconciliar Dados
-            </button>
+            <button onClick={handleReconcile}>Reconciliar Dados</button>
             <input
               type="file"
               accept=".json,.csv"
@@ -298,17 +296,21 @@ const Node: React.FC = () => {
           <Controls />
           <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
         </ReactFlow>
-      </div>
 
-      {isSidebarVisible && <SidebarComponent nodes={nodes} edges={edges} edgeNames={edgeNames} />}
+        {isSidebarVisible && (
+          <div className="sidebar-component">
+            <SidebarComponent
+              nodes={nodes}
+              edges={edges}
+              edgeNames={edgeNames}
+            />
+          </div>
+        )}
+      </div>
 
       {isGraphVisible && (
         <div className="graph-component">
-          <GraphComponent
-            nodes={nodes}
-            edges={edges}
-            edgeNames={edgeNames}
-          />
+          <GraphComponent nodes={nodes} edges={edges} edgeNames={edgeNames} />
         </div>
       )}
     </div>

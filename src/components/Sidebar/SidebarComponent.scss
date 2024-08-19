@@ -3,6 +3,7 @@
   padding: 5px 10px; 
   cursor: pointer; 
   flex-shrink: 0; 
+  text-align: center; /* Centraliza o texto */
 
   &:hover {
     background: var(--colorAccent); 
@@ -12,41 +13,29 @@
 .sidebar-content {
   background: var(--colorSubContent);
   width: 100%;
+  text-align: center; /* Centraliza o conteúdo dentro da sidebar */
+  // height: fit-content;
+  // height: 100;
 
   &.matrix-visible {
     height: auto;
     max-height: none;
     overflow-y: visible;
   }
-
-  
 }
 
-
-.existing-tags-grid {
+.existing-tags-grid, .selected-tags-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
   gap: 10px;
   padding: 10px;
+  justify-content: center; /* Centraliza o grid horizontalmente */
 
   .tag-item {
     text-align: center;
     width: 100%;
   }
 }
-
-.selected-tags-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
-  gap: 10px;
-  padding: 10px;
-
-  .tag-item {
-    text-align: center;
-    width: 100%;
-  }
-}
-
 
 /* Matrix Styles */
 .matrix-container {
@@ -56,9 +45,9 @@
     width: 100%;
     border-collapse: collapse;
 
-    td {
+    td, th {
       padding: 5px;
-      text-align: center;
+      text-align: center; /* Centraliza o texto nas células */
       background-color: #f5f5f5;
     }
 
@@ -77,4 +66,9 @@
       border-radius: 8px;
     }
   }
+}
+
+.reconciled-container {
+  padding: 10px;
+  text-align: center; /* Centraliza o conteúdo dentro do container reconciled */
 }
