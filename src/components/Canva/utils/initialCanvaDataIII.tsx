@@ -116,6 +116,7 @@ const initialEdges = [
     markerEnd: {
       type: MarkerType.ArrowClosed,
     },
+    type: 'step', // Define o tipo da aresta como 'step'
   },
   {
     id: "e2-3",
@@ -129,6 +130,7 @@ const initialEdges = [
     markerEnd: {
       type: MarkerType.ArrowClosed,
     },
+    type: 'step', // Define o tipo da aresta como 'step'
   },
   {
     id: "e3-4",
@@ -142,6 +144,7 @@ const initialEdges = [
     markerEnd: {
       type: MarkerType.ArrowClosed,
     },
+    type: 'step', // Define o tipo da aresta como 'step'
   },
   {
     id: "e4-5",
@@ -154,6 +157,7 @@ const initialEdges = [
     markerEnd: {
       type: MarkerType.ArrowClosed,
     },
+    type: 'step', // Define o tipo da aresta como 'step'
   },
   {
     id: "e5-6",
@@ -167,6 +171,7 @@ const initialEdges = [
     markerEnd: {
       type: MarkerType.ArrowClosed,
     },
+    type: 'step', // Define o tipo da aresta como 'step'
   },
 ];
 

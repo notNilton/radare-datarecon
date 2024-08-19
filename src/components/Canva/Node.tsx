@@ -31,7 +31,6 @@ import EditNodeModalComponent from "./EditNodeModalComponent";
 import ContextMenuComponent from "./ContextMenuComponent";
 import SidebarComponent from "../Sidebar/SidebarComponent";
 import GraphComponent from "../Dashboard/GraphComponent";
-import FileUpload from "./UploadFile";
 
 // Função para gerar nomes aleatórios
 const generateRandomName = () => {
@@ -50,6 +49,7 @@ const Node: React.FC = () => {
       label: `Nome: ${edge.nome || generateRandomName()}, Valor: ${
         edge.value
       }, Tolerância: ${edge.tolerance}`, // Label dinâmico
+      type: 'step', // Definindo o tipo da aresta como 'step'
     }))
   );
 
@@ -99,6 +99,7 @@ const Node: React.FC = () => {
         label: `Nome: ${generateRandomName()}, Valor: ${
           params.label || ""
         }, Tolerância: ${params.tolerance || ""}`,
+        type: 'step', // Definindo o tipo da aresta como 'step'
       };
       setEdges((eds) => addEdge(newEdge, eds));
     },
@@ -194,9 +195,29 @@ const Node: React.FC = () => {
     fecharEditNodeModal();
   };
 
-  const handleFileUploadSuccess = (data: any) => {
-    console.log("Arquivo carregado com sucesso:", data);
-    // Atualize seus nodes ou edges com base nos dados carregados, se necessário
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const response = await fetch('https://seu-servidor-api.com/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          console.log('Upload bem-sucedido:', result);
+          // Lidar com a resposta do servidor aqui
+        } else {
+          console.error('Falha no upload:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Erro ao enviar o arquivo:', error);
+      }
+    }
   };
 
   const toggleSidebar = () => {
@@ -257,6 +278,12 @@ const Node: React.FC = () => {
             <button onClick={toggleGraph}>
               {isGraphVisible ? "Esconder Gráfico" : "Mostrar Gráfico"}
             </button>
+            <input
+              type="file"
+              accept=".json,.csv"
+              onChange={handleFileUpload}
+              style={{ marginTop: "10px" }}
+            />
           </Panel>
           <Controls />
           <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
@@ -270,7 +297,7 @@ const Node: React.FC = () => {
           <GraphComponent
             nodes={nodes}
             edges={edges}
-            edgeDetails={edgeDetails}
+            edgeNames={edgeNames}
           />
         </div>
       )}
