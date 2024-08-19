@@ -12,8 +12,14 @@ import ReactFlow, {
 import cnOneThree from "./customNodeOneThree";
 import cnOneOne from "./customNodeOneOne";
 import cnTwoTwo from "./customNodeTwoTwo";
-import cnTwoOne from "./customNodeOneTwo";
+import cnTwoOne from "./customNodeTwoOne";
 import cnOneTwo from "./customNodeOneTwo";
+
+// Função para gerar nomes aleatórios
+const generateRandomName = () => {
+  const names = ["Laravel", "Alucard", "Sigma", "Delta", "Orion", "Phoenix"];
+  return names[Math.floor(Math.random() * names.length)];
+};
 
 const nodeTypes = {
   cnOneThree: cnOneThree,
@@ -103,8 +109,10 @@ const initialEdges = [
     id: "e1-2",
     source: "input",
     target: "node-1",
-    label: 161,
+    value: 161,
     tolerance: 0.05,
+    nome: generateRandomName(),
+    label: `Nome: ${generateRandomName()}, Valor: 161, Tolerância: 0.05`,
     markerEnd: {
       type: MarkerType.ArrowClosed,
     },
@@ -114,8 +122,10 @@ const initialEdges = [
     source: "node-1",
     sourceHandle: "a",
     target: "output-1",
-    label: 79,
+    value: 79,
     tolerance: 0.01,
+    nome: generateRandomName(),
+    label: `Nome: ${generateRandomName()}, Valor: 79, Tolerância: 0.01`,
     markerEnd: {
       type: MarkerType.ArrowClosed,
     },
@@ -125,8 +135,10 @@ const initialEdges = [
     source: "node-1",
     sourceHandle: "b",
     target: "node-2",
-    label: 80,
+    value: 80,
     tolerance: 0.01,
+    nome: generateRandomName(),
+    label: `Nome: ${generateRandomName()}, Valor: 80, Tolerância: 0.01`,
     markerEnd: {
       type: MarkerType.ArrowClosed,
     },
@@ -135,8 +147,10 @@ const initialEdges = [
     id: "e4-5",
     source: "node-2",
     target: "output-2",
-    label: 20,
+    value: 20,
     tolerance: 0.1,
+    nome: generateRandomName(),
+    label: `Nome: ${generateRandomName()}, Valor: 20, Tolerância: 0.1`,
     markerEnd: {
       type: MarkerType.ArrowClosed,
     },
@@ -146,8 +160,10 @@ const initialEdges = [
     source: "node-2",
     sourceHandle: "b",
     target: "output-3",
-    label: 63,
+    value: 63,
     tolerance: 0.05,
+    nome: generateRandomName(),
+    label: `Nome: ${generateRandomName()}, Valor: 63, Tolerância: 0.05`,
     markerEnd: {
       type: MarkerType.ArrowClosed,
     },

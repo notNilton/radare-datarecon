@@ -2,46 +2,27 @@ import React from "react";
 import { Chart } from "primereact/chart";
 import "./GraphComponent.scss";
 
+interface EdgeDetail {
+  nome: string;
+  value: number;
+  tolerance: number;
+}
+
 interface GraphComponentProps {
   nodes: any[];
   edges: any[];
+  edgeDetails: EdgeDetail[]; // Adicionando edgeDetails como uma prop
 }
 
-const GraphComponent: React.FC<GraphComponentProps> = ({ nodes, edges }) => {
+const GraphComponent: React.FC<GraphComponentProps> = ({ edgeDetails }) => {
   const lineChartData = {
     labels: Array.from({ length: 15 }, (_, i) => `Point ${i + 1}`),
-    datasets: [
-      {
-        label: "Line 1",
-        data: Array.from({ length: 15 }, () => Math.floor(Math.random() * 100)),
-        fill: false,
-        borderColor: "#42A5F5",
-      },
-      {
-        label: "Line 2",
-        data: Array.from({ length: 15 }, () => Math.floor(Math.random() * 100)),
-        fill: false,
-        borderColor: "#66BB6A",
-      },
-      {
-        label: "Line 3",
-        data: Array.from({ length: 15 }, () => Math.floor(Math.random() * 100)),
-        fill: false,
-        borderColor: "#FFA726",
-      },
-      {
-        label: "Line 4",
-        data: Array.from({ length: 15 }, () => Math.floor(Math.random() * 100)),
-        fill: false,
-        borderColor: "#FF7043",
-      },
-      {
-        label: "Line 5",
-        data: Array.from({ length: 15 }, () => Math.floor(Math.random() * 100)),
-        fill: false,
-        borderColor: "#AB47BC",
-      },
-    ],
+    datasets: edgeDetails.map((edge, index) => ({
+      label: edge.nome, // Usando o nome da aresta como label
+      data: Array.from({ length: 15 }, () => Math.floor(Math.random() * 100)), // Dados aleatórios
+      fill: false,
+      borderColor: `hsl(${index * 72}, 70%, 50%)`, // Cor dinâmica baseada no índice
+    })),
   };
 
   const lineChartOptions = {
