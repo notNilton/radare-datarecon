@@ -1,7 +1,7 @@
 // ReconciliationUtils.js
 export const createAdjacencyMatrix = (nodes: any[], edges: any[]) => {
   const cnOneTwoNodes = nodes.filter((node) => node.type === "cnOneTwo");
-  const adjMatrix = Array.from({ length: cnOneTwoNodes.length }, () =>
+  const incidencematrix = Array.from({ length: cnOneTwoNodes.length }, () =>
     Array(edges.length).fill(0)
   );
 
@@ -13,37 +13,37 @@ export const createAdjacencyMatrix = (nodes: any[], edges: any[]) => {
       (node) => node.id === edge.target
     );
 
-    if (sourceIndex !== -1) adjMatrix[sourceIndex][edgeIndex] = -1;
-    if (targetIndex !== -1) adjMatrix[targetIndex][edgeIndex] = 1;
+    if (sourceIndex !== -1) incidencematrix[sourceIndex][edgeIndex] = -1;
+    if (targetIndex !== -1) incidencematrix[targetIndex][edgeIndex] = 1;
   });
 
-  return adjMatrix;
+  return incidencematrix;
 };
 
 export const calcularReconciliacao = (
   nodes: any[],
   edges: any[],
-  reconciliarApi: { (incidenceMatrix: any, measurements: any, tolerances: any, atualizarProgresso: any): Promise<void>; (arg0: any[][], arg1: any, arg2: any, arg3: any): void; },
+  reconciliarApi: { (incidenceMatrix: any, values: any, tolerances: any, atualizarProgresso: any): Promise<void>; (arg0: any[][], arg1: any, arg2: any, arg3: any): void; },
   atualizarProgresso: { (message: string): void; (arg0: string): void; }
 ) => {
-  const medida = edges.map((edge) => edge.value); // Captura os valores (antes estava usando o label)
-  const tolerancia = edges.map((edge) => edge.tolerance); // Captura as tolerâncias
+  const value = edges.map((edge) => edge.value); // Captura os valores (antes estava usando o label)
+  const tolerance = edges.map((edge) => edge.tolerance); // Captura as tolerâncias
 
-  const adjMatrix = createAdjacencyMatrix(nodes, edges); // Gera a matriz de adjacência
+  const incidencematrix = createAdjacencyMatrix(nodes, edges); // Gera a matriz de adjacência
 
   // Exibe os valores capturados no console
-  console.log("Valores de Medida:", medida);
-  console.log("Valores de Tolerância:", tolerancia);
-  console.log("Matriz de Adjacência:", adjMatrix);
+  console.log("Valores de Medida:", value);
+  console.log("Valores de Tolerância:", tolerance);
+  console.log("Matriz de Adjacência:", incidencematrix);
 
   // Se necessário, você ainda pode chamar a API de reconciliação aqui
   atualizarProgresso("Chamando API de reconciliação...");
-  reconciliarApi(adjMatrix, medida, tolerancia, atualizarProgresso);
+  reconciliarApi(incidencematrix, value, tolerance, atualizarProgresso);
 };
 
 export const reconciliarApi = async (
-  incidenceMatrix: any,
-  measurements: any,
+  incidence_matrix: any,
+  values: any,
   tolerances: any,
   atualizarProgresso: (arg0: string) => void
 ) => {
@@ -55,8 +55,8 @@ export const reconciliarApi = async (
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        incidence_matrix: incidenceMatrix,
-        measurements: measurements,
+        incidence_matrix: incidence_matrix,
+        values: values,
         tolerances: tolerances,
       }),
     });
@@ -64,19 +64,19 @@ export const reconciliarApi = async (
     if (response.ok) {
       const data = await response.json();
       const reconciledMeasures = JSON.stringify(
-        data.reconciled_measurements.reconciled_measurements,
+        data.reconciled_values.reconciled_values,
         null,
         2
       );
       const correction = JSON.stringify(
-        data.reconciled_measurements.correction,
+        data.reconciled_values.correction,
         null,
         2
       );
-      console.log("Medidas Reconciliadas:", reconciledMeasures);
+      console.log("values Reconciliadas:", reconciledMeasures);
       console.log("Correções:", correction);
       atualizarProgresso(
-        `Reconciliação bem-sucedida.\n\nMedidas Reconciliadas: ${reconciledMeasures}\n\nCorreções: ${correction}`
+        `Reconciliação bem-sucedida.\n\nvalues Reconciliadas: ${reconciledMeasures}\n\nCorreções: ${correction}`
       );
     } else {
       console.error("Falha na reconciliação dos dados");
@@ -87,3 +87,4 @@ export const reconciliarApi = async (
     atualizarProgresso("Erro durante a reconciliação.");
   }
 };
+
