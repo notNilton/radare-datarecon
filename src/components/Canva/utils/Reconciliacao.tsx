@@ -73,8 +73,24 @@ export const reconciliarApi = async (
         null,
         2
       );
-      console.log("values Reconciliadas:", reconciledMeasures);
+
+      console.log("Valores Reconciliados:", reconciledMeasures);
       console.log("Correções:", correction);
+      
+      // Gera um ID único
+      const id = Date.now().toString();
+
+      // Cria um objeto para armazenar no localStorage
+      const storedData = {
+        id,
+        reconciledMeasures: data.reconciled_values.reconciled_values,
+        correction: data.reconciled_values.correction,
+      };
+
+      // Armazena os dados no localStorage
+      localStorage.setItem(id, JSON.stringify(storedData));
+      window.dispatchEvent(new Event('storage'));
+
       atualizarProgresso(
         `Reconciliação bem-sucedida.\n\nvalues Reconciliadas: ${reconciledMeasures}\n\nCorreções: ${correction}`
       );
@@ -87,4 +103,3 @@ export const reconciliarApi = async (
     atualizarProgresso("Erro durante a reconciliação.");
   }
 };
-

@@ -1,23 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { Tag } from "primereact/tag"; // Importando o componente Tag do PrimeReact
-import { Divider } from "primereact/divider"; // Importando o componente Divider do PrimeReact
-import MatrixDisplay from "./MatrixDisplay";
-
-import { createAdjacencyMatrix } from "../Canva/utils/CreateAdjMatrix";
+import { Divider } from "primereact/divider"; 
+import MatrixDisplay from "./utils/MatrixDisplay";
 import "./SidebarComponent.scss";
-import SelectedTags from "./SelectedTags";
-import ExistingTags from "./ExistingTags";
+import ExistingTags from "./utils/ExistingTagsDisplay";
+import ReconciledDataDisplay from "./utils/ReconciledDataDisplay";  // Importa o novo componente
+import { createAdjacencyMatrix } from "../Canva/utils/Reconciliacao";
 
 interface SidebarComponentProps {
   nodes: any[];
   edges: any[];
-  edgeNames: string[]; // Adicione esta linha
+  edgeNames: string[]; 
 }
 
 const SidebarComponent: React.FC<SidebarComponentProps> = ({
   nodes,
   edges,
-  edgeNames, // Receba edgeNames como prop
+  edgeNames,
 }) => {
   const [visibleSidebarContent, setVisibleSidebarContent] = useState<{
     [key: string]: boolean;
@@ -110,11 +108,7 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
           display: visibleSidebarContent["reconciled"] ? "block" : "none",
         }}
       >
-        <div className="reconciled-container">
-          <MatrixDisplay matrix={matrixData} />
-          <MatrixDisplay matrix={matrixData} />
-          <MatrixDisplay matrix={matrixData} /><MatrixDisplay matrix={matrixData} /><MatrixDisplay matrix={matrixData} /><MatrixDisplay matrix={matrixData} /><MatrixDisplay matrix={matrixData} /><MatrixDisplay matrix={matrixData} /><MatrixDisplay matrix={matrixData} /><MatrixDisplay matrix={matrixData} /><MatrixDisplay matrix={matrixData} /><MatrixDisplay matrix={matrixData} />
-        </div>
+        <ReconciledDataDisplay /> {/* Usa o componente ReconciledDataDisplay */}
       </div>
     </>
   );
