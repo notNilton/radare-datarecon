@@ -67,31 +67,6 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
 
       <Divider />
 
-      {/* Tags Selecionadas */}
-      <div
-        className="sidebar-title"
-        onClick={() => toggleSidebarContent("tags-selecionadas")}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) =>
-          e.key === "Enter" && toggleSidebarContent("tags-selecionadas")
-        }
-      >
-        Tags Selecionadas
-      </div>
-      <div
-        className="sidebar-content"
-        style={{
-          display: visibleSidebarContent["tags-selecionadas"]
-            ? "block"
-            : "none",
-        }}
-      >
-        <SelectedTags />
-      </div>
-
-      <Divider />
-
       {/* Matriz de Incidência */}
       <div
         className="sidebar-title matrix"
