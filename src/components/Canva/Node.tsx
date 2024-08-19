@@ -226,6 +226,8 @@ const Node: React.FC = () => {
     tolerance: edge.tolerance,
   }));
 
+  const edgeNames = edges.map((edge) => edge.nome);
+
   return (
     <div
       className={`node-container ${isSidebarVisible ? "" : "sidebar-hidden"}`}
@@ -261,7 +263,7 @@ const Node: React.FC = () => {
         </ReactFlow>
       </div>
 
-      {isSidebarVisible && <SidebarComponent nodes={nodes} edges={edges} />}
+      {isSidebarVisible && <SidebarComponent nodes={nodes} edges={edges} edgeNames={edgeNames} />}
 
       {isGraphVisible && (
         <div className="graph-component">

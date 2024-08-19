@@ -11,11 +11,13 @@ import ExistingTags from "./ExistingTags";
 interface SidebarComponentProps {
   nodes: any[];
   edges: any[];
+  edgeNames: string[]; // Adicione esta linha
 }
 
 const SidebarComponent: React.FC<SidebarComponentProps> = ({
   nodes,
   edges,
+  edgeNames, // Receba edgeNames como prop
 }) => {
   const [visibleSidebarContent, setVisibleSidebarContent] = useState<{
     [key: string]: boolean;
@@ -46,7 +48,7 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
       {/* Tags Existentes - Cannot be minimized */}
       <div className="sidebar-title">Tags Existentes</div>
       <div className="sidebar-content">
-        <ExistingTags />  
+        <ExistingTags edgeNames={edgeNames} />  {/* Passe edgeNames para ExistingTags */}
       </div>
 
       <Divider />
