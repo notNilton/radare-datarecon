@@ -15,12 +15,6 @@ import cnTwoTwo from "./customNodeTwoTwo";
 import cnTwoOne from "./customNodeTwoOne";
 import cnOneTwo from "./customNodeOneTwo";
 
-// Função para gerar nomes aleatórios
-const generateRandomName = () => {
-  const names = ["Laravel", "Alucard", "Sigma", "Delta", "Orion", "Phoenix"];
-  return names[Math.floor(Math.random() * names.length)];
-};
-
 const nodeTypes = {
   cnOneThree: cnOneThree,
   cnOneOne: cnOneOne,
@@ -111,8 +105,8 @@ const initialEdges = [
     target: "node-1",
     value: 161,
     tolerance: 0.05,
-    nome: generateRandomName(),
-    label: `Nome: ${generateRandomName()}, Valor: 161, Tolerância: 0.05`,
+    nome: "Alucard",
+    label: "Nome: Alucard, Valor: 161, Tolerância: 0.05",
     markerEnd: {
       type: MarkerType.ArrowClosed,
     },
@@ -125,8 +119,8 @@ const initialEdges = [
     target: "output-1",
     value: 79,
     tolerance: 0.01,
-    nome: generateRandomName(),
-    label: `Nome: ${generateRandomName()}, Valor: 79, Tolerância: 0.01`,
+    nome: "Laravel",
+    label: "Nome: Laravel, Valor: 79, Tolerância: 0.01",
     markerEnd: {
       type: MarkerType.ArrowClosed,
     },
@@ -139,8 +133,8 @@ const initialEdges = [
     target: "node-2",
     value: 80,
     tolerance: 0.01,
-    nome: generateRandomName(),
-    label: `Nome: ${generateRandomName()}, Valor: 80, Tolerância: 0.01`,
+    nome: "Orion",
+    label: "Nome: Orion, Valor: 80, Tolerância: 0.01",
     markerEnd: {
       type: MarkerType.ArrowClosed,
     },
@@ -152,8 +146,8 @@ const initialEdges = [
     target: "output-2",
     value: 20,
     tolerance: 0.1,
-    nome: generateRandomName(),
-    label: `Nome: ${generateRandomName()}, Valor: 20, Tolerância: 0.1`,
+    nome: "Sigma",
+    label: "Nome: Sigma, Valor: 20, Tolerância: 0.1",
     markerEnd: {
       type: MarkerType.ArrowClosed,
     },
@@ -166,8 +160,8 @@ const initialEdges = [
     target: "output-3",
     value: 63,
     tolerance: 0.05,
-    nome: generateRandomName(),
-    label: `Nome: ${generateRandomName()}, Valor: 63, Tolerância: 0.05`,
+    nome: "Phoenix",
+    label: "Nome: Phoenix, Valor: 63, Tolerância: 0.05",
     markerEnd: {
       type: MarkerType.ArrowClosed,
     },
