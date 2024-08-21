@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Chart } from "primereact/chart";
 import "./GraphComponent.scss";
 
@@ -8,19 +8,53 @@ interface GraphComponentProps {
   edgeNames: string[]; // Array de nomes das arestas
 }
 
-const GraphComponent: React.FC<GraphComponentProps> = ({ nodes, edges, edgeNames }) => {
-  const lineChartData = {
-    labels: Array.from({ length: 15 }, (_, i) => `Point ${i + 1}`),
-    datasets: edgeNames.map((name, index) => {
-      const edge = edges.find(edge => edge.nome === name); // Encontra a aresta correspondente pelo nome
-      return {
-        label: name, // Usando o nome da aresta como label
-        data: Array.from({ length: 15 }, () => Math.floor(Math.random() * 100)), // Dados aleatórios ou personalizados
-        fill: false,
-        borderColor: `hsl(${index * 72}, 70%, 50%)`, // Cor dinâmica baseada no índice
-      };
-    }),
+const GraphComponent: React.FC<GraphComponentProps> = ({ edgeNames }) => {
+  const [lineChartData, setLineChartData] = useState<any>(null);
+
+  const loadGraphData = () => {
+    const storedData = Object.keys(localStorage).map((key) => {
+      try {
+        const item = localStorage.getItem(key);
+        return item ? JSON.parse(item) : null;
+      } catch (error) {
+        console.error("Erro ao carregar dados do localStorage:", error);
+        return null;
+      }
+    }).filter(Boolean);
+
+    // Número de dados que queremos plotar no eixo X (assumindo que cada aresta tem o mesmo número de valores)
+    const dataLength = storedData.length;
+    const labels = Array.from({ length: dataLength }, (_, i) => `Dado ${i + 1}`);
+
+    const chartData = {
+      labels, // Usando índices como labels no eixo X
+      datasets: edgeNames.map((name, index) => {
+        const correspondingData = storedData.map(data => data.reconciledMeasures[index]);
+        return {
+          label: name, // Nome da aresta como label da linha
+          data: correspondingData, // Usando os valores reconciliados correspondentes
+          fill: false,
+          borderColor: `hsl(${index * 72}, 70%, 50%)`, // Cor dinâmica baseada no índice
+        };
+      }),
+    };
+
+    setLineChartData(chartData);
   };
+
+  useEffect(() => {
+    loadGraphData();
+
+    const handleStorageChange = () => {
+      loadGraphData();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [edgeNames]); // Certifique-se de que só atualiza quando `edgeNames` mudar
 
   const lineChartOptions = {
     responsive: true,
@@ -38,10 +72,15 @@ const GraphComponent: React.FC<GraphComponentProps> = ({ nodes, edges, edgeNames
         <a href="#analise-resumida">Análise Resumida</a>
       </div>
       <div className="graph-bar-content">
-        <Chart type="line" data={lineChartData} options={lineChartOptions} />
+        {lineChartData ? (
+          <Chart type="line" data={lineChartData} options={lineChartOptions} />
+        ) : (
+          <div>Nenhum dado disponível para exibição no gráfico</div>
+        )}
       </div>
     </div>
   );
 };
 
-export default GraphComponent;
+// Usando React.memo para evitar re-renderizações desnecessárias
+export default React.memo(GraphComponent);

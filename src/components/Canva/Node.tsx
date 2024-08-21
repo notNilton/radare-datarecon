@@ -103,9 +103,10 @@ const Node: React.FC = () => {
   };
 
   const handleReconcile = () => {
+    const edgeNames = edges.map((edge) => edge.nome);
     calcularReconciliacao(nodes, edges, reconciliarApi, (message) => {
       console.log(message);
-    });
+    }, edgeNames);  // Passando edgeNames para a função
   };
 
   const toggleSidebar = () => {
