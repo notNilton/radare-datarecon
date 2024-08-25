@@ -1,6 +1,5 @@
-// NavbarComponent.tsx
 import React from "react";
-import { AccountCircle } from "@mui/icons-material";
+import { FaUserCircle } from "react-icons/fa"; // Ícone de usuário do Font Awesome
 import "./NavbarComponent.scss";
 
 interface NavbarComponentProps {
@@ -20,31 +19,31 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
             <button className="link-button">Arquivo</button>
             <ul>
               <li>
-                <a href="novo">Novo</a>
+                <button className="link-button" onClick={() => console.log('Novo')}>Novo</button>
               </li>
               <li>
-                <a href="abrir">Abrir</a>
+                <button className="link-button" onClick={() => console.log('Abrir')}>Abrir</button>
               </li>
               <li>
-                <a href="fechar">Fechar</a>
+                <button className="link-button" onClick={() => console.log('Fechar')}>Fechar</button>
               </li>
               <li>
-                <a href="salvar">Salvar</a>
+                <button className="link-button" onClick={() => console.log('Salvar')}>Salvar</button>
               </li>
               <li>
-                <a href="salvar-como">Salvar Como</a>
+                <button className="link-button" onClick={() => console.log('Salvar Como')}>Salvar Como</button>
               </li>
               <li>
-                <a href="importar">Importar</a>
+                <button className="link-button" onClick={() => console.log('Importar')}>Importar</button>
               </li>
               <li>
-                <a href="exportar">Exportar</a>
+                <button className="link-button" onClick={() => console.log('Exportar')}>Exportar</button>
               </li>
               <li>
-                <a href="exemplos">Exemplos</a>
+                <button className="link-button" onClick={() => console.log('Exemplos')}>Exemplos</button>
               </li>
               <li>
-                <a href="sair">Sair</a>
+                <button className="link-button" onClick={() => console.log('Sair')}>Sair</button>
               </li>
             </ul>
           </li>
@@ -52,22 +51,22 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
             <button className="link-button">Editar</button>
             <ul>
               <li>
-                <a href="retornar">Retornar</a>
+                <button className="link-button" onClick={() => console.log('Retornar')}>Retornar</button>
               </li>
               <li>
-                <a href="avancar">Avançar</a>
+                <button className="link-button" onClick={() => console.log('Avançar')}>Avançar</button>
               </li>
               <li>
-                <a href="cortar">Cortar</a>
+                <button className="link-button" onClick={() => console.log('Cortar')}>Cortar</button>
               </li>
               <li>
-                <a href="copiar">Copiar</a>
+                <button className="link-button" onClick={() => console.log('Copiar')}>Copiar</button>
               </li>
               <li>
-                <a href="colar">Colar</a>
+                <button className="link-button" onClick={() => console.log('Colar')}>Colar</button>
               </li>
               <li>
-                <a href="deletar">Deletar</a>
+                <button className="link-button" onClick={() => console.log('Deletar')}>Deletar</button>
               </li>
             </ul>
           </li>
@@ -75,25 +74,25 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
             <button className="link-button">Desenhar</button>
             <ul>
               <li>
-                <a href="objetos-padroes">Lista de Objetos Padrões</a>
+                <button className="link-button" onClick={() => console.log('Lista de Objetos Padrões')}>Lista de Objetos Padrões</button>
               </li>
               <li>
-                <a href="agrupar-objetos">Agrupar Objetos</a>
+                <button className="link-button" onClick={() => console.log('Agrupar Objetos')}>Agrupar Objetos</button>
               </li>
               <li>
-                <a href="desagrupar-objetos">Desagrupar Objetos</a>
+                <button className="link-button" onClick={() => console.log('Desagrupar Objetos')}>Desagrupar Objetos</button>
               </li>
             </ul>
           </li>
           <li className="navbar-item">
-            <button className="link-button">Ajuda</button>
+            <button className="link-button" onClick={() => console.log('Ajuda')}>Ajuda</button>
           </li>
           <li className="navbar-item" onClick={toggleAboutPopup}>
             <button className="link-button">Sobre</button>
           </li>
           <li className="navbar-item navbar-icon">
             <span className="project-version">Versão: {version}</span>
-            <AccountCircle className="user-icon" />
+            <FaUserCircle className="user-icon" /> {/* Ícone de conta usando react-icons */}
           </li>
         </ul>
       </nav>

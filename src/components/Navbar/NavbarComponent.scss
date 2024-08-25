@@ -1,84 +1,84 @@
-
 .header {
-    background: var(--colorHeader);
-  }
-  
-  .navbar-menu {
-    position: relative;
-    display: flex;
-  }
-  
-  .navbar-icon {
-    position: absolute;
-    top: 50%;
-    right: 5px;
-    transform: translateY(-50%);
-    display: flex;
-    align-items: center;
-  
-    .user-icon {
-      width: 24px;
-      height: 24px;
-  
-      &:hover {
-        transform: scale(1.2);
-      }
-    }
-  
-    .project-version {
-      margin-right: 8px;
-      font-size: 1em;
-      color: #666;
-    }
-  }
-  
-  .navbar-item {
-    padding: 5px;
-    padding-inline: 10px;
-    margin-inline: 2px;
-  
-    > a {
-      transition: color 0.2s;
-    }
-  
-    > ul {
-      visibility: hidden;
-      position: absolute;
-      display: block;
-      margin: 5px -10px;
-      padding: 0;
-      background: var(--colorAccent);
-  
-      > li {
-        padding: 10px;
-  
-        > a {
-          color: var(--colorWhite);
-        }
-  
-        &:hover {
-          background-color: var(--colorBg);
-          cursor: pointer;
-  
-          > a {
-            color: var(--colorBlack);
-          }
-        }
-      }
-    }
-  
+  background: var(--colorHeader);
+}
+
+.navbar-menu {
+  position: relative;
+  display: flex;
+}
+
+.navbar-icon {
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+
+  .user-icon {
+    width: 24px;
+    height: 24px;
+    font-size: 24px; /* O tamanho do ícone pode ser controlado pelo font-size */
+
     &:hover {
-      background: var(--colorAccent);
-      cursor: pointer;
-  
+      transform: scale(1.2);
+    }
+  }
+
+  .project-version {
+    margin-right: 8px;
+    font-size: 1em;
+    color: #666;
+  }
+}
+
+.navbar-item {
+  padding: 5px;
+  padding-inline: 10px;
+  margin-inline: 2px;
+
+  > a {
+    transition: color 0.2s;
+  }
+
+  > ul {
+    visibility: hidden;
+    position: absolute;
+    display: block;
+    margin: 5px -10px;
+    padding: 0;
+    background: var(--colorAccent);
+
+    > li {
+      padding: 10px;
+
       > a {
-        color: #F9F8FD;
+        color: var(--colorWhite);
       }
-  
-      > ul {
-        z-index: 3;
-        visibility: visible;
-        opacity: 1;
+
+      &:hover {
+        background-color: var(--colorBg);
+        cursor: pointer;
+
+        > a {
+          color: var(--colorBlack);
+        }
       }
     }
   }
+
+  &:hover {
+    background: var(--colorAccent);
+    cursor: pointer;
+
+    > a {
+      color: #f9f8fd;
+    }
+
+    > ul {
+      z-index: 3;
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+}
