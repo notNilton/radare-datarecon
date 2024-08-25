@@ -1,4 +1,4 @@
-# recyon - A web-based data reconciliation dashboard
+# RADAR - Reconciliação e Análise de Dados em Ambiente Responsivo
 
 Recyon is an advanced web-based application built using TypeScript, React.js, and ReactFlow. This dashboard allows users to create detailed models of plant sensors, input measurement data, and perform data reconciliation to identify and analyze anomalies.
 
