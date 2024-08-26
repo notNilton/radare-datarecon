@@ -1,13 +1,17 @@
+@import "../../styles/Variables.scss";
+
 .header {
-  background: var(--colorHeader);
+  background: $ColorBgPrimary;
 }
 
 .navbar-menu {
   position: relative;
   display: flex;
+  background-color: $ColorPrimary;
 }
 
 .navbar-icon {
+  background-color: transparent;
   position: absolute;
   top: 50%;
   right: 5px;
@@ -16,19 +20,15 @@
   align-items: center;
 
   .user-icon {
-    width: 24px;
-    height: 24px;
-    font-size: 24px; /* O tamanho do ícone pode ser controlado pelo font-size */
+    width: auto;
+    height: 100%;
+    color: $ColorWhite;
+    background-color: transparent;
 
     &:hover {
       transform: scale(1.2);
+      color: $ColorAccent;
     }
-  }
-
-  .project-version {
-    margin-right: 8px;
-    font-size: 1em;
-    color: #666;
   }
 }
 
@@ -36,9 +36,12 @@
   padding: 5px;
   padding-inline: 10px;
   margin-inline: 2px;
+  background-color: $ColorBgPrimary;
 
-  > a {
+  > button {
     transition: color 0.2s;
+    color: $ColorBlack;
+    font-weight: bold; // Tornando o texto em negrito
   }
 
   > ul {
@@ -47,32 +50,34 @@
     display: block;
     margin: 5px -10px;
     padding: 0;
-    background: var(--colorAccent);
+    background: $ColorPrimary;
 
     > li {
       padding: 10px;
 
-      > a {
-        color: var(--colorWhite);
+      > button {
+        color: $ColorBlack;
+        font-weight: bold; // Tornando o texto em negrito
       }
 
       &:hover {
-        background-color: var(--colorBg);
+        background-color: $ColorAccent;
         cursor: pointer;
 
-        > a {
-          color: var(--colorBlack);
+        > button {
+          color: $ColorWhite;
         }
       }
     }
   }
 
   &:hover {
-    background: var(--colorAccent);
+    background: $ColorAccent;
     cursor: pointer;
 
-    > a {
-      color: #f9f8fd;
+    > button {
+      color: $ColorWhite;
+      font-weight: bold; // Tornando o texto em negrito
     }
 
     > ul {

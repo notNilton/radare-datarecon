@@ -1,5 +1,5 @@
 import React from "react";
-import { FaUserCircle } from "react-icons/fa"; // Ícone de usuário do Font Awesome
+import { FaUserCircle } from "react-icons/fa";
 import "./NavbarComponent.scss";
 
 interface NavbarComponentProps {
@@ -91,8 +91,7 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
             <button className="link-button">Sobre</button>
           </li>
           <li className="navbar-item navbar-icon">
-            <span className="project-version">Versão: {version}</span>
-            <FaUserCircle className="user-icon" /> {/* Ícone de conta usando react-icons */}
+            <FaUserCircle className="user-icon" />
           </li>
         </ul>
       </nav>
@@ -101,3 +100,4 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
 };
 
 export default NavbarComponent;
+
