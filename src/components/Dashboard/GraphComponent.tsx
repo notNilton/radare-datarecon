@@ -56,7 +56,7 @@ const GraphComponent: React.FC = () => {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: "left",
+        display: false, // Desabilita a exibição da legenda
       },
     },
   };
