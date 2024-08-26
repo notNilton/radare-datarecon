@@ -1,3 +1,5 @@
+@import "../../styles/Variables.scss";
+
 /* Layout Styles */
 .node-container {
   background-color: white;
@@ -25,7 +27,7 @@
     position: absolute;
     top: 0px; /* 15px da borda superior */
     right: 0px; /* 15px da borda direita */
-    background-color: #007bff; /* Cor de fundo para visualização */
+    background-color: $ColorBgPrimary;
     color: white;
     padding: 10px;
     border-radius: 5px;

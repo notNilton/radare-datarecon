@@ -1,63 +1,70 @@
+@import "../../styles/Variables.scss";
+
 .panel-buttons-container {
   width: 175px;
   display: flex;
   flex-direction: column;
   padding: 10px;
-  background-color: #f8f9fa;
+  background-color: $ColorBgPrimary;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-weight: bold; // Negrito para todo o texto dentro do container
 
   .p-button {
+    padding: 5px;
     margin-bottom: 8px;
     font-size: 0.85rem;
-    font-weight: 500;
+    font-weight: bold; // Negrito para os botões
     border-radius: 4px;
-    transition: background-color 0.3s ease, transform 0.3s ease,
-      box-shadow 0.3s ease;
+    color:  $ColorBlack;
+
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 
     &:focus {
       outline: none;
-      // box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+      box-shadow: 0 0 0 3px rgba($ColorSecondary, 0.5);
     }
 
     &.p-button-primary {
-      background-color: #007bff;
-      border-color: #007bff;
+      background-color: $ColorPrimary;
+      border-color: $ColorPrimary;
 
       &:hover {
-        background-color: #0056b3;
-        border-color: #0056b3;
+        background-color: $ColorAccent;
+        border-color: $ColorPrimary;
       }
     }
 
     &.p-button-secondary {
-      background-color: #6c757d;
-      border-color: #6c757d;
+      background-color: $ColorSecondary;
+      border-color: $ColorSecondary;
 
       &:hover {
-        background-color: #5a6268;
-        border-color: #545b62;
+        background-color: $ColorSecondary;
+        border-color: $ColorSecondary;
       }
     }
 
     &.p-button-info {
-      background-color: #17a2b8;
-      border-color: #17a2b8;
+      background-color: $ColorBgSecondary;
+      border-color: $ColorBgSecondary;
 
       &:hover {
-        background-color: #117a8b;
-        border-color: #117a8b;
+        background-color: $ColorBgSecondary;
+        border-color: $ColorBgSecondary;
       }
     }
 
     &.p-button-success {
-      background-color: #28a745;
-      border-color: #28a745;
+      background-color: $ColorPrimary;
+      border-color: $ColorPrimary;
 
       &:hover {
-        background-color: #218838;
-        border-color: #1e7e34;
+        background-color: $ColorAccent;
+        border-color: $ColorAccent;
       }
+    }
+    &:hover{
+      color:  $ColorWhite;
     }
   }
 }

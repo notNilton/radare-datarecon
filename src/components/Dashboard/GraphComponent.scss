@@ -1,13 +1,15 @@
+@import "../../styles/Variables.scss";
+
 .graph-bar-title {
-  background-color: #f5f5f5;
+  background-color: $ColorBgPrimary; // Substituído por $ColorBgPrimary
   padding: 10px;
   font-weight: bold;
   text-align: center;
 }
 
 .graph-bar-content canvas {
+  background-color: $ColorBgSecondary;
   width: 100% !important; /* Garantir que o canvas ocupe 100% da largura */
   height: auto !important; /* Ajustar a altura automaticamente */
   max-height: 175px; /* Limitar a altura máxima ao tamanho do container */
-  // object-fit: contain;
 }
