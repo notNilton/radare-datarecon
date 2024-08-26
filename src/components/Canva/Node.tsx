@@ -7,6 +7,8 @@ import ReactFlow, {
   useEdgesState,
   addEdge,
   BackgroundVariant,
+  Connection,
+  Edge,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import "./Node.scss";
@@ -53,6 +55,21 @@ const Node: React.FC = () => {
   useEffect(() => {
     edgesRef.current = edges;
   }, [edges]);
+
+  const onConnect = useCallback(
+    (params: Edge | Connection) => {
+      const newEdge = {
+        ...params,
+        nome: generateRandomName(), // Adiciona um nome aleatório
+        label: `Nome: ${generateRandomName()}, Valor: ${
+          params.label || ""
+        }, Tolerância: ${params.tolerance || ""}`,
+        type: "step", // Definindo o tipo da aresta como 'step'
+      };
+      setEdges((eds) => addEdge(newEdge, eds));
+    },
+    [setEdges]
+  );
 
   const addNode = useCallback(
     (nodeType: string) => {
@@ -104,9 +121,15 @@ const Node: React.FC = () => {
 
   const handleReconcile = () => {
     const edgeNames = edges.map((edge) => edge.nome);
-    calcularReconciliacao(nodes, edges, reconciliarApi, (message) => {
-      console.log(message);
-    }, edgeNames);  // Passando edgeNames para a função
+    calcularReconciliacao(
+      nodes,
+      edges,
+      reconciliarApi,
+      (message) => {
+        console.log(message);
+      },
+      edgeNames
+    ); // Passando edgeNames para a função
   };
 
   const toggleSidebar = () => {
@@ -121,21 +144,27 @@ const Node: React.FC = () => {
     console.log("Nodes:", nodesRef.current);
     console.log("Edges:", edgesRef.current);
     alert(
-      `Nodes: ${JSON.stringify(nodesRef.current, null, 2)}\nEdges: ${JSON.stringify(edgesRef.current, null, 2)}`
+      `Nodes: ${JSON.stringify(
+        nodesRef.current,
+        null,
+        2
+      )}\nEdges: ${JSON.stringify(edgesRef.current, null, 2)}`
     );
   };
 
   const edgeNames = edges.map((edge) => edge.nome);
 
   return (
-    <div className={`node-container ${isSidebarVisible ? "" : "sidebar-hidden"}`}>
+    <div
+      className={`node-container ${isSidebarVisible ? "" : "sidebar-hidden"}`}
+    >
       <div className="reactflow-component">
         <ReactFlow
           nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
-          onConnect={addEdge}
+          onConnect={onConnect} // Use o seu onConnect personalizado aqui
           nodeTypes={nodeTypes}
           fitView
         >
@@ -157,7 +186,11 @@ const Node: React.FC = () => {
 
         {isSidebarVisible && (
           <div className="sidebar-component">
-            <SidebarComponent nodes={nodes} edges={edges} edgeNames={edgeNames} />
+            <SidebarComponent
+              nodes={nodes}
+              edges={edges}
+              edgeNames={edgeNames}
+            />
           </div>
         )}
       </div>
