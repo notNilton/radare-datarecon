@@ -10,7 +10,7 @@ const GraphComponent: React.FC = () => {
       .map((key) => {
         try {
           const item = localStorage.getItem(key);
-          return item ? JSON.parse(item) : null;
+          return item ? JSON.parse(item).reconciledMeasures : null;
         } catch (error) {
           console.error("Erro ao carregar dados do localStorage:", error);
           return null;
@@ -18,25 +18,27 @@ const GraphComponent: React.FC = () => {
       })
       .filter(Boolean);
 
-    const dataLength = storedData.length;
-    const labels = Array.from(
-      { length: dataLength },
-      (_, i) => `Dado ${i + 1}`
-    );
+    if (storedData.length > 0) {
+      const dataLength = storedData[0].length;
+      const labels = Array.from(
+        { length: dataLength },
+        (_, i) => `Dado ${i + 1}`
+      );
 
-    const chartData = {
-      labels, // Usando índices como labels no eixo X
-      datasets: [
-        {
-          label: "Template Data", // Um label padrão
-          data: storedData.map((data) => data.reconciledMeasures[0]), // Usando o primeiro conjunto de dados reconciliados
+      const chartData = {
+        labels, // Usando índices como labels no eixo X
+        datasets: storedData.map((data, index) => ({
+          label: `Dataset ${index + 1}`,
+          data: data || [],
           fill: false,
-          borderColor: "hsl(0, 70%, 50%)", // Cor estática para o gráfico
-        },
-      ],
-    };
+          borderColor: `hsl(${index * 72}, 70%, 50%)`, // Cor dinâmica baseada no índice
+        })),
+      };
 
-    setLineChartData(chartData);
+      setLineChartData(chartData);
+    } else {
+      setLineChartData(null);
+    }
   };
 
   useEffect(() => {
@@ -51,7 +53,7 @@ const GraphComponent: React.FC = () => {
     return () => {
       window.removeEventListener("storage", handleStorageChange);
     };
-  }, []); // Remove `edgeNames` das dependências
+  }, []); // Não há props a serem monitoradas
 
   const lineChartOptions = {
     responsive: true,
