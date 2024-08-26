@@ -1,26 +1,26 @@
-# RADAR - Reconciliação e Análise de Dados em Ambiente Responsivo
+# RADARE - Reconciliation and Data Analysis in a Responsive Environment
 
-O projeto **RADAR** é uma aplicação projetada para facilitar a reconciliação e análise de dados em um ambiente responsivo. Utilizando as mais modernas tecnologias de front-end, o RADAR oferece uma interface intuitiva e eficiente para o gerenciamento de dados, garantindo agilidade e precisão nas operações de reconciliação.
+The **RADARE** project is an application designed to facilitate data reconciliation and analysis in a responsive environment. Leveraging the latest front-end technologies, RADARE offers an intuitive and efficient interface for data management, ensuring agility and precision in reconciliation operations.
 
-## Funcionalidades
+## Features
 
-- **Reconciliação de Dados:** Ferramentas robustas para comparar e reconciliar dados de diferentes fontes, assegurando a consistência e integridade das informações.
-- **Análise de Dados:** Interface visual para análise de dados, com suporte a gráficos e relatórios customizáveis.
-- **Ambiente Responsivo:** Projetado para oferecer uma experiência otimizada em qualquer dispositivo, seja desktop, tablet ou smartphone.
-- **Integração Contínua:** Suporte para integração com sistemas externos, facilitando a importação e exportação de dados.
+- **Data Reconciliation:** Robust tools for comparing and reconciling data from different sources, ensuring consistency and integrity of information.
+- **Data Analysis:** Visual interface for data analysis, with support for customizable graphs and reports.
+- **Responsive Environment:** Designed to provide an optimized experience on any device, whether desktop, tablet, or smartphone.
+- **Continuous Integration:** Support for integration with external systems, facilitating data import and export.
 
-## Tecnologias Utilizadas
+## Technologies Used
 
-O RADAR é construído sobre uma base sólida de tecnologias modernas, incluindo:
+RADARE is built on a solid foundation of modern technologies, including:
 
-- **React e Vite:** Utilizando Vite como bundler para um ambiente de desenvolvimento ultrarrápido, com suporte a Hot Module Replacement (HMR) para React.
-- **SWC/Babel:** Suporte a plugins de Fast Refresh com Babel ou SWC, conforme as necessidades do projeto.
-- **TypeScript:** Tipagem estática para maior segurança e produtividade no desenvolvimento.
+- **React and Vite:** Using Vite as a bundler for an ultra-fast development environment, with support for Hot Module Replacement (HMR) for React.
+- **SWC/Babel:** Support for Fast Refresh plugins with Babel or SWC, depending on the project’s needs.
+- **TypeScript:** Static typing for greater security and productivity in development.
 
-## Contribuindo
+## Contributing
 
-Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull requests para melhorias e correções.
+Contributions are welcome! Feel free to open issues and pull requests for improvements and fixes.
 
-## Licença
+## License
 
-Este projeto está licenciado sob a Licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
