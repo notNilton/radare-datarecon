@@ -2,13 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Chart } from "primereact/chart";
 import "./GraphComponent.scss";
 
-interface GraphComponentProps {
-  nodes: any[];
-  edges: any[];
-  edgeNames: string[]; // Array de nomes das arestas
-}
-
-const GraphComponent: React.FC<GraphComponentProps> = ({ edgeNames }) => {
+const GraphComponent: React.FC = () => {
   const [lineChartData, setLineChartData] = useState<any>(null);
 
   const loadGraphData = () => {
@@ -24,7 +18,6 @@ const GraphComponent: React.FC<GraphComponentProps> = ({ edgeNames }) => {
       })
       .filter(Boolean);
 
-    // Número de dados que queremos plotar no eixo X (assumindo que cada aresta tem o mesmo número de valores)
     const dataLength = storedData.length;
     const labels = Array.from(
       { length: dataLength },
@@ -33,17 +26,14 @@ const GraphComponent: React.FC<GraphComponentProps> = ({ edgeNames }) => {
 
     const chartData = {
       labels, // Usando índices como labels no eixo X
-      datasets: edgeNames.map((name, index) => {
-        const correspondingData = storedData.map(
-          (data) => data.reconciledMeasures[index]
-        );
-        return {
-          label: name, // Nome da aresta como label da linha
-          data: correspondingData, // Usando os valores reconciliados correspondentes
+      datasets: [
+        {
+          label: "Template Data", // Um label padrão
+          data: storedData.map((data) => data.reconciledMeasures[0]), // Usando o primeiro conjunto de dados reconciliados
           fill: false,
-          borderColor: `hsl(${index * 72}, 70%, 50%)`, // Cor dinâmica baseada no índice
-        };
-      }),
+          borderColor: "hsl(0, 70%, 50%)", // Cor estática para o gráfico
+        },
+      ],
     };
 
     setLineChartData(chartData);
@@ -61,7 +51,7 @@ const GraphComponent: React.FC<GraphComponentProps> = ({ edgeNames }) => {
     return () => {
       window.removeEventListener("storage", handleStorageChange);
     };
-  }, [edgeNames]); // Certifique-se de que só atualiza quando `edgeNames` mudar
+  }, []); // Remove `edgeNames` das dependências
 
   const lineChartOptions = {
     responsive: true,

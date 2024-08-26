@@ -228,7 +228,7 @@ const Node: React.FC = () => {
 
       {isGraphVisible && (
         <div className="graph-component">
-          <GraphComponent nodes={nodes} edges={edges} edgeNames={edgeNames} />
+          <GraphComponent />
         </div>
       )}
     </div>
