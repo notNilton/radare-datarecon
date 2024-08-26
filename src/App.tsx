@@ -16,11 +16,8 @@ const App: React.FC = () => {
       <NavbarComponent toggleAboutPopup={toggleAboutPopup} version={""} />
 
       <Node />
-
-      {/* <AboutModal showAbout={showAbout} toggleAboutPopup={toggleAboutPopup} /> */}
     </div>
   );
 };
 
 export default App;
-

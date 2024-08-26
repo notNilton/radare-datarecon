@@ -10,7 +10,7 @@ const GraphComponent: React.FC = () => {
       .map((key) => {
         try {
           const item = localStorage.getItem(key);
-          return item ? JSON.parse(item).reconciledMeasures : null;
+          return item ? JSON.parse(item) : null;
         } catch (error) {
           console.error("Erro ao carregar dados do localStorage:", error);
           return null;
@@ -19,17 +19,13 @@ const GraphComponent: React.FC = () => {
       .filter(Boolean);
 
     if (storedData.length > 0) {
-      const dataLength = storedData[0].length;
-      const labels = Array.from(
-        { length: dataLength },
-        (_, i) => `Dado ${i + 1}`
-      );
+      const labels = storedData[0].names; // Usando os nomes como labels no eixo X
 
       const chartData = {
-        labels, // Usando índices como labels no eixo X
+        labels, // Usando nomes como labels no eixo X
         datasets: storedData.map((data, index) => ({
-          label: `Dataset ${index + 1}`,
-          data: data || [],
+          label: `Medição ${index + 1}`,
+          data: data.reconciledMeasures || [],
           fill: false,
           borderColor: `hsl(${index * 72}, 70%, 50%)`, // Cor dinâmica baseada no índice
         })),
