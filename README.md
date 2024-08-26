@@ -24,7 +24,3 @@ Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull re
 ## Licença
 
 Este projeto está licenciado sob a Licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
----
-
-Esse README fornece uma descrição clara e direta do projeto RADAR, destacando suas funcionalidades, tecnologias utilizadas, e orientações para desenvolvimento e expansão do código.
