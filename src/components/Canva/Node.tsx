@@ -71,6 +71,36 @@ const Node: React.FC = () => {
     [setEdges]
   );
 
+  const onEdgeDoubleClick = (edgeId: string) => {
+    const labelValue = window.prompt(
+      "Digite um valor para o rótulo da aresta:"
+    );
+    const toleranceValue = window.prompt("Digite um valor para a tolerância:");
+
+    if (
+      labelValue &&
+      toleranceValue &&
+      !isNaN(Number(labelValue)) &&
+      !isNaN(Number(toleranceValue))
+    ) {
+      const numericLabel = parseFloat(labelValue);
+      const numericTolerance = parseFloat(toleranceValue);
+
+      setEdges((prevEdges) =>
+        prevEdges.map((edge) =>
+          edge.id === edgeId
+            ? {
+                ...edge,
+                value: numericLabel,
+                tolerance: numericTolerance,
+                label: `Nome: ${edge.nome}, Valor: ${numericLabel}, Tolerância: ${numericTolerance}`,
+              }
+            : edge
+        )
+      );
+    }
+  };
+
   const addNode = useCallback(
     (nodeType: string) => {
       const newNode = {
@@ -167,6 +197,7 @@ const Node: React.FC = () => {
           onConnect={onConnect} // Use o seu onConnect personalizado aqui
           nodeTypes={nodeTypes}
           fitView
+          onEdgeDoubleClick={(event, edge) => onEdgeDoubleClick(edge.id)}
         >
           <Panel position="top-left" className="top-left-panel custom-panel">
             <PanelButtons
