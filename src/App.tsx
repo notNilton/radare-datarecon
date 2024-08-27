@@ -3,6 +3,7 @@ import "./App.scss";
 import "./styles/global.css";
 import Node from "./components/Canva/Node";
 import NavbarComponent from "./components/Navbar/NavbarComponent";
+import AboutModal from "./components/About/AboutModal";
 
 const App: React.FC = () => {
   const [showAbout, setShowAbout] = useState<boolean>(false);
@@ -16,6 +17,7 @@ const App: React.FC = () => {
       <NavbarComponent toggleAboutPopup={toggleAboutPopup} version={""} />
 
       <Node />
+      <AboutModal showAbout={undefined} toggleAboutPopup={undefined} />
     </div>
   );
 };
