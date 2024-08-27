@@ -67,48 +67,69 @@ export const reconciliarApi = async (
 ) => {
   try {
     atualizarProgresso("Enviando dados para o servidor...");
+
+    // Criação do timestamp
+    const timestamp = new Date().toISOString();
+
+    // Criação do ID único
+    const id = `reconciliation_${Date.now()}`;
+
+    // Criação do pacote de dados
+    const pacote = {
+      data: {
+        id,
+        description: "Reconciliation for Q3 financial data across departments", // Descrição fixa, pode ser alterada dinamicamente
+        user: "John Doe", // Usuário fixo, pode ser alterado dinamicamente
+        timestamp,
+        names, // Lista de nomes
+        incidence_matrix, // Matriz de incidência
+        unreconciledata: [
+          {
+            values, // Valores não reconciliados
+            tolerances, // Tolerâncias
+          },
+        ],
+      },
+    };
+
+    // Loga o pacote no console antes de enviá-lo
+    console.log("Pacote a ser enviado:", JSON.stringify(pacote, null, 2));
+
+    // Envio do pacote para o servidor
     const response = await fetch("http://localhost:5000/reconcile", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        incidence_matrix: incidence_matrix,
-        values: values,
-        tolerances: tolerances,
-        names: names, // Enviando o array de nomes para o servidor
-      }),
+      body: JSON.stringify(pacote),
     });
 
     if (response.ok) {
       const data = await response.json();
 
-      // Corrigido: Agora os dados são corretamente exibidos no console
       console.log("Dados recebidos:", data);
 
-      const reconciledMeasures = JSON.stringify(data.reconciled_values, null, 2);
-      const correction = JSON.stringify(data.correction, null, 2);
+      const reconciledData = JSON.stringify(data.data.reconciledata, null, 2);
 
-      console.log("Valores Reconciliados:", reconciledMeasures);
-      console.log("Correções:", correction);
-
-      // Gera um ID único
-      const id = Date.now().toString();
-
-      // Corrigido: Armazena os dados corretos no localStorage
-      const storedData = {
-        id,
-        reconciledMeasures: data.reconciled_values, // Armazena o array original em vez de string
-        correction: data.correction,               // Armazena o array original em vez de string
-        names: data.names,                         // Inclui os nomes para referência
-      };
+      console.log("Dados Reconciliados:", reconciledData);
 
       // Armazena os dados no localStorage
-      localStorage.setItem(id, JSON.stringify(storedData));
+      const storedData = {
+        id: data.data.id,
+        reconciledata: data.data.reconciledata,
+        names: data.data.names,
+        timestamp: data.data.timestamp,
+        description: data.data.description,
+        user: data.data.user,
+      };
+
+      console.log(storedData);
+
+      localStorage.setItem(data.data.id, JSON.stringify(storedData));
       window.dispatchEvent(new Event("storage"));
 
       atualizarProgresso(
-        `Reconciliação bem-sucedida.\n\nValores Reconciliados: ${reconciledMeasures}\n\nCorreções: ${correction}`
+        `Reconciliação bem-sucedida.\n\nDados Reconciliados: ${reconciledData}`
       );
     } else {
       console.error("Falha na reconciliação dos dados");
@@ -119,4 +140,3 @@ export const reconciliarApi = async (
     atualizarProgresso("Erro durante a reconciliação.");
   }
 };
-
