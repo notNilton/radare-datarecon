@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.6](https://github.com/notNilton/radare-client/compare/v0.0.5...v0.0.6) (2024-08-27)
+
+
+### Features
+
+* add help modal ([e7c16a2](https://github.com/notNilton/radare-client/commit/e7c16a26917e24a74563fb88c2560d71228cdded))
+* add Limpar Local Storage Button ([2273b49](https://github.com/notNilton/radare-client/commit/2273b494dc88e6144e8150a66eb0e41c20aef5ab))
+* adjust the Graph and DataDispaly to the new database format ([ac66433](https://github.com/notNilton/radare-client/commit/ac6643367d827f3458a8f5effbf4c444a3566dcb))
+* modify the json package format ([878fa8e](https://github.com/notNilton/radare-client/commit/878fa8e985e662ca219816a0aac6b76932dcab09))
+* remove "Mostrar Conexões" button ([5aca135](https://github.com/notNilton/radare-client/commit/5aca1354a3dc479d91144ea11a8a113ec24a4eed))
+
 ### [0.0.5](https://github.com/notNilton/radare-client/compare/v0.0.4...v0.0.5) (2024-08-27)
 
 
