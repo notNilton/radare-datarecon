@@ -31,6 +31,12 @@ const PanelButtons: React.FC<PanelButtonsProps> = ({
     }
   };
 
+  const clearLocalStorage = () => {
+    localStorage.clear();
+    // Opcional: Atualize a interface ou notifique o usuário
+    alert("Local Storage limpo!");
+  };
+
   return (
     <div className="panel-buttons-container">
       <Button
@@ -68,6 +74,12 @@ const PanelButtons: React.FC<PanelButtonsProps> = ({
         icon="pi pi-upload"
         onClick={handleClick}
         className="p-button-sm p-button-secondary p-mt-2"
+      />
+      <Button
+        label="Limpar Local Storage"
+        icon="pi pi-trash"
+        onClick={clearLocalStorage}
+        className="p-button-sm p-button-danger p-mt-2"
       />
       <input
         type="file"
