@@ -18,10 +18,10 @@ import {
   initialEdges,
   nodeTypes,
 } from "./utils/initialCanvaDataIII";
-import { calcularReconciliacao, reconciliarApi } from "./utils/Reconciliacao";
 import SidebarComponent from "../Sidebar/SidebarComponent";
 import GraphComponent from "../Dashboard/GraphComponent";
-import PanelButtons from "./PanelButtons"; // Importando o novo componente
+import PanelButtons from "./PanelButtons";
+import { handleFileUpload, handleReconcile } from "./utils/ApiCalls";
 
 const generateRandomName = () => {
   const names = ["Laravel", "Alucard", "Sigma", "Delta", "Orion", "Phoenix"];
@@ -123,45 +123,6 @@ const Node: React.FC = () => {
     [setNodes]
   );
 
-  const handleFileUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      try {
-        const response = await fetch("http://localhost:5000/reconcile", {
-          method: "POST",
-          body: formData,
-        });
-
-        if (response.ok) {
-          const result = await response.json();
-          console.log("Upload bem-sucedido:", result);
-        } else {
-          console.error("Falha no upload:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Erro ao enviar o arquivo:", error);
-      }
-    }
-  };
-
-  const handleReconcile = () => {
-    const edgeNames = edges.map((edge) => edge.nome);
-    calcularReconciliacao(
-      nodes,
-      edges,
-      reconciliarApi,
-      (message) => {
-        console.log(message);
-      },
-      edgeNames
-    ); // Passando edgeNames para a função
-  };
-
   const toggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible);
   };
@@ -205,8 +166,8 @@ const Node: React.FC = () => {
               showNodesAndEdges={showNodesAndEdges}
               toggleSidebar={toggleSidebar}
               toggleGraph={toggleGraph}
-              handleReconcile={handleReconcile}
-              handleFileUpload={handleFileUpload}
+              handleReconcile={() => handleReconcile(nodes, edges, console.log)} // Passa a função handleReconcile
+              handleFileUpload={handleFileUpload} // Passa a função handleFileUpload
               isSidebarVisible={isSidebarVisible}
               isGraphVisible={isGraphVisible}
             />
