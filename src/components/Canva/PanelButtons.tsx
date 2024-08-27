@@ -31,11 +31,6 @@ const PanelButtons: React.FC<PanelButtonsProps> = ({
     }
   };
 
-  const handleClearLocalStorage = () => {
-    localStorage.clear();
-    alert("LocalStorage has been cleared!");
-  };
-
   return (
     <div className="panel-buttons-container">
       <Button
@@ -86,12 +81,6 @@ const PanelButtons: React.FC<PanelButtonsProps> = ({
         onChange={handleFileUpload}
         ref={fileInputRef}
         style={{ display: "none" }}
-      />
-      <Button
-        label="Limpar LocalStorage"
-        icon="pi pi-trash"
-        onClick={handleClearLocalStorage}
-        className="p-button-sm p-button-danger p-mt-2"
       />
     </div>
   );
