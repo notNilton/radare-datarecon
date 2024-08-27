@@ -22,13 +22,16 @@ const GraphComponent: React.FC = () => {
       // Ordena os dados com base no timestamp ou ID
       const sortedData = storedData.sort((a, b) => a.id - b.id);
 
+      // Cria labels para cada iteração
       const labels = sortedData.map((_, index) => `Iteração ${index + 1}`);
 
       // Cria um dataset para cada valor reconciliado
-      const datasets = sortedData[0].reconciledMeasures.map(
+      const datasets = sortedData[0].reconciledata[0].values.map(
         (_: number, measureIndex: number) => ({
           label: `Medida ${measureIndex + 1}`,
-          data: sortedData.map((data) => data.reconciledMeasures[measureIndex]),
+          data: sortedData.map(
+            (data) => data.reconciledata[0].values[measureIndex]
+          ),
           fill: false,
           borderColor: `hsl(${measureIndex * 72}, 70%, 50%)`,
         })
