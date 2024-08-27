@@ -19,16 +19,24 @@ const GraphComponent: React.FC = () => {
       .filter(Boolean);
 
     if (storedData.length > 0) {
-      const labels = storedData[0].names; // Usando os nomes como labels no eixo X
+      // Ordena os dados com base no timestamp ou ID
+      const sortedData = storedData.sort((a, b) => a.id - b.id);
+
+      const labels = sortedData.map((_, index) => `Iteração ${index + 1}`);
+
+      // Cria um dataset para cada valor reconciliado
+      const datasets = sortedData[0].reconciledMeasures.map(
+        (_: number, measureIndex: number) => ({
+          label: `Medida ${measureIndex + 1}`,
+          data: sortedData.map((data) => data.reconciledMeasures[measureIndex]),
+          fill: false,
+          borderColor: `hsl(${measureIndex * 72}, 70%, 50%)`,
+        })
+      );
 
       const chartData = {
-        labels, // Usando nomes como labels no eixo X
-        datasets: storedData.map((data, index) => ({
-          label: `Medição ${index + 1}`,
-          data: data.reconciledMeasures || [],
-          fill: false,
-          borderColor: `hsl(${index * 72}, 70%, 50%)`, // Cor dinâmica baseada no índice
-        })),
+        labels, // Iterações no eixo X
+        datasets, // Dados reconciliados no eixo Y
       };
 
       setLineChartData(chartData);
@@ -49,7 +57,7 @@ const GraphComponent: React.FC = () => {
     return () => {
       window.removeEventListener("storage", handleStorageChange);
     };
-  }, []); // Não há props a serem monitoradas
+  }, []);
 
   const lineChartOptions = {
     responsive: true,
@@ -75,5 +83,4 @@ const GraphComponent: React.FC = () => {
   );
 };
 
-// Usando React.memo para evitar re-renderizações desnecessárias
 export default React.memo(GraphComponent);
