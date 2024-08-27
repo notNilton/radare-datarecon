@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.5](https://github.com/notNilton/radare-client/compare/v0.0.4...v0.0.5) (2024-08-27)
+
+
+### Features
+
+* adjust graph and add sorting ([727e996](https://github.com/notNilton/radare-client/commit/727e99685aebb336f50c12e298671dad36ca617a))
+* remove outdated files and implement new API calls ([7ba50a5](https://github.com/notNilton/radare-client/commit/7ba50a561488e1808d34c301034d7d79d9f89df4))
+
 ### [0.0.4](https://github.com/notNilton/radar-client/compare/v0.0.3...v0.0.4) (2024-08-26)
 
 ### [0.0.3](https://github.com/notNilton/radar-client/compare/v0.0.2...v0.0.3) (2024-08-26)
