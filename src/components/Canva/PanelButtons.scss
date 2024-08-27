@@ -49,8 +49,9 @@
       border-color: $ColorBgSecondary;
 
       &:hover {
-        background-color: $ColorBgSecondary;
+        background-color: $ColorSecondary;
         border-color: $ColorBgSecondary;
+        color: $ColorBlack;
       }
     }
 

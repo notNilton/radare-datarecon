@@ -46,12 +46,6 @@ const PanelButtons: React.FC<PanelButtonsProps> = ({
         className="p-button-sm p-button-primary"
       />
       <Button
-        label="Mostrar Conexões"
-        icon="pi pi-eye"
-        onClick={showNodesAndEdges}
-        className="p-button-sm p-button-secondary"
-      />
-      <Button
         label={isSidebarVisible ? "Esconder Sidebar" : "Mostrar Sidebar"}
         icon={isSidebarVisible ? "pi pi-eye-slash" : "pi pi-eye"}
         onClick={toggleSidebar}
