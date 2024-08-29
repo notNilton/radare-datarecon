@@ -74,4 +74,38 @@
       text-decoration: underline;
     }
   }
+
+  .contact-section {
+    margin-top: $SpacingLarge;
+    text-align: center; // Centraliza o conteúdo dentro da seção de contatos
+
+    h3 {
+      font-size: $FontSizeLarge;
+      margin-bottom: $SpacingMedium;
+    }
+
+    .contact-links {
+      display: flex;
+      justify-content: center; // Centraliza os ícones horizontalmente
+      gap: $SpacingMedium; // Adiciona espaçamento entre os ícones
+      align-items: center;
+
+      a {
+        display: flex;
+        align-items: center;
+        color: #333;
+        text-decoration: none;
+        font-size: 16px;
+
+        &:hover {
+          color: #007bff;
+        }
+
+        .contact-icon {
+          margin-right: $SpacingSmall;
+          font-size: 20px;
+        }
+      }
+    }
+  }
 }

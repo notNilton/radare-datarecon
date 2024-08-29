@@ -2,6 +2,7 @@ import React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { AiOutlineClose } from "react-icons/ai";
 import { FaInfoCircle } from "react-icons/fa";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
 import "./AboutModal.scss";
 
 interface AboutModalProps {
@@ -40,6 +41,31 @@ const AboutModal: React.FC<AboutModalProps> = ({
               <a href="mailto:nilton.naab@gmail.com">nilton.naab@gmail.com</a>.
               Feedbacks, sugestões e colaborações são sempre bem-vindos!
             </p>
+            <div className="contact-section">
+              <h3>Contato</h3>
+              <div className="contact-links">
+                <a
+                  href="https://github.com/notNilton"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <FaGithub className="contact-icon" />
+                  GitHub
+                </a>
+                <a
+                  href="https://linkedin.com/in/notNilton"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <FaLinkedin className="contact-icon" />
+                  LinkedIn
+                </a>
+                <a href="mailto:nilton.naab@gmail.com">
+                  <AiOutlineClose className="contact-icon" />
+                  Email
+                </a>
+              </div>
+            </div>
           </div>
         </Dialog.Content>
       </Dialog.Portal>
