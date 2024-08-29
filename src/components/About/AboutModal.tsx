@@ -1,6 +1,6 @@
 import React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { AiOutlineClose } from "react-icons/ai";
+import { AiOutlineClose, AiOutlineMail } from "react-icons/ai";
 import { FaInfoCircle } from "react-icons/fa";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import "./AboutModal.scss";
@@ -28,21 +28,26 @@ const AboutModal: React.FC<AboutModalProps> = ({
           </div>
           <div className="about-content">
             <p>
-              A ferramenta de Dashboard de Reconciliation de Dados foi proposta
-              como o projeto final para o curso de Engenharia de Computação na
-              Universidade Federal de Mato Grosso, Campus Várzea Grande. Este
-              projeto tem como objetivo facilitar a análise e visualização de
-              dados, fornecendo uma interface amigável e intuitiva para
-              reconciliar dados, de preferência Industriais.
+              A ferramenta <strong>RADARE</strong> (Reconciliation and Data
+              Analysis in a Responsive Environment) foi criada por Nilton Aguiar
+              dos Santos, com auxilio do Prof. Dr. João Pena como parte de um
+              projeto de inovação científica para o curso de Engenharia de
+              Computação na Universidade Federal de Mato Grosso, Campus Várzea
+              Grande. Este projeto visa facilitar a análise e reconciliação de
+              dados, oferecendo uma solução avançada e intuitiva para lidar com
+              grandes volumes de informações.
             </p>
             <p>
-              Para entrar em contato com o desenvolvedor responsável pela
-              ferramenta, envie um e-mail para:{" "}
-              <a href="mailto:nilton.naab@gmail.com">nilton.naab@gmail.com</a>.
-              Feedbacks, sugestões e colaborações são sempre bem-vindos!
+              <strong>RADARE</strong> utiliza TypeScript e React para garantir
+              responsividade e agilidade no processo de desenvolvimento, e
+              integra o ReactFlow para uma visualização dinâmica e interativa
+              dos nós. No backend, a aplicação é sustentada por Python e Flask,
+              proporcionando uma arquitetura robusta e escalável para o
+              processamento e gerenciamento dos dados.
             </p>
+
             <div className="contact-section">
-              <h3>Contato</h3>
+              <h3>Contatos</h3>
               <div className="contact-links">
                 <a
                   href="https://github.com/notNilton"
@@ -61,7 +66,7 @@ const AboutModal: React.FC<AboutModalProps> = ({
                   LinkedIn
                 </a>
                 <a href="mailto:nilton.naab@gmail.com">
-                  <AiOutlineClose className="contact-icon" />
+                  <AiOutlineMail className="contact-icon" />
                   Email
                 </a>
               </div>
