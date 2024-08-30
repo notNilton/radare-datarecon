@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Divider } from "primereact/divider"; 
-import MatrixDisplay from "./utils/MatrixDisplay";
+import MatrixDisplay from "./MatrixDisplay";
 import "./SidebarComponent.scss";
-import ExistingTags from "./utils/ExistingTagsDisplay";
-import ReconciledDataDisplay from "./utils/ReconciledDataDisplay";  // Importa o novo componente
+import ExistingTags from "./ExistingTagsDisplay";
+import ReconciledDataDisplay from "./ReconciledDataDisplay";  // Importa o novo componente
 import { createAdjacencyMatrix } from "../Canva/utils/Reconciliacao";
 
 interface SidebarComponentProps {
