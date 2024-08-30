@@ -2,7 +2,7 @@
 
 .graph-bar-title {
   background-color: $ColorPrimary; // Substituído por $ColorBgPrimary
-  padding: 10px;
+  padding: $SpacingSmall;
   font-weight: bold;
   text-align: center;
   transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
