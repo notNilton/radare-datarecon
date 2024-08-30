@@ -30,12 +30,6 @@ const PanelButtons: React.FC<PanelButtonsProps> = ({
     }
   };
 
-  const clearLocalStorage = () => {
-    localStorage.clear();
-    // Opcional: Atualize a interface ou notifique o usuário
-    alert("Local Storage limpo!");
-  };
-
   return (
     <div className="panel-buttons-container">
       <Button
