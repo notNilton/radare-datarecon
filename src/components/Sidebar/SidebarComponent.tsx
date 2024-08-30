@@ -3,7 +3,7 @@ import { Divider } from "primereact/divider";
 import MatrixDisplay from "./MatrixDisplay";
 import "./SidebarComponent.scss";
 import ExistingTags from "./TagDisplayComp";
-import ReconciledDataDisplay from "./ReconciledDataDisplay";  // Importa o novo componente
+import ReconciledDataComp from "./ReconciledDataComp";  // Importa o novo componente
 import { createAdjacencyMatrix } from "../Canva/utils/Reconciliacao";
 
 interface SidebarComponentProps {
@@ -108,7 +108,7 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
           display: visibleSidebarContent["reconciled"] ? "block" : "none",
         }}
       >
-        <ReconciledDataDisplay /> {/* Usa o componente ReconciledDataDisplay */}
+        <ReconciledDataComp /> {/* Usa o componente ReconciledDataComp */}
       </div>
     </>
   );
