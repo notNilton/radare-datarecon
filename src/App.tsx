@@ -14,10 +14,10 @@ const App: React.FC = () => {
 
   return (
     <div className="app-container">
-      <NavbarComponent toggleAboutPopup={toggleAboutPopup} version={""} />
+      <NavbarComponent version={""} />
 
       <Node />
-      <AboutModal showAbout={undefined} toggleAboutPopup={undefined} />
+      <AboutModal showAbout={showAbout} toggleAboutPopup={toggleAboutPopup} />
     </div>
   );
 };

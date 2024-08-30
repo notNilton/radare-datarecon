@@ -48,8 +48,41 @@ const GraphComponent: React.FC = () => {
     }
   };
 
+  // Função para fazer a requisição GET e processar os dados do backend
+  const fetchData = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/reconciled-data');
+      const data = await response.json();
+      console.log('Dados recebidos do backend:', data);
+
+      if (data.length > 0) {
+        // Assume que todas as iterações têm os mesmos labels (nomes de tags)
+        const labels = data[0][0]; // Extrai os nomes das tags
+
+        // Cria um dataset para cada tag, agrupando os dados das correções
+        const datasets = labels.map((label: string, index: number) => ({
+          label: label,
+          data: data.map((iteration: any) => parseFloat(iteration[1][index])), // Extrai as correções para cada iteração
+          fill: false,
+          borderColor: `hsl(${index * 72}, 70%, 50%)`,
+        }));
+
+        const chartData = {
+          labels: data.map((_: any, index: number) => `Iteração ${index + 1}`), // Iterações no eixo X
+          datasets: datasets, // Dados das correções no eixo Y
+        };
+
+        setLineChartData(chartData);
+      } else {
+        setLineChartData(null);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar dados do backend:', error);
+    }
+  };
+
   useEffect(() => {
-    loadGraphData();
+    fetchData(); // Chama a função para buscar dados do backend
 
     const handleStorageChange = () => {
       loadGraphData();
@@ -67,7 +100,7 @@ const GraphComponent: React.FC = () => {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: false, // Desabilita a exibição da legenda
+        display: false, // Exibe a legenda com os nomes das tags
       },
     },
   };
