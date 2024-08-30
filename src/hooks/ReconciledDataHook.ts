@@ -5,7 +5,7 @@ import { fetchReconciledData } from '../api/ReconciledDataApi';
 
 interface ReconciledRowData {
   id: string;
-  [key: string]: number;
+  [key: `V${number}`]: number; // Chaves dinâmicas para valores numéricos com prefixo `V`
 }
 
 const ReconciledDataHook = () => {
@@ -18,7 +18,7 @@ const ReconciledDataHook = () => {
         const data = await fetchReconciledData();
 
         if (data.length > 0) {
-          const formattedData = data.map((valueSet: string[], index: number) =>
+          const formattedData = data.map((valueSet: any[], index: number) =>
             createRowData(valueSet[1], index) // valueSet[1] contém os valores reconciliados
           );
           setReconciledData(formattedData);
