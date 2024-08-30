@@ -5,49 +5,6 @@ import "./GraphComponent.scss";
 const GraphComponent: React.FC = () => {
   const [lineChartData, setLineChartData] = useState<any>(null);
 
-  const loadGraphData = () => {
-    const storedData = Object.keys(localStorage)
-      .map((key) => {
-        try {
-          const item = localStorage.getItem(key);
-          return item ? JSON.parse(item) : null;
-        } catch (error) {
-          console.error("Erro ao carregar dados do localStorage:", error);
-          return null;
-        }
-      })
-      .filter(Boolean);
-
-    if (storedData.length > 0) {
-      // Ordena os dados com base no timestamp ou ID
-      const sortedData = storedData.sort((a, b) => a.id - b.id);
-
-      // Cria labels para cada iteração
-      const labels = sortedData.map((_, index) => `Iteração ${index + 1}`);
-
-      // Cria um dataset para cada valor reconciliado
-      const datasets = sortedData[0].reconciledata[0].values.map(
-        (_: number, measureIndex: number) => ({
-          label: `Medida ${measureIndex + 1}`,
-          data: sortedData.map(
-            (data) => data.reconciledata[0].values[measureIndex]
-          ),
-          fill: false,
-          borderColor: `hsl(${measureIndex * 72}, 70%, 50%)`,
-        })
-      );
-
-      const chartData = {
-        labels, // Iterações no eixo X
-        datasets, // Dados reconciliados no eixo Y
-      };
-
-      setLineChartData(chartData);
-    } else {
-      setLineChartData(null);
-    }
-  };
-
   // Função para fazer a requisição GET e processar os dados do backend
   const fetchData = async () => {
     try {
@@ -84,14 +41,9 @@ const GraphComponent: React.FC = () => {
   useEffect(() => {
     fetchData(); // Chama a função para buscar dados do backend
 
-    const handleStorageChange = () => {
-      loadGraphData();
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
     return () => {
-      window.removeEventListener("storage", handleStorageChange);
+      // Remove qualquer evento de listener desnecessário
+      window.removeEventListener("storage", fetchData);
     };
   }, []);
 

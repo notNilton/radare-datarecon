@@ -1,62 +1,44 @@
 import React, { useState, useEffect } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { Tag } from "primereact/tag";
 
 interface ReconciledRowData {
   id: string;
-  [key: string]: number | string; // Define que pode haver várias chaves dinâmicas com valores numéricos ou string
+  [key: string]: number; // Chaves dinâmicas para os valores numéricos
 }
 
 const ReconciledDataDisplay: React.FC = () => {
   const [reconciledData, setReconciledData] = useState<ReconciledRowData[]>([]);
 
-  const loadReconciledData = () => {
-    const storedData = Object.keys(localStorage)
-      .map((key) => {
-        try {
-          const item = localStorage.getItem(key);
-          if (item) {
-            const parsedItem = JSON.parse(item);
-            // Garantia de que `reconciledata` e `values` não são null ou undefined
-            return parsedItem.reconciledata?.[0]?.values || [];
-          }
-          return [];
-        } catch (error) {
-          console.error("Erro ao carregar dados do localStorage:", error);
-          return [];
-        }
-      });
+  const fetchReconciledData = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/reconciled-data");
+      const data = await response.json();
 
-    // Formata os dados para o estado
-    const formattedData = storedData.map((data, index) =>
-      createRowData(data, index)
-    );
+      if (data.length > 0) {
+        // Formata os dados para o estado
+        const formattedData = data.map((valueSet: string[], index: number) =>
+          createRowData(valueSet[1], index) // valueSet[1] contém os valores reconciliados
+        );
 
-    setReconciledData(formattedData);
+        setReconciledData(formattedData);
+      }
+    } catch (error) {
+      console.error("Erro ao carregar dados reconciliados do backend:", error);
+    }
   };
 
   useEffect(() => {
-    loadReconciledData();
-
-    const handleStorageChange = () => {
-      loadReconciledData();
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
+    fetchReconciledData();
   }, []);
 
-  const createRowData = (data: number[], index: number): ReconciledRowData => {
+  const createRowData = (data: string[], index: number): ReconciledRowData => {
     const rowData: ReconciledRowData = {
-      id: `${index + 1}`,
+      id: `${index + 1}`, // Identificador da linha
     };
 
     data.forEach((value, idx) => {
-      rowData[`value${idx + 1}`] = value;
+      rowData[`V${idx + 1}`] = parseFloat(value); // Associa cada valor a uma chave genérica como `V1`, `V2`, etc.
     });
 
     return rowData;
@@ -69,23 +51,25 @@ const ReconciledDataDisplay: React.FC = () => {
           value={reconciledData}
           scrollable
           scrollHeight="200px"
-          style={{ width: '100%', fontSize: '12px' }}
+          style={{ width: "100%", fontSize: "12px" }}
           className="p-datatable-sm"
         >
           <Column
             field="id"
             header="ID"
-            body={(rowData) => <Tag value={rowData.id} />}
-            style={{ width: '100px', padding: '4px 8px' }}
+            style={{ width: "100px", padding: "4px 8px" }}
           />
-          {reconciledData[0] && Object.keys(reconciledData[0]).filter(key => key !== 'id').map((key, index) => (
-            <Column
-              key={index}
-              field={key}
-              header={`V${index + 1}`}
-              style={{ width: '80px', padding: '4px 8px' }}
-            />
-          ))}
+          {reconciledData[0] &&
+            Object.keys(reconciledData[0])
+              .filter((key) => key !== "id")
+              .map((key, index) => (
+                <Column
+                  key={index}
+                  field={key}
+                  header={`V${index + 1}`} // Cabeçalhos genéricos V1, V2, etc.
+                  style={{ width: "80px", padding: "4px 8px" }}
+                />
+              ))}
         </DataTable>
       ) : (
         <div>Nenhum dado reconciliado disponível</div>
