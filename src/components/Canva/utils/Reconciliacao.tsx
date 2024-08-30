@@ -48,10 +48,10 @@ export const calcularReconciliacao = (
   const incidencematrix = createAdjacencyMatrix(nodes, edges); // Gera a matriz de adjacência
 
   // Exibe os valores capturados no console
-  console.log("Valores de Medida:", value);
-  console.log("Valores de Tolerância:", tolerance);
-  console.log("Nomes das Arestas:", edgeNames);
-  console.log("Matriz de Adjacência:", incidencematrix);
+  // console.log("Valores de Medida:", value);
+  // console.log("Valores de Tolerância:", tolerance);
+  // console.log("Nomes das Arestas:", edgeNames);
+  // console.log("Matriz de Adjacência:", incidencematrix);
 
   // Se necessário, você ainda pode chamar a API de reconciliação aqui
   atualizarProgresso("Chamando API de reconciliação...");
@@ -93,7 +93,7 @@ export const reconciliarApi = async (
     };
 
     // Loga o pacote no console antes de enviá-lo
-    console.log("Pacote a ser enviado:", JSON.stringify(pacote, null, 2));
+    // console.log("Pacote a ser enviado:", JSON.stringify(pacote, null, 2));
 
     // Envio do pacote para o servidor
     const response = await fetch("http://localhost:5000/reconcile", {
@@ -107,30 +107,7 @@ export const reconciliarApi = async (
     if (response.ok) {
       const data = await response.json();
 
-      console.log("Dados recebidos:", data);
-
-      const reconciledData = JSON.stringify(data.data.reconciledata, null, 2);
-
-      console.log("Dados Reconciliados:", reconciledData);
-
-      // Armazena os dados no localStorage
-      const storedData = {
-        id: data.data.id,
-        reconciledata: data.data.reconciledata,
-        names: data.data.names,
-        timestamp: data.data.timestamp,
-        description: data.data.description,
-        user: data.data.user,
-      };
-
-      console.log(storedData);
-
-      localStorage.setItem(data.data.id, JSON.stringify(storedData));
-      window.dispatchEvent(new Event("storage"));
-
-      atualizarProgresso(
-        `Reconciliação bem-sucedida.\n\nDados Reconciliados: ${reconciledData}`
-      );
+      console.log("Resposta do Back-end:", data);
     } else {
       console.error("Falha na reconciliação dos dados");
       atualizarProgresso("Falha na reconciliação.");
