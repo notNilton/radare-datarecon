@@ -18,7 +18,7 @@ import {
   initialEdges,
   nodeTypes,
 } from "./utils/initialCanvaDataIII";
-import { calcularReconciliacao, reconciliarApi } from "./utils/Reconciliacao";
+import { calcularReconciliacao, reconciliarApi, createAdjacencyMatrix } from "./utils/Reconciliacao";
 import SidebarComponent from "../Sidebar/SidebarComponent";
 import GraphComponent from "../Dashboard/GraphComponent";
 import PanelButtons from "./PanelButtons"; // Importando o novo componente
@@ -128,17 +128,22 @@ const Node: React.FC = () => {
   ) => {
     const file = event.target.files?.[0];
     if (file) {
+      // Gera a matriz de adjacência e os nomes das arestas, necessários para a reconciliação
+      const edgeNames = edges.map((edge) => edge.nome);
+      const incidenceMatrix = createAdjacencyMatrix(nodes, edges); // Cria a matriz de incidência
+  
       // Agora usando a função reconciliarApi para processar o arquivo JSON
       reconciliarApi(
-        [], // Passa uma matriz vazia como um placeholder para incidence_matrix
-        [], // Placeholder para values
-        [], // Placeholder para tolerances
-        [], // Placeholder para names
+        incidenceMatrix, // Passa a matriz de incidência gerada
+        [], // Placeholder para values, que será sobrescrito pelo JSON
+        [], // Placeholder para tolerances, que será sobrescrito pelo JSON
+        edgeNames, // Passa os nomes das arestas
         (message) => console.log(message),
         file // Passa o arquivo JSON
       );
     }
-  };  
+  };
+  
 
   const handleReconcile = () => {
     const edgeNames = edges.map((edge) => edge.nome);
