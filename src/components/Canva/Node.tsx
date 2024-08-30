@@ -128,26 +128,17 @@ const Node: React.FC = () => {
   ) => {
     const file = event.target.files?.[0];
     if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      try {
-        const response = await fetch("http://localhost:5000/reconcile", {
-          method: "POST",
-          body: formData,
-        });
-
-        if (response.ok) {
-          const result = await response.json();
-          console.log("Upload bem-sucedido:", result);
-        } else {
-          console.error("Falha no upload:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Erro ao enviar o arquivo:", error);
-      }
+      // Agora usando a função reconciliarApi para processar o arquivo JSON
+      reconciliarApi(
+        [], // Passa uma matriz vazia como um placeholder para incidence_matrix
+        [], // Placeholder para values
+        [], // Placeholder para tolerances
+        [], // Placeholder para names
+        (message) => console.log(message),
+        file // Passa o arquivo JSON
+      );
     }
-  };
+  };  
 
   const handleReconcile = () => {
     const edgeNames = edges.map((edge) => edge.nome);
@@ -161,6 +152,7 @@ const Node: React.FC = () => {
       edgeNames
     ); // Passando edgeNames para a função
   };
+  
 
   const toggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible);

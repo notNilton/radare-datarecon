@@ -63,10 +63,30 @@ export const reconciliarApi = async (
   values: any,
   tolerances: any,
   names: any[],
-  atualizarProgresso: (arg0: string) => void
+  atualizarProgresso: (arg0: string) => void,
+  jsonFile?: File // Parâmetro opcional para o arquivo JSON
 ) => {
   try {
     atualizarProgresso("Enviando dados para o servidor...");
+
+    let unreconciledata;
+
+    // Se um arquivo JSON foi fornecido, lê o conteúdo
+    if (jsonFile) {
+      const fileContent = await jsonFile.text();
+      const jsonData = JSON.parse(fileContent);
+
+      // Substitui os valores e tolerâncias pelos dados do arquivo JSON
+      unreconciledata = jsonData.unreconciledata || jsonData;
+    } else {
+      // Se não, usa os valores e tolerâncias fornecidos
+      unreconciledata = [
+        {
+          values, // Valores não reconciliados
+          tolerances, // Tolerâncias
+        },
+      ];
+    }
 
     // Criação do timestamp
     const timestamp = new Date().toISOString();
@@ -78,22 +98,16 @@ export const reconciliarApi = async (
     const pacote = {
       data: {
         id,
-        description: "Reconciliation for Q3 financial data across departments", // Descrição fixa, pode ser alterada dinamicamente
-        user: "John Doe", // Usuário fixo, pode ser alterado dinamicamente
+        description: "Reconciliation for Q3 financial data across departments",
+        user: "John Doe",
         timestamp,
         names, // Lista de nomes
         incidence_matrix, // Matriz de incidência
-        unreconciledata: [
-          {
-            values, // Valores não reconciliados
-            tolerances, // Tolerâncias
-          },
-        ],
+        unreconciledata, // Dados carregados do arquivo JSON ou gerados
       },
     };
 
-    // Loga o pacote no console antes de enviá-lo
-    // console.log("Pacote a ser enviado:", JSON.stringify(pacote, null, 2));
+    console.log("Pacote", pacote );
 
     // Envio do pacote para o servidor
     const response = await fetch("http://localhost:5000/reconcile", {
@@ -106,8 +120,8 @@ export const reconciliarApi = async (
 
     if (response.ok) {
       const data = await response.json();
-
       console.log("Resposta do Back-end:", data);
+      atualizarProgresso("Reconciliação bem-sucedida.");
     } else {
       console.error("Falha na reconciliação dos dados");
       atualizarProgresso("Falha na reconciliação.");

@@ -15,7 +15,6 @@ interface PanelButtonsProps {
 
 const PanelButtons: React.FC<PanelButtonsProps> = ({
   addNode,
-  showNodesAndEdges,
   toggleSidebar,
   toggleGraph,
   handleReconcile,
