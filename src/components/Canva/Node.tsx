@@ -20,7 +20,7 @@ import {
 } from "./utils/initialCanvaDataIII";
 import { calcularReconciliacao, reconciliarApi, createAdjacencyMatrix } from "./utils/Reconciliacao";
 import SidebarComponent from "../Sidebar/SidebarComponent";
-import GraphComponent from "../Dashboard/GraphComponent";
+import GraphComponent from "../Graph/GraphComponent";
 import PanelButtons from "./PanelButtons"; // Importando o novo componente
 
 const generateRandomName = () => {

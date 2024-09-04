@@ -1,14 +1,14 @@
 {
   "name": "radare-client",
   "private": true,
-  "version": "0.0.6",
+  "version": "0.0.7",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "release": "standard-version"
+    "release": "standard-version && git push --follow-tags origin master"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.1",

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./App.scss";
-import "./styles/global.css";
+import "./styles/Global.css";
 import Node from "./components/Canva/Node";
 import NavbarComponent from "./components/Navbar/NavbarComponent";
 import AboutModal from "./components/About/AboutModal";
