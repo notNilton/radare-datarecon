@@ -33,13 +33,31 @@ const PanelButtons: React.FC<PanelButtonsProps> = ({
   return (
     <div className="panel-buttons-container">
       <Button
-        label="Adicionar Nódulo 1"
+        label="Adicionar Input"
         icon="pi pi-plus"
         onClick={() => addNode("type1")}
         className="p-button-sm p-button-primary"
       />
       <Button
-        label="Adicionar Nódulo 2"
+        label="Adicionar Output"
+        icon="pi pi-plus"
+        onClick={() => addNode("type2")}
+        className="p-button-sm p-button-primary"
+      />{" "}
+      <Button
+        label="Adicionar Nódulo 1-1"
+        icon="pi pi-plus"
+        onClick={() => addNode("type1")}
+        className="p-button-sm p-button-primary"
+      />
+      <Button
+        label="Adicionar Nódulo 1-2"
+        icon="pi pi-plus"
+        onClick={() => addNode("type2")}
+        className="p-button-sm p-button-primary"
+      />
+      <Button
+        label="Adicionar Nódulo 2-1"
         icon="pi pi-plus"
         onClick={() => addNode("type2")}
         className="p-button-sm p-button-primary"
@@ -67,7 +85,7 @@ const PanelButtons: React.FC<PanelButtonsProps> = ({
         icon="pi pi-upload"
         onClick={handleClick}
         className="p-button-sm p-button-secondary p-mt-2"
-      />  
+      />
       <input
         type="file"
         accept=".json,.csv"
