@@ -23,7 +23,7 @@ const GraphHook = () => {
           }));
 
           const chartData = {
-            labels: data.map((_: any, index: number) => `Iteração ${index + 1}`),
+            labels: data.map((_: any, index: number) => `Medida ${index + 1}`),
             datasets: datasets,
           };
 
