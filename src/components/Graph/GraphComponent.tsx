@@ -30,24 +30,34 @@ const GraphComponent: React.FC = () => {
     const storedData = JSON.parse(localStorage.getItem("reconciliationData") || "[]");
 
     if (Array.isArray(storedData) && storedData.length > 0) {
-      const numValues = storedData[0].tagreconciled.length;
-      
-      const datasets = Array.from({ length: numValues }).map((_, valueIndex) => ({
-        label: `Valor ${valueIndex + 1}`,
-        data: storedData.map(entry => parseFloat(entry.tagreconciled[valueIndex]) || 0),
-        fill: false,
-        borderColor: `hsl(${(valueIndex * 60) % 360}, 70%, 50%)`,
-        tension: 0.1,
-      }));
+      // Verifica se todas as entradas possuem tagreconciled
+      const hasTagReconciled = storedData.every(entry => Array.isArray(entry.tagreconciled));
 
-      const labels = storedData.map((_, index) => `Iteração ${index + 1}`);
+      if (hasTagReconciled) {
+        const numValues = storedData[0].tagreconciled.length; // Número de valores em cada iteração
+        
+        const datasets = Array.from({ length: numValues }).map((_, valueIndex) => ({
+          label: `Valor ${valueIndex + 1}`,
+          data: storedData.map(entry => parseFloat(entry.tagreconciled[valueIndex]) || 0),
+          fill: false,
+          borderColor: `hsl(${(valueIndex * 60) % 360}, 70%, 50%)`,
+          tension: 0.1,
+        }));
 
-      const chartData: ChartData = {
-        labels,
-        datasets,
-      };
+        const labels = storedData.map((_, index) => `Iteração ${index + 1}`);
 
-      setLineChartData(chartData);
+        const chartData: ChartData = {
+          labels,
+          datasets,
+        };
+
+        setLineChartData(chartData);
+      } else {
+        console.warn("Alguma entrada não possui a propriedade 'tagreconciled'.");
+        setLineChartData(null);
+      }
+    } else {
+      setLineChartData(null);
     }
   }, []);
 

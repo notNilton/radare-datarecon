@@ -1,4 +1,5 @@
 // ReconciliationUtils.js
+
 export const createAdjacencyMatrix = (nodes: any[], edges: any[]) => {
   const cnOneTwoNodes = nodes.filter((node) => node.type === "cnOneTwo");
   const incidencematrix = Array.from({ length: cnOneTwoNodes.length }, () =>
@@ -23,93 +24,67 @@ export const createAdjacencyMatrix = (nodes: any[], edges: any[]) => {
 export const calcularReconciliacao = (
   nodes: any[],
   edges: any[],
-  reconciliarApi: {
-    (
-      incidenceMatrix: any,
-      values: any,
-      tolerances: any,
-      names: any[],
-      atualizarProgresso: any
-    ): Promise<void>;
-    (
-      arg0: any[][],
-      arg1: any,
-      arg2: any,
-      arg3: any,
-      arg4: any[]
-    ): void;
-  },
-  atualizarProgresso: { (message: string): void; (arg0: string): void },
+  reconciliarApi: (
+    incidenceMatrix: any,
+    values: any,
+    tolerances: any,
+    names: any[],
+    atualizarProgresso: any
+  ) => Promise<void>,
+  atualizarProgresso: (message: string) => void,
   edgeNames: any[]
 ) => {
-  const value = edges.map((edge) => edge.value); // Captura os valores
-  const tolerance = edges.map((edge) => edge.tolerance); // Captura as tolerâncias
+  const value = edges.map((edge) => edge.value);
+  const tolerance = edges.map((edge) => edge.tolerance);
+  const incidencematrix = createAdjacencyMatrix(nodes, edges);
 
-  const incidencematrix = createAdjacencyMatrix(nodes, edges); // Gera a matriz de adjacência
-
-  // Exibe os valores capturados no console
-  // console.log("Valores de Medida:", value);
-  // console.log("Valores de Tolerância:", tolerance);
-  // console.log("Nomes das Arestas:", edgeNames);
-  // console.log("Matriz de Adjacência:", incidencematrix);
-
-  // Se necessário, você ainda pode chamar a API de reconciliação aqui
   atualizarProgresso("Chamando API de reconciliação...");
   reconciliarApi(incidencematrix, value, tolerance, edgeNames, atualizarProgresso);
 };
 
 export const reconciliarApi = async (
-  incidence_matrix: any,
-  values: any,
-  tolerances: any,
-  names: any[],
-  atualizarProgresso: (arg0: string) => void,
-  jsonFile?: File // Parâmetro opcional para o arquivo JSON
+  incidence_matrix: number[][],
+  values: number[],
+  tolerances: number[],
+  names: string[],
+  atualizarProgresso: (message: string) => void,
+  jsonFile?: File
 ) => {
   try {
     atualizarProgresso("Enviando dados para o servidor...");
 
     let unreconciledata;
 
-    // Se um arquivo JSON foi fornecido, lê o conteúdo
     if (jsonFile) {
       const fileContent = await jsonFile.text();
       const jsonData = JSON.parse(fileContent);
-
-      // Substitui os valores e tolerâncias pelos dados do arquivo JSON
       unreconciledata = jsonData.unreconciledata || jsonData;
     } else {
-      // Se não, usa os valores e tolerâncias fornecidos
       unreconciledata = [
         {
-          values, // Valores não reconciliados
-          tolerances, // Tolerâncias
+          values,
+          tolerances,
         },
       ];
     }
 
-    // Criação do timestamp
     const timestamp = new Date().toISOString();
-
-    // Criação do ID único
     const id = `reconciliation_${Date.now()}`;
 
-    // Criação do pacote de dados
     const pacote = {
       data: {
         id,
         description: "Reconciliation for Q3 financial data across departments",
         user: "John Doe",
         timestamp,
-        names, // Lista de nomes
-        incidence_matrix, // Matriz de incidência
-        unreconciledata, // Dados carregados do arquivo JSON ou gerados
+        names,
+        incidence_matrix,
+        unreconciledata,
       },
     };
 
-    console.log("Pacote", pacote );
+    console.log("Pacote a ser enviado:", pacote);
 
-    // Envio do pacote para o servidor
     const response = await fetch("http://localhost:5000/reconcile", {
       method: "POST",
       headers: {
@@ -119,11 +94,37 @@ export const reconciliarApi = async (
     });
 
     if (response.ok) {
-      const data = await response.json();
-      console.log("Resposta do Back-end:", data);
       atualizarProgresso("Reconciliação bem-sucedida.");
+
+      // Realiza o GET para substituir os dados no localStorage
+      const getResponse = await fetch("http://localhost:5000/reconciled-data");
+
+      if (getResponse.ok) {
+        const reconciledDataArray = await getResponse.json();
+        console.log("Dados reconciliados recebidos do servidor:", reconciledDataArray);
+
+        // Formata os dados recebidos para o localStorage
+        const formattedData = reconciledDataArray.map((entry: any) => ({
+          id: entry.id || `reconciliation_${Date.now()}`,
+          user: entry.user || "postgres",
+          time: entry.timestamp || new Date().toISOString(),
+          tagname: entry.names || names,
+          tagmatrix: entry.incidence_matrix || incidence_matrix,
+          tagcorrection: entry.unreconciledata?.[0]?.tolerances || tolerances,
+          tagreconciled: entry.unreconciledata?.[0]?.values?.map((v: number) => v.toFixed(2)) || values.map(v => v.toFixed(2)),
+        }));
+
+        // Substitui completamente o localStorage com os dados obtidos
+        localStorage.setItem("reconciliationData", JSON.stringify(formattedData));
+        console.log("Dados atualizados no localStorage:", formattedData);
+
+        // Dispara o evento para atualizar os componentes que dependem dos dados
+        window.dispatchEvent(new CustomEvent("localStorageUpdated"));
+      } else {
+        console.error("Falha ao obter dados reconciliados.");
+      }
     } else {
-      console.error("Falha na reconciliação dos dados");
+      console.error("Falha na reconciliação dos dados.");
       atualizarProgresso("Falha na reconciliação.");
     }
   } catch (error) {
