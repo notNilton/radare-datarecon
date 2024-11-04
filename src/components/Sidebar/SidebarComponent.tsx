@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { Divider } from "primereact/divider"; 
+import React, { useState, useEffect, useCallback } from "react";
 import "./SidebarComponent.scss";
 
 interface CorrectionEntry {
@@ -21,40 +20,56 @@ const SidebarComponent: React.FC = () => {
   const [existingTags, setExistingTags] = useState<string[]>([]);
   const [matrixData, setMatrixData] = useState<number[][]>([]);
 
-  useEffect(() => {
-    // Função para carregar todas as tagcorrection do localStorage
-    const loadAllCorrectionValues = (): CorrectionEntry[] => {
-      const storedData = JSON.parse(localStorage.getItem("reconciliationData") || "[]");
-      if (Array.isArray(storedData)) {
-        return storedData.map((entry: { id: number; tagcorrection: string[] }) => ({
-          id: entry.id,
-          values: entry.tagcorrection || [],
-        }));
-      }
-      return [];
-    };
+  // Função para carregar todas as tagcorrection do localStorage
+  const loadAllCorrectionValues = (): CorrectionEntry[] => {
+    const storedData = JSON.parse(localStorage.getItem("reconciliationData") || "[]");
+    if (Array.isArray(storedData)) {
+      return storedData.map((entry: { id: number; tagcorrection: string[] }) => ({
+        id: entry.id,
+        values: entry.tagcorrection || [],
+      }));
+    }
+    return [];
+  };
 
-    // Função para carregar tagname e tagmatrix da última entrada
-    const loadLastEntryData = () => {
-      const storedData = JSON.parse(localStorage.getItem("reconciliationData") || "[]");
-      if (Array.isArray(storedData) && storedData.length > 0) {
-        const lastEntry = storedData[storedData.length - 1];
-        
-        if (lastEntry.tagname) {
-          console.log("Valores de tagname da última entrada:", lastEntry.tagname);
-          setExistingTags(lastEntry.tagname);
-        }
-        
-        if (lastEntry.tagmatrix) {
-          setMatrixData(lastEntry.tagmatrix);
-        }
+  // Função para carregar tagname e tagmatrix da última entrada
+  const loadLastEntryData = () => {
+    const storedData = JSON.parse(localStorage.getItem("reconciliationData") || "[]");
+    if (Array.isArray(storedData) && storedData.length > 0) {
+      const lastEntry = storedData[storedData.length - 1];
+      
+      if (lastEntry.tagname) {
+        setExistingTags(lastEntry.tagname);
       }
-    };
+      
+      if (lastEntry.tagmatrix) {
+        setMatrixData(lastEntry.tagmatrix);
+      }
+    }
+  };
 
-    // Carrega e define correctionValues, existingTags e matrixData
+  // Função para atualizar dados no componente, usando useCallback para memoizar
+  const updateDataFromLocalStorage = useCallback(() => {
     setCorrectionValues(loadAllCorrectionValues());
     loadLastEntryData();
-  }, []); // Apenas carrega uma vez na montagem do componente
+  }, []);
+
+  useEffect(() => {
+    // Carregar dados iniciais do localStorage
+    updateDataFromLocalStorage();
+
+    // Listener para detectar mudanças no localStorage
+    const handleStorageChange = () => {
+      updateDataFromLocalStorage();
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    // Limpeza do listener ao desmontar o componente
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, [updateDataFromLocalStorage]);
 
   const toggleSidebarContent = (key: string) => {
     setVisibleSidebarContent((prevState) => ({
@@ -92,8 +107,6 @@ const SidebarComponent: React.FC = () => {
         </div>
       </div>
 
-      <Divider />
-
       {/* Matriz de Incidência */}
       <div
         className="sidebar-title matrix"
@@ -127,11 +140,9 @@ const SidebarComponent: React.FC = () => {
         </div>
       </div>
 
-      <Divider />
-
       {/* Valores de Correção */}
       <div
-        className="sidebar-title reconciled"
+        className="sidebar-title correction-values"
         onClick={() => toggleSidebarContent("reconciled")}
         role="button"
         tabIndex={0}
@@ -140,14 +151,14 @@ const SidebarComponent: React.FC = () => {
         Valores de Correção
       </div>
       <div
-        className={`sidebar-content reconciled${
-          visibleSidebarContent["reconciled"] ? "matrix-visible" : ""
+        className={`sidebar-content correction-values-content${
+          visibleSidebarContent["reconciled"] ? " visible" : ""
         }`}
         style={{
           display: visibleSidebarContent["reconciled"] ? "block" : "none",
         }}
       >
-        <table>
+        <table className="correction-values-table">
           <thead>
             <tr>
               <th>ID</th>
