@@ -18,28 +18,27 @@ const GraphComponent: React.FC = () => {
   };
 
   useEffect(() => {
-    // Função para buscar dados do localStorage e atualizar o estado
+    // Função para buscar todos os dados do localStorage e atualizar o estado
     const updateChartData = () => {
-      const storedData = localStorage.getItem('reconciliationData');
-      if (storedData) {
-        const parsedData = JSON.parse(storedData);
-        
-        // Extrair dados de tagreconciled para o gráfico
-        const labels = parsedData.tagname || []; // Usar tagname como rótulos
-        const dataValues = parsedData.tagreconciled.map(Number); // Converter os valores para números
+      const storedData = JSON.parse(localStorage.getItem("reconciliationData") || "[]");
 
-        // Configurar os dados do gráfico
+      // Verifica se existem dados armazenados e itera sobre cada entrada
+      if (Array.isArray(storedData)) {
+        const datasets = storedData.map((entry: any, index: number) => ({
+          label: `Iteração ${entry.id}`,
+          data: entry.tagreconciled.map(Number), // Converte os valores para números
+          fill: false,
+          borderColor: `hsl(${(index * 45) % 360}, 70%, 50%)`, // Gera uma cor única para cada série
+          tension: 0.1,
+        }));
+
+        // Usa as tags da primeira entrada como rótulos
+        const labels = storedData[0]?.tagname || [];
+
+        // Configura os dados para o gráfico
         const chartData = {
-          labels: labels,
-          datasets: [
-            {
-              label: 'Tag Reconciled',
-              data: dataValues,
-              fill: false,
-              borderColor: '#42A5F5',
-              tension: 0.1,
-            },
-          ],
+          labels,
+          datasets,
         };
 
         setLineChartData(chartData);

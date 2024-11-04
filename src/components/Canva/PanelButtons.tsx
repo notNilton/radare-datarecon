@@ -30,18 +30,29 @@ const PanelButtons: React.FC<PanelButtonsProps> = ({
     }
   };
 
+  const generateRandomValues = (count: number, min: number, max: number) => {
+    return Array.from({ length: count }, () =>
+      (Math.random() * (max - min) + min).toFixed(2)
+    );
+  };
+
   const handleToggleGraph = () => {
     // Chama a função toggleGraph original
     toggleGraph();
 
-    // Adiciona a linha no banco de dados local com a estrutura especificada
-    // Adiciona a linha no banco de dados local com a estrutura especificada
-    const data = {
-      id: [7],
-      user: ["postgres"],
-      time: ["Thu, 29 Aug 2024 12:00:00 GMT"],
+    // Recupera os dados existentes do localStorage ou cria uma lista vazia
+    const storedData = JSON.parse(localStorage.getItem("reconciliationData") || "[]");
+
+    // Gera um novo id único baseado no comprimento da lista existente
+    const newId = storedData.length ? storedData[storedData.length - 1].id + 1 : 1;
+
+    // Novo item para adicionar
+    const newItem = {
+      id: newId,
+      user: "postgres",
+      time: new Date().toISOString(),
       tagname: ["Alucard", "Laravel", "Orion", "Sigma", "Phoenix"],
-      tagreconciled: ["110.45", "128.99", "40.73", "11.29", "115.87"],
+      tagreconciled: generateRandomValues(5, 10, 150), // 5 valores aleatórios entre 10 e 150
       tagcorrection: ["1.83", "-0.02", "-0.15", "0.82", "2.03"],
       tagmatrix: [
         [1, -1, -1, 0, 0],
@@ -49,8 +60,10 @@ const PanelButtons: React.FC<PanelButtonsProps> = ({
       ],
     };
 
-    localStorage.setItem("reconciliationData", JSON.stringify(data));
-    console.log("Linha adicionada ao banco de dados local:", data);
+    // Adiciona o novo item à lista existente e salva de volta no localStorage
+    const updatedData = [...storedData, newItem];
+    localStorage.setItem("reconciliationData", JSON.stringify(updatedData));
+    console.log("Nova linha adicionada ao banco de dados local:", newItem);
   };
 
   return (
