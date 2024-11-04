@@ -56,7 +56,7 @@ const PanelButtons: React.FC<PanelButtonsProps> = ({
       tagcorrection: ["1.83", "-0.02", "-0.15", "0.82", "2.03"],
       tagmatrix: [
         [1, -1, -1, 0, 0],
-        [0, 0, 1, -1, -1],
+        [0, 0, 1, -2, -3],
       ],
     };
 

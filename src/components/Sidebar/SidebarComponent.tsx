@@ -3,8 +3,6 @@ import { Divider } from "primereact/divider";
 import MatrixDisplay from "./MatrixDisplay";
 import "./SidebarComponent.scss";
 import ExistingTags from "./TagDisplayComp";
-import ReconciledDataComp from "./ReconciledDataComp";  // Importa o novo componente
-import { createAdjacencyMatrix } from "../Canva/utils/Reconciliacao";
 
 interface SidebarComponentProps {
   nodes: any[];
@@ -27,11 +25,27 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
   });
 
   const [matrixData, setMatrixData] = useState<number[][]>([]);
+  const [correctionValues, setCorrectionValues] = useState<string[]>([]);
 
   useEffect(() => {
-    const newMatrix = createAdjacencyMatrix(nodes, edges);
-    setMatrixData(newMatrix);
-  }, [nodes, edges]);
+    // Função para carregar a última tagmatrix e tagcorrection do localStorage
+    const loadLastEntryData = () => {
+      const storedData = JSON.parse(localStorage.getItem("reconciliationData") || "[]");
+      if (Array.isArray(storedData) && storedData.length > 0) {
+        const lastEntry = storedData[storedData.length - 1];
+        return {
+          matrix: lastEntry.tagmatrix || [],
+          corrections: lastEntry.tagcorrection || []
+        };
+      }
+      return { matrix: [], corrections: [] };
+    };
+
+    // Carrega e define matrixData e correctionValues com a última entrada
+    const { matrix, corrections } = loadLastEntryData();
+    setMatrixData(matrix);
+    setCorrectionValues(corrections);
+  }, []); // Apenas carrega uma vez na montagem do componente
 
   const toggleSidebarContent = (key: string) => {
     setVisibleSidebarContent((prevState) => ({
@@ -90,7 +104,7 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
 
       <Divider />
 
-      {/* Dados Reconciliados */}
+      {/* Valores de Correção */}
       <div
         className="sidebar-title reconciled"
         onClick={() => toggleSidebarContent("reconciled")}
@@ -98,7 +112,7 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
         tabIndex={0}
         onKeyDown={(e) => e.key === "Enter" && toggleSidebarContent("reconciled")}
       >
-        Dados Reconciliados
+        Valores de Correção
       </div>
       <div
         className={`sidebar-content reconciled${
@@ -108,7 +122,15 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
           display: visibleSidebarContent["reconciled"] ? "block" : "none",
         }}
       >
-        <ReconciledDataComp /> {/* Usa o componente ReconciledDataComp */}
+        <ul>
+          {correctionValues.length > 0 ? (
+            correctionValues.map((value, index) => (
+              <li key={index}>{value}</li>
+            ))
+          ) : (
+            <div>Nenhum valor de correção disponível</div>
+          )}
+        </ul>
       </div>
     </>
   );
