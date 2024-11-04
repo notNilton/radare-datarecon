@@ -69,11 +69,9 @@ export const reconciliarApi = async (
     }
 
     const timestamp = new Date().toISOString();
-    const id = `reconciliation_${Date.now()}`;
 
     const pacote = {
       data: {
-        id,
         description: "Reconciliation for Q3 financial data across departments",
         user: "John Doe",
         timestamp,
@@ -105,13 +103,13 @@ export const reconciliarApi = async (
 
         // Formata os dados recebidos para o localStorage
         const formattedData = reconciledDataArray.map((entry: any) => ({
-          id: entry.id || `reconciliation_${Date.now()}`,
-          user: entry.user || "postgres",
-          time: entry.timestamp || new Date().toISOString(),
-          tagname: entry.names || names,
-          tagmatrix: entry.incidence_matrix || incidence_matrix,
-          tagcorrection: entry.unreconciledata?.[0]?.tolerances || tolerances,
-          tagreconciled: entry.unreconciledata?.[0]?.values?.map((v: number) => v.toFixed(2)) || values.map(v => v.toFixed(2)),
+          id: entry[0],
+          user: entry[1] || "postgres",
+          time: entry[2] || timestamp,
+          tagname: entry[3] || names,
+          tagreconciled: entry[4]?.map((v: any) => (typeof v === 'number' ? v.toFixed(2) : v)) || values.map(v => v.toFixed(2)),
+          tagcorrection: entry[5]?.map((v: any) => (typeof v === 'number' ? v.toFixed(2) : v)) || tolerances,
+          tagmatrix: entry[6] || incidence_matrix,
         }));
 
         // Substitui completamente o localStorage com os dados obtidos
