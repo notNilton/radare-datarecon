@@ -35,14 +35,18 @@ const PanelButtons: React.FC<PanelButtonsProps> = ({
     toggleGraph();
 
     // Adiciona a linha no banco de dados local com a estrutura especificada
+    // Adiciona a linha no banco de dados local com a estrutura especificada
     const data = {
-      id: [1],
-      user: ["José"],
-      time: [new Date().toISOString()],
-      tagname: ["Tag1", "Tag2"],
-      tagreconciled: ["Recon1", "Recon2"],
-      tagcorrection: ["Correction1", "Correction2"],
-      tagmatrix: [["Matrix1", "Matrix2"], ["Matrix3", "Matrix4"]],
+      id: [7],
+      user: ["postgres"],
+      time: ["Thu, 29 Aug 2024 12:00:00 GMT"],
+      tagname: ["Alucard", "Laravel", "Orion", "Sigma", "Phoenix"],
+      tagreconciled: ["110.45", "128.99", "40.73", "11.29", "115.87"],
+      tagcorrection: ["1.83", "-0.02", "-0.15", "0.82", "2.03"],
+      tagmatrix: [
+        [1, -1, -1, 0, 0],
+        [0, 0, 1, -1, -1],
+      ],
     };
 
     localStorage.setItem("reconciliationData", JSON.stringify(data));
