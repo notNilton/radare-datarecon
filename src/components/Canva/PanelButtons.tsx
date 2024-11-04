@@ -30,6 +30,25 @@ const PanelButtons: React.FC<PanelButtonsProps> = ({
     }
   };
 
+  const handleToggleGraph = () => {
+    // Chama a função toggleGraph original
+    toggleGraph();
+
+    // Adiciona a linha no banco de dados local com a estrutura especificada
+    const data = {
+      id: [1],
+      user: ["José"],
+      time: [new Date().toISOString()],
+      tagname: ["Tag1", "Tag2"],
+      tagreconciled: ["Recon1", "Recon2"],
+      tagcorrection: ["Correction1", "Correction2"],
+      tagmatrix: [["Matrix1", "Matrix2"], ["Matrix3", "Matrix4"]],
+    };
+
+    localStorage.setItem("reconciliationData", JSON.stringify(data));
+    console.log("Linha adicionada ao banco de dados local:", data);
+  };
+
   return (
     <div className="panel-buttons-container">
       <Button
@@ -71,7 +90,7 @@ const PanelButtons: React.FC<PanelButtonsProps> = ({
       <Button
         label={isGraphVisible ? "Esconder Gráfico" : "Mostrar Gráfico"}
         icon={isGraphVisible ? "pi pi-eye-slash" : "pi pi-eye"}
-        onClick={toggleGraph}
+        onClick={handleToggleGraph}
         className="p-button-sm p-button-info"
       />
       <Button
