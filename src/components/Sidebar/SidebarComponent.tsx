@@ -1,20 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Divider } from "primereact/divider"; 
-import MatrixDisplay from "./MatrixDisplay";
 import "./SidebarComponent.scss";
-import ExistingTags from "./TagDisplayComp";
 
-interface SidebarComponentProps {
-  nodes: any[];
-  edges: any[];
-  edgeNames: string[]; 
+interface CorrectionEntry {
+  id: number;
+  values: string[];
 }
 
-const SidebarComponent: React.FC<SidebarComponentProps> = ({
-  nodes,
-  edges,
-  edgeNames,
-}) => {
+const SidebarComponent: React.FC = () => {
   const [visibleSidebarContent, setVisibleSidebarContent] = useState<{
     [key: string]: boolean;
   }>({
@@ -24,27 +17,43 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
     reconciled: true,
   });
 
+  const [correctionValues, setCorrectionValues] = useState<CorrectionEntry[]>([]);
+  const [existingTags, setExistingTags] = useState<string[]>([]);
   const [matrixData, setMatrixData] = useState<number[][]>([]);
-  const [correctionValues, setCorrectionValues] = useState<string[]>([]);
 
   useEffect(() => {
-    // Função para carregar a última tagmatrix e tagcorrection do localStorage
+    // Função para carregar todas as tagcorrection do localStorage
+    const loadAllCorrectionValues = (): CorrectionEntry[] => {
+      const storedData = JSON.parse(localStorage.getItem("reconciliationData") || "[]");
+      if (Array.isArray(storedData)) {
+        return storedData.map((entry: { id: number; tagcorrection: string[] }) => ({
+          id: entry.id,
+          values: entry.tagcorrection || [],
+        }));
+      }
+      return [];
+    };
+
+    // Função para carregar tagname e tagmatrix da última entrada
     const loadLastEntryData = () => {
       const storedData = JSON.parse(localStorage.getItem("reconciliationData") || "[]");
       if (Array.isArray(storedData) && storedData.length > 0) {
         const lastEntry = storedData[storedData.length - 1];
-        return {
-          matrix: lastEntry.tagmatrix || [],
-          corrections: lastEntry.tagcorrection || []
-        };
+        
+        if (lastEntry.tagname) {
+          console.log("Valores de tagname da última entrada:", lastEntry.tagname);
+          setExistingTags(lastEntry.tagname);
+        }
+        
+        if (lastEntry.tagmatrix) {
+          setMatrixData(lastEntry.tagmatrix);
+        }
       }
-      return { matrix: [], corrections: [] };
     };
 
-    // Carrega e define matrixData e correctionValues com a última entrada
-    const { matrix, corrections } = loadLastEntryData();
-    setMatrixData(matrix);
-    setCorrectionValues(corrections);
+    // Carrega e define correctionValues, existingTags e matrixData
+    setCorrectionValues(loadAllCorrectionValues());
+    loadLastEntryData();
   }, []); // Apenas carrega uma vez na montagem do componente
 
   const toggleSidebarContent = (key: string) => {
@@ -74,7 +83,13 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
             : "none",
         }}
       >
-        <ExistingTags edgeNames={edgeNames} />
+        <div className="tag-container">
+          {existingTags.map((tag, index) => (
+            <div key={index} className="tag-item">
+              {tag}
+            </div>
+          ))}
+        </div>
       </div>
 
       <Divider />
@@ -98,7 +113,17 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
         }}
       >
         <div className="matrix-container">
-          <MatrixDisplay matrix={matrixData} />
+          <table>
+            <tbody>
+              {matrixData.map((row, rowIndex) => (
+                <tr key={rowIndex}>
+                  {row.map((cell, cellIndex) => (
+                    <td key={cellIndex}>{cell}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -122,15 +147,27 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
           display: visibleSidebarContent["reconciled"] ? "block" : "none",
         }}
       >
-        <ul>
-          {correctionValues.length > 0 ? (
-            correctionValues.map((value, index) => (
-              <li key={index}>{value}</li>
-            ))
-          ) : (
-            <div>Nenhum valor de correção disponível</div>
-          )}
-        </ul>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              {correctionValues.length > 0 &&
+                correctionValues[0].values.map((_, index) => (
+                  <th key={index}>Valor {index + 1}</th>
+                ))}
+            </tr>
+          </thead>
+          <tbody>
+            {correctionValues.map((entry) => (
+              <tr key={entry.id}>
+                <td>{entry.id}</td>
+                {entry.values.map((value, index) => (
+                  <td key={index}>{value}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </>
   );

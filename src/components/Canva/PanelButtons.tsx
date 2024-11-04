@@ -51,7 +51,7 @@ const PanelButtons: React.FC<PanelButtonsProps> = ({
       id: newId,
       user: "postgres",
       time: new Date().toISOString(),
-      tagname: ["Alucard", "Laravel", "Orion", "Sigma", "Phoenix"],
+      tagname: ["José", "Laravel", "Orion", "Sigma", "Phoenix"],
       tagreconciled: generateRandomValues(5, 10, 150), // 5 valores aleatórios entre 10 e 150
       tagcorrection: ["1.83", "-0.02", "-0.15", "0.82", "2.03"],
       tagmatrix: [

@@ -25,6 +25,29 @@
     max-height: none;
     overflow-y: visible;
   }
+
+  .tag-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); // Define 5 colunas fixas
+    gap: $SpacingSmall;
+    padding: 8px;
+
+    .tag-item {
+      text-align: center;
+      padding: 8px 12px;
+      background-color: $ColorSecondary;
+      color: $ColorWhite;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      font-weight: bold;
+
+      &:hover {
+        background-color: lighten($ColorPrimary, 10%);
+      }
+    }
+  }
 }
 
 .existing-tags-grid,
@@ -35,15 +58,10 @@
   padding: $SpacingSmall;
   justify-content: center;
   font-weight: bold;
-
-  .tag-item {
-    text-align: center;
-    width: 100%;
-  }
 }
 
 .matrix-container {
-  padding: $SpacingSmall ;
+  padding: $SpacingSmall;
   font-weight: bold;
 
   table {
