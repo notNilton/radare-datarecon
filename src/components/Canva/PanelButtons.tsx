@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { Button } from "primereact/button";
-import "./PanelButtons.scss"; // Importando o arquivo SCSS
+import "./PanelButtons.scss";
 
 interface PanelButtonsProps {
   addNode: (nodeType: string) => void;
@@ -37,22 +37,18 @@ const PanelButtons: React.FC<PanelButtonsProps> = ({
   };
 
   const handleToggleGraph = () => {
-    // Chama a função toggleGraph original
     toggleGraph();
 
-    // Recupera os dados existentes do localStorage ou cria uma lista vazia
     const storedData = JSON.parse(localStorage.getItem("reconciliationData") || "[]");
 
-    // Gera um novo id único baseado no comprimento da lista existente
     const newId = storedData.length ? storedData[storedData.length - 1].id + 1 : 1;
 
-    // Novo item para adicionar
     const newItem = {
       id: newId,
       user: "postgres",
       time: new Date().toISOString(),
       tagname: ["José", "Laravel", "Orion", "Sigma", "Phoenix"],
-      tagreconciled: generateRandomValues(5, 10, 150), // 5 valores aleatórios entre 10 e 150
+      tagreconciled: generateRandomValues(5, 10, 150),
       tagcorrection: ["1.83", "-0.02", "-0.15", "0.82", "2.03"],
       tagmatrix: [
         [1, -1, -1, 0, 0],
@@ -60,10 +56,11 @@ const PanelButtons: React.FC<PanelButtonsProps> = ({
       ],
     };
 
-    // Adiciona o novo item à lista existente e salva de volta no localStorage
     const updatedData = [...storedData, newItem];
     localStorage.setItem("reconciliationData", JSON.stringify(updatedData));
     console.log("Nova linha adicionada ao banco de dados local:", newItem);
+
+    window.dispatchEvent(new CustomEvent("localStorageUpdated"));
   };
 
   return (
@@ -74,7 +71,7 @@ const PanelButtons: React.FC<PanelButtonsProps> = ({
         onClick={() => addNode("type1")}
         className="p-button-sm p-button-primary"
       />
-      <Button
+            <Button
         label="Adicionar Output"
         icon="pi pi-plus"
         onClick={() => addNode("type2")}
@@ -110,7 +107,7 @@ const PanelButtons: React.FC<PanelButtonsProps> = ({
         onClick={handleToggleGraph}
         className="p-button-sm p-button-info"
       />
-      <Button
+           <Button
         label="Reconciliar Dados"
         icon="pi pi-refresh"
         onClick={handleReconcile}

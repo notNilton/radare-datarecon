@@ -1,66 +1,69 @@
-// src/components/GraphComponent.tsx
-
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Chart } from 'primereact/chart';
 import './GraphComponent.scss';
 
+interface ChartData {
+  labels: string[];
+  datasets: {
+    label: string;
+    data: number[];
+    fill: boolean;
+    borderColor: string;
+    tension: number;
+  }[];
+}
+
 const GraphComponent: React.FC = () => {
-  const [lineChartData, setLineChartData] = useState(null);
+  const [lineChartData, setLineChartData] = useState<ChartData | null>(null);
 
   const lineChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: true,
+        display: false,
       },
     },
   };
 
+  const updateChartData = useCallback(() => {
+    const storedData = JSON.parse(localStorage.getItem("reconciliationData") || "[]");
+
+    if (Array.isArray(storedData) && storedData.length > 0) {
+      const numValues = storedData[0].tagreconciled.length;
+      
+      const datasets = Array.from({ length: numValues }).map((_, valueIndex) => ({
+        label: `Valor ${valueIndex + 1}`,
+        data: storedData.map(entry => parseFloat(entry.tagreconciled[valueIndex]) || 0),
+        fill: false,
+        borderColor: `hsl(${(valueIndex * 60) % 360}, 70%, 50%)`,
+        tension: 0.1,
+      }));
+
+      const labels = storedData.map((_, index) => `Iteração ${index + 1}`);
+
+      const chartData: ChartData = {
+        labels,
+        datasets,
+      };
+
+      setLineChartData(chartData);
+    }
+  }, []);
+
   useEffect(() => {
-    // Função para buscar todos os dados do localStorage e atualizar o estado
-    const updateChartData = () => {
-      const storedData = JSON.parse(localStorage.getItem("reconciliationData") || "[]");
-
-      // Verifica se existem dados armazenados e itera sobre cada entrada
-      if (Array.isArray(storedData)) {
-        const datasets = storedData.map((entry: any, index: number) => ({
-          label: `Iteração ${entry.id}`,
-          data: entry.tagreconciled.map(Number), // Converte os valores para números
-          fill: false,
-          borderColor: `hsl(${(index * 45) % 360}, 70%, 50%)`, // Gera uma cor única para cada série
-          tension: 0.1,
-        }));
-
-        // Usa as tags da primeira entrada como rótulos
-        const labels = storedData[0]?.tagname || [];
-
-        // Configura os dados para o gráfico
-        const chartData = {
-          labels,
-          datasets,
-        };
-
-        setLineChartData(chartData);
-      }
-    };
-
-    // Atualiza os dados na montagem do componente
     updateChartData();
 
-    // Escuta mudanças no localStorage para atualizar os dados
-    const handleStorageChange = () => {
+    const handleStorageUpdate = () => {
       updateChartData();
     };
 
-    // Adiciona o event listener
-    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener("localStorageUpdated", handleStorageUpdate);
 
-    // Remove o listener quando o componente for desmontado
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener("localStorageUpdated", handleStorageUpdate);
     };
-  }, []);
+  }, [updateChartData]);
 
   return (
     <div className="graph-component">

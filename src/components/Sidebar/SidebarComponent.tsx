@@ -20,7 +20,6 @@ const SidebarComponent: React.FC = () => {
   const [existingTags, setExistingTags] = useState<string[]>([]);
   const [matrixData, setMatrixData] = useState<number[][]>([]);
 
-  // Função para carregar todas as tagcorrection do localStorage
   const loadAllCorrectionValues = (): CorrectionEntry[] => {
     const storedData = JSON.parse(localStorage.getItem("reconciliationData") || "[]");
     if (Array.isArray(storedData)) {
@@ -32,7 +31,6 @@ const SidebarComponent: React.FC = () => {
     return [];
   };
 
-  // Função para carregar tagname e tagmatrix da última entrada
   const loadLastEntryData = () => {
     const storedData = JSON.parse(localStorage.getItem("reconciliationData") || "[]");
     if (Array.isArray(storedData) && storedData.length > 0) {
@@ -48,26 +46,22 @@ const SidebarComponent: React.FC = () => {
     }
   };
 
-  // Função para atualizar dados no componente, usando useCallback para memoizar
   const updateDataFromLocalStorage = useCallback(() => {
     setCorrectionValues(loadAllCorrectionValues());
     loadLastEntryData();
   }, []);
 
   useEffect(() => {
-    // Carregar dados iniciais do localStorage
     updateDataFromLocalStorage();
 
-    // Listener para detectar mudanças no localStorage
-    const handleStorageChange = () => {
+    const handleStorageUpdate = () => {
       updateDataFromLocalStorage();
     };
 
-    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("localStorageUpdated", handleStorageUpdate);
 
-    // Limpeza do listener ao desmontar o componente
     return () => {
-      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("localStorageUpdated", handleStorageUpdate);
     };
   }, [updateDataFromLocalStorage]);
 
@@ -80,51 +74,21 @@ const SidebarComponent: React.FC = () => {
 
   return (
     <>
-      {/* Tags Existentes */}
-      <div
-        className="sidebar-title"
-        onClick={() => toggleSidebarContent("tags-existentes")}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => e.key === "Enter" && toggleSidebarContent("tags-existentes")}
-      >
+      <div className="sidebar-title" onClick={() => toggleSidebarContent("tags-existentes")}>
         Tags Existentes
       </div>
-      <div
-        className="sidebar-content"
-        style={{
-          display: visibleSidebarContent["tags-existentes"]
-            ? "block"
-            : "none",
-        }}
-      >
+      <div className="sidebar-content">
         <div className="tag-container">
           {existingTags.map((tag, index) => (
-            <div key={index} className="tag-item">
-              {tag}
-            </div>
+            <div key={index} className="tag-item">{tag}</div>
           ))}
         </div>
       </div>
 
-      {/* Matriz de Incidência */}
-      <div
-        className="sidebar-title matrix"
-        onClick={() => toggleSidebarContent("matriz")}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => e.key === "Enter" && toggleSidebarContent("matriz")}
-      >
+      <div className="sidebar-title matrix" onClick={() => toggleSidebarContent("matriz")}>
         Matriz de Incidência
       </div>
-      <div
-        className={`sidebar-content matrix${
-          visibleSidebarContent["matriz"] ? "matrix-visible" : ""
-        }`}
-        style={{
-          display: visibleSidebarContent["matriz"] ? "block" : "none",
-        }}
-      >
+      <div className={`sidebar-content matrix${visibleSidebarContent["matriz"] ? " visible" : ""}`}>
         <div className="matrix-container">
           <table>
             <tbody>
@@ -140,32 +104,17 @@ const SidebarComponent: React.FC = () => {
         </div>
       </div>
 
-      {/* Valores de Correção */}
-      <div
-        className="sidebar-title correction-values"
-        onClick={() => toggleSidebarContent("reconciled")}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => e.key === "Enter" && toggleSidebarContent("reconciled")}
-      >
+      <div className="sidebar-title correction-values" onClick={() => toggleSidebarContent("reconciled")}>
         Valores de Correção
       </div>
-      <div
-        className={`sidebar-content correction-values-content${
-          visibleSidebarContent["reconciled"] ? " visible" : ""
-        }`}
-        style={{
-          display: visibleSidebarContent["reconciled"] ? "block" : "none",
-        }}
-      >
+      <div className={`sidebar-content correction-values-content${visibleSidebarContent["reconciled"] ? " visible" : ""}`}>
         <table className="correction-values-table">
           <thead>
             <tr>
               <th>ID</th>
-              {correctionValues.length > 0 &&
-                correctionValues[0].values.map((_, index) => (
-                  <th key={index}>Valor {index + 1}</th>
-                ))}
+              {correctionValues.length > 0 && correctionValues[0].values.map((_, index) => (
+                <th key={index}>Valor {index + 1}</th>
+              ))}
             </tr>
           </thead>
           <tbody>
