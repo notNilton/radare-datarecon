@@ -8,7 +8,6 @@ import ReactFlow, {
   Connection,
   Edge,
   Panel,
-  getConnectedEdges,
   MarkerType,
 } from "reactflow";
 
@@ -60,7 +59,7 @@ const initialNodes = [
       border: "2px solid black",
       padding: "3px",
       width: "50px",
-      heigth: "50px",
+      height: "50px",
     },
     position: { x: -100, y: 450 },
   },
@@ -73,7 +72,7 @@ const initialNodes = [
       border: "2px solid black",
       padding: "3px",
       width: "50px",
-      heigth: "50px",
+      height: "50px",
     },
     position: { x: 350, y: 450 },
   },
@@ -81,37 +80,38 @@ const initialNodes = [
 
 const initialEdges = [
   {
-    label: 161,
-    tolerance: 0.05,
     id: "ei-1",
     type: "step",
     source: "Input",
-    // sourceHandle: "b",
     target: "Node",
+    value: 161,
+    tolerance: 0.05,
+    label: `Valor: 161, Tolerância: 0.05`,
     markerEnd: {
       type: MarkerType.ArrowClosed,
     },
   },
   {
-    label: 79,
-    tolerance: 0.01,
     id: "ei-2",
     type: "step",
     source: "Node",
-    // sourceHandle: "b",
     target: "Output1",
+    value: 79,
+    tolerance: 0.01,
+    label: `Valor: 79, Tolerância: 0.01`,
     markerEnd: {
       type: MarkerType.ArrowClosed,
     },
   },
   {
-    label: 80,
-    tolerance: 0.01,
     id: "ei-3",
     type: "step",
     source: "Node",
     sourceHandle: "b",
     target: "Output2",
+    value: 80,
+    tolerance: 0.01,
+    label: `Valor: 80, Tolerância: 0.01`,
     markerEnd: {
       type: MarkerType.ArrowClosed,
     },

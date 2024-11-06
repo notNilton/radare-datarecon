@@ -46,7 +46,7 @@ const initialNodes = [
       padding: "3px",
       width: "100px",
     },
-    position: { x: 100, y: 200 },
+    position: { x: 0, y: 200 },
   },
   {
     id: "node-2",
@@ -94,7 +94,7 @@ const initialNodes = [
       padding: "3px",
       width: "100px",
     },
-    position: { x: 500, y: 500 },
+    position: { x: 600, y: 500 },
   },
 ];
 
