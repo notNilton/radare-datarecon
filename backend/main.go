@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"radare/backend/internal/handlers"
-	"radare/backend/internal/middleware"
+	"radare-datarecon/backend/internal/handlers"
+	"radare-datarecon/backend/internal/middleware"
 	"syscall"
 	"time"
 )
