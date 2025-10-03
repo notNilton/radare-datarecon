@@ -16,6 +16,7 @@ import (
 func main() {
 	// Define os manipuladores para as rotas, usando o middleware para tratamento de erros
 	http.HandleFunc("/api/current-values", middleware.ErrorHandler(handlers.GetCurrentValues))
+	http.HandleFunc("/api/reconcile", middleware.ErrorHandler(handlers.ReconcileData))
 	http.HandleFunc("/healthz", middleware.ErrorHandler(handlers.HealthCheck))
 
 	// Obtém a porta da variável de ambiente PORT ou usa 8080 como padrão

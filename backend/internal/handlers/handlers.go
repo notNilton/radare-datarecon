@@ -4,8 +4,11 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"radare-datarecon/backend/internal/reconciliation"
 	"sync"
 	"time"
+
+	"gonum.org/v1/gonum/mat"
 	// Import the middleware package (not needed here, but might be in other handlers)
 )
 
@@ -13,6 +16,13 @@ import (
 type CurrentValues struct {
 	Value1 int `json:"value1"`
 	Value2 int `json:"value2"`
+}
+
+// ReconciliationRequest representa o corpo da requisição para o endpoint de reconciliação.
+type ReconciliationRequest struct {
+	Measurements []float64   `json:"measurements"`
+	Tolerances   []float64   `json:"tolerances"`
+	Constraints  [][]float64 `json:"constraints"`
 }
 
 var (
@@ -60,6 +70,52 @@ func GetCurrentValues(w http.ResponseWriter, r *http.Request) error { // Retorna
 	if err := json.NewEncoder(w).Encode(values); err != nil {
 		return err // Retorna o erro para o middleware
 	}
+	return nil
+}
+
+// ReconcileData processa a requisição de reconciliação de dados.
+func ReconcileData(w http.ResponseWriter, r *http.Request) error {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Método não permitido", http.StatusMethodNotAllowed)
+		return nil
+	}
+
+	var req ReconciliationRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Corpo da requisição inválido: "+err.Error(), http.StatusBadRequest)
+		return nil
+	}
+
+	// Converte a matriz de restrições de [][]float64 para *mat.Dense
+	rows := len(req.Constraints)
+	if rows == 0 {
+		http.Error(w, "A matriz de restrições não pode estar vazia", http.StatusBadRequest)
+		return nil
+	}
+	cols := len(req.Constraints[0])
+	constraints := mat.NewDense(rows, cols, nil)
+	for i, row := range req.Constraints {
+		if len(row) != cols {
+			http.Error(w, "Todas as linhas da matriz de restrições devem ter o mesmo comprimento", http.StatusBadRequest)
+			return nil
+		}
+		constraints.SetRow(i, row)
+	}
+
+	// Chama a função de reconciliação
+	reconciledData, err := reconciliation.Reconcile(req.Measurements, req.Tolerances, constraints)
+	if err != nil {
+		http.Error(w, "Erro ao reconciliar os dados: "+err.Error(), http.StatusInternalServerError)
+		return nil
+	}
+
+	// Envia a resposta
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(map[string][]float64{"reconciled": reconciledData}); err != nil {
+		// Se a codificação do JSON falhar, o middleware de erro tratará disso
+		return err
+	}
+
 	return nil
 }
 
