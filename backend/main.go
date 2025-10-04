@@ -14,10 +14,10 @@ import (
 )
 
 func main() {
-	// Define os manipuladores para as rotas, usando o middleware para tratamento de erros
-	http.HandleFunc("/api/current-values", middleware.ErrorHandler(handlers.GetCurrentValues))
-	http.HandleFunc("/api/reconcile", middleware.ErrorHandler(handlers.ReconcileData))
-	http.HandleFunc("/healthz", middleware.ErrorHandler(handlers.HealthCheck))
+	// Define os manipuladores para as rotas, usando os middlewares
+	http.Handle("/api/current-values", middleware.LoggingMiddleware(middleware.ErrorHandler(handlers.GetCurrentValues)))
+	http.Handle("/api/reconcile", middleware.LoggingMiddleware(middleware.ErrorHandler(handlers.ReconcileData)))
+	http.Handle("/healthz", middleware.LoggingMiddleware(middleware.ErrorHandler(handlers.HealthCheck)))
 
 	// Obtém a porta da variável de ambiente PORT ou usa 8080 como padrão
 	port := os.Getenv("PORT")
