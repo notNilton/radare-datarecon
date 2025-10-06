@@ -10,16 +10,24 @@ import (
 	"syscall"
 	"time"
 
+	"radare-datarecon/backend/internal/database"
 	"radare-datarecon/backend/internal/handlers"
 	"radare-datarecon/backend/internal/middleware"
+	"radare-datarecon/backend/internal/models"
 )
 
 func main() {
+	// Conecta ao banco de dados e migra o schema.
+	database.Connect()
+	database.DB.AutoMigrate(&models.User{})
+
 	// Registra os manipuladores para os endpoints da API.
 	// Cada manipulador é encapsulado com middlewares para logging e tratamento de erros.
 	// Os middlewares são aplicados de forma aninhada: as requisições passam primeiro pelo LoggingMiddleware e depois pelo ErrorHandler.
+	http.Handle("/api/register", middleware.LoggingMiddleware(middleware.ErrorHandler(handlers.Register)))
+	http.Handle("/api/login", middleware.LoggingMiddleware(middleware.ErrorHandler(handlers.Login)))
 	http.Handle("/api/current-values", middleware.LoggingMiddleware(middleware.ErrorHandler(handlers.GetCurrentValues)))
-	http.Handle("/api/reconcile", middleware.LoggingMiddleware(middleware.ErrorHandler(handlers.ReconcileData)))
+	http.Handle("/api/reconcile", middleware.LoggingMiddleware(middleware.AuthMiddleware(middleware.ErrorHandler(handlers.ReconcileData))))
 	http.Handle("/healthz", middleware.LoggingMiddleware(middleware.ErrorHandler(handlers.HealthCheck)))
 
 	// Obtém a porta da variável de ambiente PORT ou usa "8080" como padrão.
