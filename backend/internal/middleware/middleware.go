@@ -1,9 +1,15 @@
 package middleware
 
 import (
+	"context"
+	"fmt"
 	"log"
 	"net/http"
+	"radare-datarecon/backend/internal/config"
+	"strings"
 	"time"
+
+	"github.com/golang-jwt/jwt/v4"
 )
 
 // HTTPError allows handlers to specify HTTP error codes and messages.
@@ -69,4 +75,40 @@ func ErrorHandler(handler AppHandler) http.HandlerFunc {
 			}
 		}
 	}
+}
+
+// AuthMiddleware é um middleware para verificar o token JWT.
+func AuthMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		authHeader := r.Header.Get("Authorization")
+		if authHeader == "" {
+			http.Error(w, "Authorization header é obrigatório", http.StatusUnauthorized)
+			return
+		}
+
+		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+		if tokenString == authHeader {
+			http.Error(w, "Formato do token inválido", http.StatusUnauthorized)
+			return
+		}
+
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("Método de assinatura inesperado: %v", token.Header["alg"])
+			}
+			return config.JWTSecret, nil
+		})
+
+		if err != nil || !token.Valid {
+			http.Error(w, "Token inválido", http.StatusUnauthorized)
+			return
+		}
+
+		if claims, ok := token.Claims.(jwt.MapClaims); ok {
+			ctx := context.WithValue(r.Context(), "userID", claims["user_id"])
+			next.ServeHTTP(w, r.WithContext(ctx))
+		} else {
+			http.Error(w, "Claims do token inválidos", http.StatusUnauthorized)
+		}
+	})
 }
