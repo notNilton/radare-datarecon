@@ -1,4 +1,4 @@
-// handlers.go
+// Package handlers contém os manipuladores de requisições HTTP para a API.
 package handlers
 
 import (
@@ -9,38 +9,43 @@ import (
 	"time"
 
 	"gonum.org/v1/gonum/mat"
-	// Import the middleware package (not needed here, but might be in other handlers)
 )
 
-// Estrutura para representar os valores
+// CurrentValues representa uma estrutura de dados de exemplo com dois valores inteiros.
+// É usado pelo endpoint /api/current-values para demonstrar a atualização de dados em tempo real.
 type CurrentValues struct {
-	Value1 int `json:"value1"`
-	Value2 int `json:"value2"`
+	Value1 int `json:"value1"` // O primeiro valor.
+	Value2 int `json:"value2"` // O segundo valor.
 }
 
 // ReconciliationRequest representa o corpo da requisição para o endpoint de reconciliação.
+// Contém todos os dados necessários para realizar o processo de reconciliação.
 type ReconciliationRequest struct {
-	Measurements []float64   `json:"measurements"`
-	Tolerances   []float64   `json:"tolerances"`
-	Constraints  [][]float64 `json:"constraints"`
+	// Measurements é um slice de float64 representando os valores medidos.
+	Measurements []float64 `json:"measurements"`
+	// Tolerances é um slice de float64 representando as tolerâncias percentuais para cada medição.
+	Tolerances []float64 `json:"tolerances"`
+	// Constraints é uma matriz (slice de slices de float64) que representa as equações de restrição linear.
+	Constraints [][]float64 `json:"constraints"`
 }
 
 var (
 	currentValues CurrentValues
-	mutex         sync.RWMutex // Mutex para garantir acesso seguro aos valores
+	mutex         sync.RWMutex // Mutex para garantir o acesso seguro e concorrente à variável `currentValues`.
 )
 
-// Inicializa a variação dos valores
+// init é uma função especial do Go que é executada na inicialização do pacote.
+// Aqui, ela inicia uma goroutine para atualizar os valores de exemplo periodicamente.
 func init() {
 	go updateValues()
 }
 
-// updateValues atualiza os valores a cada segundo
+// updateValues é uma função executada em uma goroutine que atualiza `currentValues` a cada segundo.
+// Ela alterna os valores entre (50, 100) e (100, 50), demonstrando uma fonte de dados dinâmica.
 func updateValues() {
 	for {
-		// Bloqueia o mutex para escrita
+		// Bloqueia o mutex para escrita, garantindo que nenhuma outra goroutine leia ou escreva enquanto os valores são atualizados.
 		mutex.Lock()
-		// Alterna os valores entre 50 e 100
 		if currentValues.Value1 == 50 {
 			currentValues.Value1 = 100
 			currentValues.Value2 = 50
@@ -48,45 +53,49 @@ func updateValues() {
 			currentValues.Value1 = 50
 			currentValues.Value2 = 100
 		}
-		// Libera o mutex
-		mutex.Unlock()
+		mutex.Unlock() // Libera o mutex após a atualização.
 
-		// Aguarda 1 segundo antes de atualizar novamente
+		// Pausa a goroutine por 1 segundo antes da próxima atualização.
 		time.Sleep(1 * time.Second)
 	}
 }
 
-// GetCurrentValues retorna os valores atuais
-func GetCurrentValues(w http.ResponseWriter, r *http.Request) error { // Retorna um erro
-	// Configura o cabeçalho para indicar que a resposta é JSON
+// GetCurrentValues é o manipulador para o endpoint GET /api/current-values.
+// Ele retorna os valores atuais da estrutura `currentValues` em formato JSON.
+// A função retorna um erro para ser tratado pelo middleware ErrorHandler.
+func GetCurrentValues(w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "application/json")
 
-	// Bloqueia o mutex para leitura
+	// Bloqueia o mutex para leitura, permitindo múltiplas leituras concorrentes, mas bloqueando escritas.
 	mutex.RLock()
 	values := currentValues
-	mutex.RUnlock()
+	mutex.RUnlock() // Libera o bloqueio de leitura.
 
-	// Converte a estrutura para JSON e envia como resposta
+	// Codifica a estrutura `values` para JSON e a escreve no corpo da resposta.
 	if err := json.NewEncoder(w).Encode(values); err != nil {
-		return err // Retorna o erro para o middleware
+		// Se a codificação falhar, o erro é retornado para ser tratado pelo middleware.
+		return err
 	}
 	return nil
 }
 
-// ReconcileData processa a requisição de reconciliação de dados.
+// ReconcileData é o manipulador para o endpoint POST /api/reconcile.
+// Ele processa a requisição de reconciliação de dados.
 func ReconcileData(w http.ResponseWriter, r *http.Request) error {
+	// Garante que o método da requisição seja POST.
 	if r.Method != http.MethodPost {
 		http.Error(w, "Método não permitido", http.StatusMethodNotAllowed)
-		return nil
+		return nil // Retorna nil porque a resposta de erro já foi escrita.
 	}
 
+	// Decodifica o corpo da requisição JSON para a estrutura ReconciliationRequest.
 	var req ReconciliationRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Corpo da requisição inválido: "+err.Error(), http.StatusBadRequest)
 		return nil
 	}
 
-	// Converte a matriz de restrições de [][]float64 para *mat.Dense
+	// Converte a matriz de restrições de [][]float64 para o tipo *mat.Dense esperado pela biblioteca gonum.
 	rows := len(req.Constraints)
 	if rows == 0 {
 		http.Error(w, "A matriz de restrições não pode estar vazia", http.StatusBadRequest)
@@ -102,30 +111,33 @@ func ReconcileData(w http.ResponseWriter, r *http.Request) error {
 		constraints.SetRow(i, row)
 	}
 
-	// Chama a função de reconciliação
+	// Chama a função de reconciliação principal com os dados da requisição.
 	reconciledData, err := reconciliation.Reconcile(req.Measurements, req.Tolerances, constraints)
 	if err != nil {
+		// Se a reconciliação falhar, retorna um erro de servidor interno.
 		http.Error(w, "Erro ao reconciliar os dados: "+err.Error(), http.StatusInternalServerError)
 		return nil
 	}
 
-	// Envia a resposta
+	// Prepara e envia a resposta de sucesso em formato JSON.
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(map[string][]float64{"reconciled": reconciledData}); err != nil {
-		// Se a codificação do JSON falhar, o middleware de erro tratará disso
+	response := map[string][]float64{"reconciled": reconciledData}
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		// Se a codificação da resposta falhar, o erro é retornado para o middleware.
 		return err
 	}
 
 	return nil
 }
 
-// HealthCheck retorna o status do servidor
-func HealthCheck(w http.ResponseWriter, r *http.Request) error { // Retorna um erro
-	// Você pode adicionar lógica aqui para verificar a saúde do seu servidor
-
-	// Por enquanto, vamos apenas retornar um status 200 OK
+// HealthCheck é o manipulador para o endpoint GET /healthz.
+// Ele fornece uma verificação de saúde básica para o serviço.
+func HealthCheck(w http.ResponseWriter, r *http.Request) error {
+	// Define o cabeçalho de status como 200 OK.
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(map[string]string{"status": "ok"}); err != nil {
+	// Retorna uma resposta JSON simples indicando que o serviço está "ok".
+	response := map[string]string{"status": "ok"}
+	if err := json.NewEncoder(w).Encode(response); err != nil {
 		return err
 	}
 	return nil
