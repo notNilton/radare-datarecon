@@ -3,10 +3,12 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"radare-datarecon/backend/internal/reconciliation"
 	"sync"
 	"time"
+
 	"gonum.org/v1/gonum/mat"
 )
 
@@ -26,6 +28,14 @@ type ReconciliationRequest struct {
 	Tolerances []float64 `json:"tolerances"`
 	// Constraints é uma matriz (slice de slices de float64) que representa as equações de restrição linear.
 	Constraints [][]float64 `json:"constraints"`
+}
+
+// ReconciliationResponse representa a estrutura da resposta JSON para uma reconciliação bem-sucedida.
+type ReconciliationResponse struct {
+	ReconciledValues  []float64 `json:"reconciled_values"`
+	Corrections       []float64 `json:"corrections"`
+	ConsistencyStatus string    `json:"consistency_status"`
+	// Outros campos como Chi2TestResult, etc., podem ser adicionados aqui.
 }
 
 var (
@@ -90,37 +100,54 @@ func ReconcileData(w http.ResponseWriter, r *http.Request) error {
 	// Decodifica o corpo da requisição JSON para a estrutura ReconciliationRequest.
 	var req ReconciliationRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Corpo da requisição inválido: "+err.Error(), http.StatusBadRequest)
+		http.Error(w, fmt.Sprintf("Corpo da requisição inválido: %v", err), http.StatusBadRequest)
 		return nil
 	}
 
 	// Converte a matriz de restrições de [][]float64 para o tipo *mat.Dense esperado pela biblioteca gonum.
 	rows := len(req.Constraints)
 	if rows == 0 {
-		http.Error(w, "A matriz de restrições não pode estar vazia", http.StatusBadRequest)
+		http.Error(w, "Erro de validação: A matriz 'constraints' não pode estar vazia.", http.StatusBadRequest)
 		return nil
 	}
 	cols := len(req.Constraints[0])
+	if cols != len(req.Measurements) {
+		http.Error(w, fmt.Sprintf("Erro de validação: O número de colunas nas restrições (%d) deve ser igual ao número de medições (%d).", cols, len(req.Measurements)), http.StatusBadRequest)
+		return nil
+	}
+
 	constraints := mat.NewDense(rows, cols, nil)
 	for i, row := range req.Constraints {
 		if len(row) != cols {
-			http.Error(w, "Todas as linhas da matriz de restrições devem ter o mesmo comprimento", http.StatusBadRequest)
+			http.Error(w, fmt.Sprintf("Erro de validação: A linha %d da matriz de restrições tem %d elementos, mas o esperado era %d.", i, len(row), cols), http.StatusBadRequest)
 			return nil
 		}
 		constraints.SetRow(i, row)
 	}
 
 	// Chama a função de reconciliação principal com os dados da requisição.
-	reconciledData, err := reconciliation.Reconcile(req.Measurements, req.Tolerances, constraints)
+	reconciledValues, err := reconciliation.Reconcile(req.Measurements, req.Tolerances, constraints)
 	if err != nil {
-		// Se a reconciliação falhar, retorna um erro de servidor interno.
-		http.Error(w, "Erro ao reconciliar os dados: "+err.Error(), http.StatusInternalServerError)
+		// Se a reconciliação falhar, retorna um erro com o status apropriado.
+		// Erros de validação dentro de Reconcile() devem idealmente retornar um erro específico.
+		// Por enquanto, tratamos a maioria como Bad Request, exceto por inversão de matriz que é mais sistêmico.
+		http.Error(w, fmt.Sprintf("Erro ao processar a reconciliação: %v", err), http.StatusBadRequest)
 		return nil
+	}
+
+	// Calcula as correções aplicadas.
+	corrections := make([]float64, len(req.Measurements))
+	for i := range req.Measurements {
+		corrections[i] = reconciledValues[i] - req.Measurements[i]
 	}
 
 	// Prepara e envia a resposta de sucesso em formato JSON.
 	w.Header().Set("Content-Type", "application/json")
-	response := map[string][]float64{"reconciled": reconciledData}
+	response := ReconciliationResponse{
+		ReconciledValues:  reconciledValues,
+		Corrections:       corrections,
+		ConsistencyStatus: "Consistente", // Este é um valor placeholder. Um teste real (ex: Qui-quadrado) seria implementado aqui.
+	}
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		// Se a codificação da resposta falhar, o erro é retornado para o middleware.
 		return err

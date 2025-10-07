@@ -17,10 +17,10 @@ type Address struct {
 // Contém informações de autenticação e detalhes do perfil.
 type User struct {
 	gorm.Model
-	Username     string  `gorm:"uniqueIndex;not null"` // Nome de usuário para login, deve ser único.
-	Password     string  `gorm:"not null"`             // Senha hash para autenticação.
-	Name         string  `json:"name"`                   // Nome completo do usuário.
-	ContactEmail string  `gorm:"uniqueIndex;not null"` // E-mail de contato, deve ser único.
-	Address      Address `gorm:"embedded"`             // Endereço do usuário, incorporado na tabela de usuários.
-	ProfileIcon  string  `json:"profile_icon"`         // URL ou identificador para o ícone de perfil do usuário.
+	Username     string  `gorm:"uniqueIndex;not null"`
+	Password     string  `gorm:"not null"`
+	Name         string  `json:"name"`
+	ContactEmail string  `gorm:"not null;default:'no-email-provided'"`
+	Address      Address `gorm:"embedded"`
+	ProfileIcon  string  `json:"profile_icon"`
 }
