@@ -1,11 +1,11 @@
-// Package handlers contém os manipuladores de requisições HTTP para a API.
+// Package handlers contains the HTTP request handlers for the API.
 package handlers
 
 import (
 	"encoding/json"
 	"net/http"
-	"radare-datarecon/backend/internal/config"
 	"radare-datarecon/backend/internal/database"
+	"radare-datarecon/backend/internal/middleware"
 	"radare-datarecon/backend/internal/models"
 	"time"
 
@@ -13,14 +13,14 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// AuthRequest define a estrutura para requisições de autenticação (login).
+// AuthRequest defines the structure for authentication (login) requests.
 type AuthRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
-// RegisterRequest define a estrutura para a requisição de registro de um novo usuário.
-// Inclui todos os campos necessários para criar um perfil de usuário completo.
+// RegisterRequest defines the structure for a new user registration request.
+// It includes all the necessary fields to create a complete user profile.
 type RegisterRequest struct {
 	Username     string `json:"username"`
 	Password     string `json:"password"`
@@ -30,27 +30,25 @@ type RegisterRequest struct {
 	models.Address
 }
 
-// Register cria um novo usuário no sistema.
-// Esta função lida com a requisição de registro, valida os dados e armazena o novo usuário no banco de dados.
+// Register creates a new user in the system.
+// This function handles the registration request, validates the data, and stores the new user in the database.
 func Register(w http.ResponseWriter, r *http.Request) error {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Método não permitido", http.StatusMethodNotAllowed)
-		return nil
+		return middleware.HTTPError{Code: http.StatusMethodNotAllowed, Message: "Method not allowed"}
 	}
 
 	var req RegisterRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Corpo da requisição inválido: "+err.Error(), http.StatusBadRequest)
-		return nil
+		return middleware.HTTPError{Code: http.StatusBadRequest, Message: "Invalid request body: " + err.Error()}
 	}
 
-	// Gera o hash da senha para armazenamento seguro.
+	// Generate a hash of the password for secure storage.
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return err // Retorna erro 500 se o hash falhar.
+		return err // Return a 500 error if hashing fails.
 	}
 
-	// Cria uma nova instância de User com os dados da requisição.
+	// Create a new User instance with the request data.
 	user := models.User{
 		Username:     req.Username,
 		Password:     string(hashedPassword),
@@ -60,74 +58,70 @@ func Register(w http.ResponseWriter, r *http.Request) error {
 		ProfileIcon:  req.ProfileIcon,
 	}
 
-	// Salva o novo usuário no banco de dados.
+	// Save the new user to the database.
 	if result := database.DB.Create(&user); result.Error != nil {
-		http.Error(w, "Erro ao criar usuário: "+result.Error.Error(), http.StatusInternalServerError)
-		return nil
+		return middleware.HTTPError{Code: http.StatusInternalServerError, Message: "Error creating user: " + result.Error.Error()}
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]string{"message": "Usuário criado com sucesso"})
+	json.NewEncoder(w).Encode(map[string]string{"message": "User created successfully"})
 	return nil
 }
 
-// Login é o manipulador para o endpoint POST /api/login.
-// Ele autentica um usuário e retorna um token JWT.
-func Login(w http.ResponseWriter, r *http.Request) error {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Método não permitido", http.StatusMethodNotAllowed)
+// LoginHandler creates a handler for the POST /api/login endpoint.
+// It authenticates a user and returns a JWT. This function is a factory
+// that injects the JWT secret, decoupling the handler from global configuration.
+func LoginHandler(jwtSecret string) middleware.AppHandler {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		if r.Method != http.MethodPost {
+			return middleware.HTTPError{Code: http.StatusMethodNotAllowed, Message: "Method not allowed"}
+		}
+
+		var req AuthRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			return middleware.HTTPError{Code: http.StatusBadRequest, Message: "Invalid request body: " + err.Error()}
+		}
+
+		var user models.User
+		if result := database.DB.Where("username = ?", req.Username).First(&user); result.Error != nil {
+			return middleware.HTTPError{Code: http.StatusNotFound, Message: "User not found"}
+		}
+
+		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
+			return middleware.HTTPError{Code: http.StatusUnauthorized, Message: "Incorrect password"}
+		}
+
+		// Create the JWT
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+			"user_id": user.ID,
+			"exp":     time.Now().Add(time.Hour * 72).Unix(),
+		})
+
+		tokenString, err := token.SignedString([]byte(jwtSecret))
+		if err != nil {
+			return err
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{"token": tokenString})
 		return nil
 	}
-
-	var req AuthRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Corpo da requisição inválido: "+err.Error(), http.StatusBadRequest)
-		return nil
-	}
-
-	var user models.User
-	if result := database.DB.Where("username = ?", req.Username).First(&user); result.Error != nil {
-		http.Error(w, "Usuário não encontrado", http.StatusNotFound)
-		return nil
-	}
-
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
-		http.Error(w, "Senha incorreta", http.StatusUnauthorized)
-		return nil
-	}
-
-	// Cria o token JWT
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id": user.ID,
-		"exp":     time.Now().Add(time.Hour * 72).Unix(),
-	})
-
-	tokenString, err := token.SignedString(config.JWTSecret)
-	if err != nil {
-		return err
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"token": tokenString})
-	return nil
 }
 
-// GetUserProfile retorna o perfil do usuário autenticado.
-// O ID do usuário é extraído do token JWT, que é validado pelo AuthMiddleware.
+// GetUserProfile returns the profile of the authenticated user.
+// The user ID is extracted from the JWT, which is validated by the AuthMiddleware.
 func GetUserProfile(w http.ResponseWriter, r *http.Request) error {
-	// O ID do usuário é injetado no contexto pela AuthMiddleware.
+	// The user ID is injected into the context by the AuthMiddleware.
 	userID, ok := r.Context().Value("userID").(float64)
 	if !ok {
-		// Este erro indica um problema com o middleware ou com a forma como o token foi gerado.
-		http.Error(w, "ID de usuário inválido no token", http.StatusBadRequest)
-		return nil
+		// This error indicates a problem with the middleware or how the token was generated.
+		return middleware.HTTPError{Code: http.StatusBadRequest, Message: "Invalid user ID in token"}
 	}
 
 	var user models.User
-	// Busca o usuário no banco de dados, omitindo a senha por segurança.
+	// Fetch the user from the database, omitting the password for security.
 	if result := database.DB.Select("id", "username", "name", "contact_email", "address", "profile_icon").First(&user, uint(userID)); result.Error != nil {
-		http.Error(w, "Usuário não encontrado", http.StatusNotFound)
-		return nil
+		return middleware.HTTPError{Code: http.StatusNotFound, Message: "User not found"}
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -135,32 +129,30 @@ func GetUserProfile(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-// UpdateUserProfile atualiza o perfil do usuário autenticado.
-// Apenas os campos fornecidos na requisição são atualizados.
+// UpdateUserProfile updates the profile of the authenticated user.
+// Only the fields provided in the request are updated.
 func UpdateUserProfile(w http.ResponseWriter, r *http.Request) error {
 	userID, ok := r.Context().Value("userID").(float64)
 	if !ok {
-		http.Error(w, "ID de usuário inválido no token", http.StatusBadRequest)
-		return nil
+		return middleware.HTTPError{Code: http.StatusBadRequest, Message: "Invalid user ID in token"}
 	}
 
 	var user models.User
 	if result := database.DB.First(&user, uint(userID)); result.Error != nil {
-		http.Error(w, "Usuário não encontrado", http.StatusNotFound)
-		return nil
+		return middleware.HTTPError{Code: http.StatusNotFound, Message: "User not found"}
 	}
 
-	// Decodifica a requisição em um mapa para permitir atualizações parciais.
+	// Decode the request into a map to allow for partial updates.
 	var updates map[string]interface{}
 	if err := json.NewDecoder(r.Body).Decode(&updates); err != nil {
-		http.Error(w, "Corpo da requisição inválido", http.StatusBadRequest)
-		return nil
+		return middleware.HTTPError{Code: http.StatusBadRequest, Message: "Invalid request body"}
 	}
 
-	// O GORM permite a atualização a partir de um mapa, o que é ideal para updates parciais.
+	// GORM allows updating from a map, which is ideal for partial updates.
+	// Prevent password from being updated through this endpoint.
+	delete(updates, "password")
 	if result := database.DB.Model(&user).Updates(updates); result.Error != nil {
-		http.Error(w, "Erro ao atualizar o perfil do usuário", http.StatusInternalServerError)
-		return nil
+		return middleware.HTTPError{Code: http.StatusInternalServerError, Message: "Error updating user profile"}
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -168,52 +160,47 @@ func UpdateUserProfile(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-// ChangePasswordRequest define a estrutura para a requisição de mudança de senha.
+// ChangePasswordRequest defines the structure for a password change request.
 type ChangePasswordRequest struct {
 	CurrentPassword string `json:"current_password"`
 	NewPassword     string `json:"new_password"`
 }
 
-// ChangePassword altera a senha do usuário autenticado.
-// Requer a senha atual para verificação antes de definir a nova senha.
+// ChangePassword changes the password of the authenticated user.
+// It requires the current password for verification before setting the new one.
 func ChangePassword(w http.ResponseWriter, r *http.Request) error {
 	userID, ok := r.Context().Value("userID").(float64)
 	if !ok {
-		http.Error(w, "ID de usuário inválido no token", http.StatusBadRequest)
-		return nil
+		return middleware.HTTPError{Code: http.StatusBadRequest, Message: "Invalid user ID in token"}
 	}
 
 	var req ChangePasswordRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Corpo da requisição inválido", http.StatusBadRequest)
-		return nil
+		return middleware.HTTPError{Code: http.StatusBadRequest, Message: "Invalid request body"}
 	}
 
 	var user models.User
 	if result := database.DB.First(&user, uint(userID)); result.Error != nil {
-		http.Error(w, "Usuário não encontrado", http.StatusNotFound)
-		return nil
+		return middleware.HTTPError{Code: http.StatusNotFound, Message: "User not found"}
 	}
 
-	// Verifica se a senha atual fornecida corresponde à senha armazenada.
+	// Verify that the provided current password matches the stored password.
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.CurrentPassword)); err != nil {
-		http.Error(w, "Senha atual incorreta", http.StatusUnauthorized)
-		return nil
+		return middleware.HTTPError{Code: http.StatusUnauthorized, Message: "Incorrect current password"}
 	}
 
-	// Gera o hash da nova senha.
+	// Generate a hash of the new password.
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), bcrypt.DefaultCost)
 	if err != nil {
-		return err // Erro interno do servidor ao gerar o hash.
+		return err // Internal server error when generating the hash.
 	}
 
-	// Atualiza a senha do usuário no banco de dados.
+	// Update the user's password in the database.
 	if result := database.DB.Model(&user).Update("password", string(hashedPassword)); result.Error != nil {
-		http.Error(w, "Erro ao alterar a senha", http.StatusInternalServerError)
-		return nil
+		return middleware.HTTPError{Code: http.StatusInternalServerError, Message: "Error changing password"}
 	}
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"message": "Senha alterada com sucesso"})
+	json.NewEncoder(w).Encode(map[string]string{"message": "Password changed successfully"})
 	return nil
 }

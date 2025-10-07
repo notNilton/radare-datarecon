@@ -5,33 +5,39 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"radare-datarecon/backend/internal/config"
 	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
 )
 
-// HTTPError allows handlers to specify HTTP error codes and messages.
+// HTTPError represents a structured error with an HTTP status code and a message.
+// This allows handlers to return specific error responses, which are then processed
+// by the ErrorHandler middleware.
 type HTTPError struct {
 	Code    int
 	Message string
 }
 
+// Error implements the error interface for HTTPError.
 func (e HTTPError) Error() string {
 	return e.Message
 }
 
-// AppHandler is a custom handler type that returns an error.
+// AppHandler defines a custom HTTP handler type that returns an error.
+// This simplifies error handling by allowing handlers to return errors directly,
+// which are then centralized and managed by the ErrorHandler middleware.
 type AppHandler func(w http.ResponseWriter, r *http.Request) error
 
-// LoggingMiddleware logs request details.
+// LoggingMiddleware provides a robust logging mechanism for all incoming requests.
+// It records essential information such as the request method, URL, remote address,
+// and user agent, as well as the time taken to process the request.
 func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
+		startTime := time.Now()
 
 		log.Printf(
-			"Request: Method=%s URL=%s RemoteAddr=%s UserAgent=%s",
+			"Request Details: Method=%s, URL=%s, RemoteAddr=%s, UserAgent=%s",
 			r.Method,
 			r.URL.String(),
 			r.RemoteAddr,
@@ -40,17 +46,20 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 
 		next.ServeHTTP(w, r)
 
-		log.Printf("Request finished in %s", time.Since(start))
+		log.Printf("Request processed in %v", time.Since(startTime))
 	})
 }
 
-// ErrorHandler é um middleware que captura erros e os trata de forma global
+// ErrorHandler is a centralized middleware for error management. It gracefully
+// handles errors returned by AppHandlers and recovers from panics, preventing server
+
+// crashes and ensuring a consistent error response format.
 func ErrorHandler(handler AppHandler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
 			if err := recover(); err != nil {
 				log.Printf(
-					"Recovered from panic: Method=%s URL=%s Error=%v",
+					"Critical Error: Recovered from panic on %s %s. Details: %v",
 					r.Method,
 					r.URL.String(),
 					err,
@@ -59,56 +68,69 @@ func ErrorHandler(handler AppHandler) http.HandlerFunc {
 			}
 		}()
 
-		if err := handler(w, r); err != nil {
+		err := handler(w, r)
+		if err != nil {
 			log.Printf(
-				"Request error: Method=%s URL=%s Error=%v",
+				"Request Error: Failed processing %s %s. Details: %v",
 				r.Method,
 				r.URL.String(),
 				err,
 			)
 
-			// Check if the error is a specific HTTP error. If not, return a generic 500.
-			if httpErr, ok := err.(HTTPError); ok {
-				http.Error(w, httpErr.Message, httpErr.Code)
+			var httpErr HTTPError
+			if he, ok := err.(HTTPError); ok {
+				httpErr = he
 			} else {
-				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				httpErr = HTTPError{
+					Code:    http.StatusInternalServerError,
+					Message: "An unexpected error occurred.",
+				}
 			}
+			http.Error(w, httpErr.Message, httpErr.Code)
 		}
 	}
 }
 
-// AuthMiddleware é um middleware para verificar o token JWT.
-func AuthMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		authHeader := r.Header.Get("Authorization")
-		if authHeader == "" {
-			http.Error(w, "Authorization header é obrigatório", http.StatusUnauthorized)
-			return
-		}
-
-		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
-		if tokenString == authHeader {
-			http.Error(w, "Formato do token inválido", http.StatusUnauthorized)
-			return
-		}
-
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("Método de assinatura inesperado: %v", token.Header["alg"])
+// NewAuthMiddleware creates a new authentication middleware with a provided JWT secret.
+// This function acts as a factory, decoupling the middleware from global configuration
+// and making it more modular and testable. The returned middleware validates JWTs
+// from the Authorization header.
+func NewAuthMiddleware(jwtSecret string) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			authHeader := r.Header.Get("Authorization")
+			if authHeader == "" {
+				http.Error(w, "Authorization header is required", http.StatusUnauthorized)
+				return
 			}
-			return config.JWTSecret, nil
-		})
 
-		if err != nil || !token.Valid {
-			http.Error(w, "Token inválido", http.StatusUnauthorized)
-			return
-		}
+			tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+			if tokenString == authHeader {
+				http.Error(w, "Invalid token format", http.StatusUnauthorized)
+				return
+			}
 
-		if claims, ok := token.Claims.(jwt.MapClaims); ok {
+			token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+					return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+				}
+				return []byte(jwtSecret), nil
+			})
+
+			if err != nil || !token.Valid {
+				http.Error(w, "Invalid or expired token", http.StatusUnauthorized)
+				return
+			}
+
+			claims, ok := token.Claims.(jwt.MapClaims)
+			if !ok {
+				http.Error(w, "Invalid token claims", http.StatusUnauthorized)
+				return
+			}
+
+			// Inject user ID into the request context for downstream handlers.
 			ctx := context.WithValue(r.Context(), "userID", claims["user_id"])
 			next.ServeHTTP(w, r.WithContext(ctx))
-		} else {
-			http.Error(w, "Claims do token inválidos", http.StatusUnauthorized)
-		}
-	})
+		})
+	}
 }

@@ -1,6 +1,19 @@
 version: '3.8'
 
 services:
+  postgres:
+    image: postgres:13
+    container_name: radare-postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: radare
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
   backend:
     build:
       context: ./backend
@@ -11,6 +24,15 @@ services:
       - ./backend:/app
     container_name: radare-backend
     restart: unless-stopped
+    depends_on:
+      - postgres
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_NAME=radare
+      - DB_SSLMODE=disable
 
   frontend:
     build:
@@ -27,3 +49,6 @@ services:
       - backend
     environment:
       - VITE_API_URL=http://backend:8080
+
+volumes:
+  postgres_data:
