@@ -9,7 +9,7 @@ services:
       - "8080:8080"
     volumes:
       - ./backend:/app
-    container_name: meu-projeto-backend
+    container_name: radare-backend
     restart: unless-stopped
 
   frontend:
@@ -21,7 +21,7 @@ services:
     volumes:
       - ./webapp:/app
       - /app/node_modules
-    container_name: meu-projeto-frontend
+    container_name: radare-frontend
     restart: unless-stopped
     depends_on:
       - backend
