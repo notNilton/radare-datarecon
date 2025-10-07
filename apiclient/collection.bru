@@ -1,0 +1,19 @@
+meta {
+  name: radare-datarecon
+  type: collection
+}
+
+vars:env {
+  host: http://localhost:8080
+}
+
+vars:secret [
+  token
+]
+
+script:post-response {
+  const token = res.body?.token;
+  if (token) {
+    bru.setEnvVar('token', token);
+  }
+}
