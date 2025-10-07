@@ -26,6 +26,9 @@ func main() {
 	// Os middlewares são aplicados de forma aninhada: as requisições passam primeiro pelo LoggingMiddleware e depois pelo ErrorHandler.
 	http.Handle("/api/register", middleware.LoggingMiddleware(middleware.ErrorHandler(handlers.Register)))
 	http.Handle("/api/login", middleware.LoggingMiddleware(middleware.ErrorHandler(handlers.Login)))
+	http.Handle("/api/profile", middleware.LoggingMiddleware(middleware.AuthMiddleware(middleware.ErrorHandler(handlers.GetUserProfile))))
+	http.Handle("/api/profile/update", middleware.LoggingMiddleware(middleware.AuthMiddleware(middleware.ErrorHandler(handlers.UpdateUserProfile))))
+	http.Handle("/api/profile/change-password", middleware.LoggingMiddleware(middleware.AuthMiddleware(middleware.ErrorHandler(handlers.ChangePassword))))
 	http.Handle("/api/current-values", middleware.LoggingMiddleware(middleware.ErrorHandler(handlers.GetCurrentValues)))
 	http.Handle("/api/reconcile", middleware.LoggingMiddleware(middleware.AuthMiddleware(middleware.ErrorHandler(handlers.ReconcileData))))
 	http.Handle("/healthz", middleware.LoggingMiddleware(middleware.ErrorHandler(handlers.HealthCheck)))

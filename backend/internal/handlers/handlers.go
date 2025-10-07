@@ -7,21 +7,8 @@ import (
 	"radare-datarecon/backend/internal/reconciliation"
 	"sync"
 	"time"
-
-	"radare-datarecon/backend/internal/config"
-	"radare-datarecon/backend/internal/database"
-	"radare-datarecon/backend/internal/models"
 	"gonum.org/v1/gonum/mat"
-	"github.com/golang-jwt/jwt/v4"
-	"golang.org/x/crypto/bcrypt"
 )
-
-// AuthRequest define a estrutura para requisições de autenticação (login/registro).
-type AuthRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
 
 // CurrentValues representa uma estrutura de dados de exemplo com dois valores inteiros.
 // É usado pelo endpoint /api/current-values para demonstrar a atualização de dados em tempo real.
@@ -88,77 +75,6 @@ func GetCurrentValues(w http.ResponseWriter, r *http.Request) error {
 		// Se a codificação falhar, o erro é retornado para ser tratado pelo middleware.
 		return err
 	}
-	return nil
-}
-
-// Register é o manipulador para o endpoint POST /api/register.
-// Ele cria um novo usuário no banco de dados.
-func Register(w http.ResponseWriter, r *http.Request) error {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Método não permitido", http.StatusMethodNotAllowed)
-		return nil
-	}
-
-	var req AuthRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Corpo da requisição inválido: "+err.Error(), http.StatusBadRequest)
-		return nil
-	}
-
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return err
-	}
-
-	user := models.User{Username: req.Username, Password: string(hashedPassword)}
-	if result := database.DB.Create(&user); result.Error != nil {
-		http.Error(w, "Erro ao criar usuário: "+result.Error.Error(), http.StatusInternalServerError)
-		return nil
-	}
-
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]string{"message": "Usuário criado com sucesso"})
-	return nil
-}
-
-// Login é o manipulador para o endpoint POST /api/login.
-// Ele autentica um usuário e retorna um token JWT.
-func Login(w http.ResponseWriter, r *http.Request) error {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Método não permitido", http.StatusMethodNotAllowed)
-		return nil
-	}
-
-	var req AuthRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Corpo da requisição inválido: "+err.Error(), http.StatusBadRequest)
-		return nil
-	}
-
-	var user models.User
-	if result := database.DB.Where("username = ?", req.Username).First(&user); result.Error != nil {
-		http.Error(w, "Usuário não encontrado", http.StatusNotFound)
-		return nil
-	}
-
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
-		http.Error(w, "Senha incorreta", http.StatusUnauthorized)
-		return nil
-	}
-
-	// Cria o token JWT
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id": user.ID,
-		"exp":     time.Now().Add(time.Hour * 72).Unix(),
-	})
-
-	tokenString, err := token.SignedString(config.JWTSecret)
-	if err != nil {
-		return err
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"token": tokenString})
 	return nil
 }
 
