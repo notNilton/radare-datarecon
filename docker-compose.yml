@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
   postgres:
-    image: postgres:13
+    image: postgres:18
     container_name: radare-postgres
     environment:
       POSTGRES_USER: user
@@ -13,6 +11,12 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d radare"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
 
   backend:
     build:
@@ -23,16 +27,18 @@ services:
     volumes:
       - ./backend:/app
     container_name: radare-backend
-    restart: unless-stopped
+    restart: on-failure
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     environment:
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_USER=user
-      - DB_PASSWORD=password
-      - DB_NAME=radare
-      - DB_SSLMODE=disable
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_USER: user
+      DB_PASSWORD: password
+      DB_NAME: radare
+      DB_SSLMODE: disable
+      PORT: "8080"
 
   frontend:
     build:
@@ -48,7 +54,7 @@ services:
     depends_on:
       - backend
     environment:
-      - VITE_API_URL=http://backend:8080
+      VITE_API_URL: http://backend:8080
 
 volumes:
   postgres_data:

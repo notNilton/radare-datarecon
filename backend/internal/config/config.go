@@ -7,8 +7,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// Config holds all configuration for the application.
-// Values are read from environment variables.
 type Config struct {
 	DBHost     string
 	DBPort     string
@@ -20,16 +18,13 @@ type Config struct {
 	ServerPort string
 }
 
-// Load reads configuration from environment variables.
-// It can optionally load from a .env file if it exists.
 func Load() *Config {
-	// Load .env file if it exists. Ignore the error if the file is not found.
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found, proceeding with system environment variables.")
 	}
 
 	return &Config{
-		DBHost:     getEnv("DB_HOST", "localhost"),
+		DBHost:     getEnv("DB_HOST", "localhost"), // No Docker será sobrescrito por 'postgres'
 		DBPort:     getEnv("DB_PORT", "5432"),
 		DBUser:     getEnv("DB_USER", "user"),
 		DBPassword: getEnv("DB_PASSWORD", "password"),
@@ -40,7 +35,6 @@ func Load() *Config {
 	}
 }
 
-// getEnv reads an environment variable or returns a fallback value.
 func getEnv(key, fallback string) string {
 	if value, ok := os.LookupEnv(key); ok {
 		return value
