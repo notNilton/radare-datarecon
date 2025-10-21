@@ -1,7 +1,7 @@
 meta {
   name: register
   type: http
-  seq: 1
+  seq: 3
 }
 
 post {
@@ -12,8 +12,8 @@ post {
 
 body:json {
   {
-    "username": "novo_usuario_{{$timestamp}}",
-    "password": "strongpassword123",
+    "username": "testuser",
+    "password": "password",
     "name": "Usuário de Teste",
     "contactEmail": "teste@exemplo.com",
     "profile_icon": "default_icon.png",
@@ -46,7 +46,7 @@ script:post-response {
       bru.setEnvVar("authToken", token);
       console.log("Token de autenticação (auto-login) salvo com sucesso na variável 'authToken'.");
     }
-
+  
   } else {
     // 2. Se o status não for 201, exibe uma mensagem de erro detalhada.
     console.error(`Falha no registro. Status: ${status}`);
@@ -56,21 +56,21 @@ script:post-response {
 
 docs {
   # Registro de Novo Usuário
-
+  
   Este endpoint cria um novo usuário no sistema.
-
+  
   **Corpo da Requisição:**
   O corpo deve conter todos os detalhes do usuário, incluindo um objeto `address` aninhado. Os nomes dos campos (ex: `contactEmail`, `zip_code`) devem corresponder ao que sua API espera.
   
   **Boas Práticas:**
   Para facilitar os testes, os dados do novo usuário são gerados dinamicamente usando a variável `{{$timestamp}}` para garantir um `username` único a cada execução.
   Os valores estão definidos diretamente no corpo JSON para maior clareza.
-
+  
   **Campos obrigatórios (baseado no modelo Go):**
   - `username`
   - `password`
   - `contactEmail`
-
+  
   **Resposta de Sucesso (201 Created):**
   A resposta deve conter os dados do usuário recém-criado (sem a senha, por segurança). Se a API estiver configurada para **auto-login**, um token de autenticação também será retornado.
 }
