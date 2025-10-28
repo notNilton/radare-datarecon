@@ -1,6 +1,7 @@
 services:
-  postgres:
+  database:
     image: postgres:18
+    container_name: radare-database
     environment:
       POSTGRES_DB: radare
       POSTGRES_USER: radare
@@ -29,7 +30,7 @@ services:
     container_name: radare-backend
     restart: unless-stopped
     depends_on:
-      postgres:
+      database:
         condition: service_healthy
     networks:
       - app-network
