@@ -1,22 +1,23 @@
 services:
   postgres:
     image: postgres:18
-    container_name: radare-postgres
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
       POSTGRES_DB: radare
-    ports:
-      - "5432:5432"
+      POSTGRES_USER: radare
+      POSTGRES_PASSWORD: radare
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./postgres_data:/var/lib/postgresql
+    networks:
+      - app-network
     restart: unless-stopped
+    # Healthcheck simplificado
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d radare"]
-      interval: 5s
+      test: ["CMD", "pg_isready", "-U", "radare"]
+      interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 10s
+      start_period: 60s
 
   backend:
     build:
@@ -27,18 +28,21 @@ services:
     volumes:
       - ./backend:/app
     container_name: radare-backend
-    restart: on-failure
+    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
+    networks:
+      - app-network
     environment:
-      DB_HOST: postgres
-      DB_PORT: "5432"
-      DB_USER: user
-      DB_PASSWORD: password
-      DB_NAME: radare
-      DB_SSLMODE: disable
-      PORT: "8080"
+      - DB_HOST=postgres # ← MUDOU DE localhost PARA postgres
+      - DB_PORT=5432
+      - DB_USER=radare # ← MUDOU DE user PARA radare
+      - DB_PASSWORD=radare
+      - DB_NAME=radare
+      - DB_SSLMODE=disable
+      - JWT_SECRET=your_secret_key
+      - PORT=8080
 
   frontend:
     build:
@@ -53,8 +57,11 @@ services:
     restart: unless-stopped
     depends_on:
       - backend
+    networks:
+      - app-network
     environment:
-      VITE_API_URL: http://backend:8080
+      - VITE_API_URL=http://backend:8080
 
-volumes:
-  postgres_data:
+networks:
+  app-network:
+    driver: bridge

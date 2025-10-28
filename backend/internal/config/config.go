@@ -24,7 +24,7 @@ func Load() *Config {
 	}
 
 	return &Config{
-		DBHost:     getEnv("DB_HOST", "localhost"), // No Docker será sobrescrito por 'postgres'
+		DBHost:     getEnv("DB_HOST", "localhost"),
 		DBPort:     getEnv("DB_PORT", "5432"),
 		DBUser:     getEnv("DB_USER", "user"),
 		DBPassword: getEnv("DB_PASSWORD", "password"),
