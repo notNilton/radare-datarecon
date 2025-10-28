@@ -1,11 +1,11 @@
 meta {
-  name: current-values
+  name: healthz
   type: http
   seq: 2
 }
 
 get {
-  url: {{host}}/api/current-values
+  url: {{host}}/healthz
   body: none
   auth: none
 }

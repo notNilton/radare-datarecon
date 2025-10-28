@@ -1,6 +1,24 @@
-version: '3.8'
-
 services:
+  database:
+    image: postgres:18
+    container_name: radare-database
+    environment:
+      POSTGRES_DB: radare
+      POSTGRES_USER: radare
+      POSTGRES_PASSWORD: radare
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "radare"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+
   backend:
     build:
       context: ./backend
@@ -11,6 +29,20 @@ services:
       - ./backend:/app
     container_name: radare-backend
     restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - app-network
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=radare
+      - DB_PASSWORD=radare
+      - DB_NAME=radare
+      - DB_SSLMODE=disable
+      - JWT_SECRET=your_secret_key
+      - PORT=8080
 
   frontend:
     build:
@@ -25,5 +57,11 @@ services:
     restart: unless-stopped
     depends_on:
       - backend
+    networks:
+      - app-network
     environment:
       - VITE_API_URL=http://backend:8080
+
+networks:
+  app-network:
+    driver: bridge

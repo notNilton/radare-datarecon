@@ -1,0 +1,57 @@
+meta {
+  name: login
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{host}}/api/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "username": "{{username}}",
+    "password": "{{password}}"
+  }
+}
+
+vars:pre-request {
+  username: testuser
+  password: password
+}
+
+script:post-response {
+  const response = res.getBody();
+  
+  if (res.getStatus() !== 200) {
+    console.error(`Falha no login. Status: ${res.getStatus()}`);
+    console.log('Resposta do erro:', response);
+    return
+  }
+  
+  const token = response?.token || response?.accessToken || response?.access_token;
+  
+  if (token) {
+    bru.setEnvVar("authToken", token);
+    console.log("Token de autenticação salvo na variável de ambiente 'authToken'.");
+  } else {
+    console.error("Token não foi encontrado na resposta do servidor.");
+    console.log("Estrutura da resposta recebida:", response);
+  }
+}
+
+docs {
+  # Como usar a Autenticação
+  
+  Este endpoint realiza o login. Após a execução, o script salva o token de autenticação na variável de ambiente `authToken`.
+  
+  **Para usar em outras requisições:**
+  
+  1. Vá para a aba **Auth**.
+  2. Selecione o tipo **Bearer Token**.
+  3. No campo "Token", insira a variável `{{authToken}}`.
+  
+  O Bruno irá substituir `{{authToken}}` pelo valor `Bearer eyJhbGciOi...` automaticamente.
+}

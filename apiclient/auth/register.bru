@@ -1,0 +1,76 @@
+meta {
+  name: register
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{host}}/api/register
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "username": "testuser",
+    "password": "password",
+    "name": "Usuário de Teste",
+    "contactEmail": "teste@exemplo.com",
+    "profile_icon": "default_icon.png",
+    "address": {
+      "street": "Rua Principal, 123",
+      "city": "São Paulo",
+      "state": "SP",
+      "zip_code": "01000-000",
+      "country": "Brasil"
+    }
+  }
+}
+
+script:post-response {
+  // --- Script para validar a resposta do registro ---
+  const response = res.getBody();
+  const status = res.getStatus();
+  
+  // 1. O status HTTP esperado para criação de um recurso é 201 (Created).
+  if (status === 201) {
+    console.log("Usuário registrado com sucesso!");
+    // Exibe os dados do usuário retornado pela API para confirmação
+    console.log("ID do Usuário:", response?.ID);
+    console.log("Username:", response?.Username);
+    
+    // Opcional: Auto-Login após o registro
+    // Se a sua API retorna um token após o registro, o código abaixo fará o login automático.
+    const token = response?.token || response?.accessToken || response?.access_token;
+    if (token) {
+      bru.setEnvVar("authToken", token);
+      console.log("Token de autenticação (auto-login) salvo com sucesso na variável 'authToken'.");
+    }
+  
+  } else {
+    // 2. Se o status não for 201, exibe uma mensagem de erro detalhada.
+    console.error(`Falha no registro. Status: ${status}`);
+    console.log("Resposta do erro:", response);
+  }
+}
+
+docs {
+  # Registro de Novo Usuário
+  
+  Este endpoint cria um novo usuário no sistema.
+  
+  **Corpo da Requisição:**
+  O corpo deve conter todos os detalhes do usuário, incluindo um objeto `address` aninhado. Os nomes dos campos (ex: `contactEmail`, `zip_code`) devem corresponder ao que sua API espera.
+  
+  **Boas Práticas:**
+  Para facilitar os testes, os dados do novo usuário são gerados dinamicamente usando a variável `{{$timestamp}}` para garantir um `username` único a cada execução.
+  Os valores estão definidos diretamente no corpo JSON para maior clareza.
+  
+  **Campos obrigatórios (baseado no modelo Go):**
+  - `username`
+  - `password`
+  - `contactEmail`
+  
+  **Resposta de Sucesso (201 Created):**
+  A resposta deve conter os dados do usuário recém-criado (sem a senha, por segurança). Se a API estiver configurada para **auto-login**, um token de autenticação também será retornado.
+}

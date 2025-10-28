@@ -1,4 +1,4 @@
-// main.go é o ponto de entrada para o servidor backend.
+// main.go is the entry point for the backend server.
 package main
 
 import (
@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"radare-datarecon/backend/internal/config"
 	"radare-datarecon/backend/internal/database"
 	"radare-datarecon/backend/internal/handlers"
 	"radare-datarecon/backend/internal/middleware"
@@ -17,62 +18,59 @@ import (
 )
 
 func main() {
-	// Conecta ao banco de dados e migra o schema.
-	database.Connect()
-	database.DB.AutoMigrate(&models.User{})
+	// Load application configuration from environment variables.
+	cfg := config.Load()
 
-	// Registra os manipuladores para os endpoints da API.
-	// Cada manipulador é encapsulado com middlewares para logging e tratamento de erros.
-	// Os middlewares são aplicados de forma aninhada: as requisições passam primeiro pelo LoggingMiddleware e depois pelo ErrorHandler.
-	http.Handle("/api/register", middleware.LoggingMiddleware(middleware.ErrorHandler(handlers.Register)))
-	http.Handle("/api/login", middleware.LoggingMiddleware(middleware.ErrorHandler(handlers.Login)))
-	http.Handle("/api/current-values", middleware.LoggingMiddleware(middleware.ErrorHandler(handlers.GetCurrentValues)))
-	http.Handle("/api/reconcile", middleware.LoggingMiddleware(middleware.AuthMiddleware(middleware.ErrorHandler(handlers.ReconcileData))))
-	http.Handle("/healthz", middleware.LoggingMiddleware(middleware.ErrorHandler(handlers.HealthCheck)))
-
-	// Obtém a porta da variável de ambiente PORT ou usa "8080" como padrão.
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
+	// Connect to the database and migrate the schema.
+	database.Connect(cfg)
+	if err := database.DB.AutoMigrate(&models.User{}); err != nil {
+		log.Fatalf("Failed to migrate database schema: %v", err)
 	}
 
-	// Cria e configura o servidor HTTP.
+	// Instantiate the authentication middleware with the JWT secret.
+	authMiddleware := middleware.NewAuthMiddleware(cfg.JWTSecret)
+
+	// Register handlers for the API endpoints.
+	// Each handler is wrapped with middleware for logging, error handling, and authentication.
+	http.Handle("/api/register", middleware.LoggingMiddleware(middleware.ErrorHandler(handlers.Register)))
+	http.Handle("/api/login", middleware.LoggingMiddleware(middleware.ErrorHandler(handlers.LoginHandler(cfg.JWTSecret))))
+	http.Handle("/api/current-values", middleware.LoggingMiddleware(authMiddleware(middleware.ErrorHandler(handlers.GetCurrentValues))))
+	http.Handle("/api/reconcile", middleware.LoggingMiddleware(authMiddleware(middleware.ErrorHandler(handlers.ReconcileData))))
+	http.Handle("/healthz", middleware.LoggingMiddleware(middleware.ErrorHandler(handlers.HealthCheck)))
+
+	// Create and configure the HTTP server.
 	server := &http.Server{
-		Addr:    ":" + port,
-		Handler: http.DefaultServeMux, // Usa o multiplexador de serviço padrão, onde os manipuladores foram registrados.
-		// É uma boa prática definir timeouts para evitar o esgotamento de recursos.
+		Addr:         ":" + cfg.ServerPort,
+		Handler:      http.DefaultServeMux,
 		ReadTimeout:  15 * time.Second,
 		WriteTimeout: 15 * time.Second,
 		IdleTimeout:  60 * time.Second,
 	}
 
-	// Cria um canal para escutar sinais do sistema operacional (SIGINT, SIGTERM) para um desligamento gracioso (graceful shutdown).
+	// Set up a channel to listen for OS signals (SIGINT, SIGTERM) for graceful shutdown.
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 
-	// Inicia o servidor em uma goroutine separada para não bloquear a thread principal.
+	// Start the server in a separate goroutine.
 	go func() {
-		log.Println("Servidor iniciado na porta " + port + "...")
-		// ListenAndServe bloqueia até que o servidor seja desligado ou ocorra um erro.
+		log.Printf("Server starting on port %s...", cfg.ServerPort)
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("Erro ao iniciar o servidor: %v\n", err)
+			log.Fatalf("Failed to start server: %v\n", err)
 		}
 	}()
 
-	// Bloqueia a thread principal até que um sinal de desligamento seja recebido.
+	// Block until a shutdown signal is received.
 	sig := <-sigChan
-	log.Printf("Sinal de desligamento recebido: %v, iniciando graceful shutdown...\n", sig)
+	log.Printf("Received shutdown signal: %v, initiating graceful shutdown...\n", sig)
 
-	// Cria um contexto com um timeout para permitir o desligamento gracioso.
-	// Isso dá tempo para as conexões ativas terminarem antes que o servidor seja fechado.
+	// Create a context with a timeout to allow for graceful shutdown.
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	// Tenta desligar o servidor graciosamente.
-	// Isso interromperá a aceitação de novas conexões e aguardará a conclusão das existentes.
+	// Attempt to gracefully shut down the server.
 	if err := server.Shutdown(shutdownCtx); err != nil {
-		log.Fatalf("Erro durante o shutdown do servidor: %v\n", err)
+		log.Fatalf("Server shutdown failed: %v\n", err)
 	}
 
-	log.Println("Servidor desligado com sucesso.")
+	log.Println("Server shut down successfully.")
 }
