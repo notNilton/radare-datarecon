@@ -12,6 +12,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -25,12 +28,17 @@ jobs:
           file: ./backend/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/radare-backend:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/radare-backend:latest
+          cache-to: type=inline
 
   build-and-push-frontend:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -45,21 +53,5 @@ jobs:
           file: ./frontend/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/radare-frontend:latest
-
-  build-and-push-database:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Pull and push postgres image
-        run: |
-          docker pull postgres:16
-          docker tag postgres:16 ${{ secrets.DOCKERHUB_USERNAME }}/radare-database:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/radare-database:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/radare-frontend:latest
+          cache-to: type=inline
